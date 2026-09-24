@@ -21,7 +21,8 @@ namespace KianaPet {
   }
   public void FocusMusicControls(){if(!Settings.MusicEnabled||!Music.Current.Connected){Say("请先连接网易云音乐并开启音乐栏。",4);return;}musicUntil=clock.Elapsed.TotalSeconds+5;UpdateMusic();if(musicWindow!=null&&musicWindow.IsVisible)musicWindow.FocusControls();}
   public void SetMusicPosition(string position){Settings.MusicPosition=position;if(position=="free"&&!Settings.MusicHasPosition&&musicWindow!=null)musicWindow.SavePosition();ApplySettings();}
-  public void ResetMusicPosition(){Settings.MusicPosition="below";Settings.MusicHasPosition=false;ApplySettings();}
+  public void ResetMusicPosition(){RestoreMusicDock(Settings.MusicDefaultPosition);}
+  public void RestoreMusicDock(string position){if(position!="below"&&position!="left"&&position!="right")return;Settings.MusicPosition=position;Settings.MusicHasPosition=false;ApplySettings();PositionMusic();UpdateMusic();}
   public void PositionMusic(){if(musicWindow!=null)musicWindow.Follow(Bounds(),true);}
   public async void MusicCommand(string action){if(musicBusy)return;musicBusy=true;try{UpdateMusic();if(!await Music.Command(action))Say("音乐控制暂不可用，请重新连接网易云音乐。",4);await Music.Poll(Settings.MusicEnabled);musicLibrary.Update(Music.Current,Settings.MusicEnabled&&Settings.MusicLyrics);}finally{musicBusy=false;if(!quitting)UpdateMusic();}}
   void StopMusic(){musicTimer.Stop();Music.Dispose();musicLibrary.Dispose();if(musicWindow!=null)musicWindow.Close();}

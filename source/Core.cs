@@ -15,7 +15,7 @@ namespace KianaPet {
   public bool RecoverHotkeyEnabled=false;
   public uint RecoverHotkeyModifiers=PetHotkey.Control|PetHotkey.Alt,RecoverHotkeyKey=0x50;
   public bool BackgroundMini=true;
-  public bool NoticePreviewCompact=true,NoticePreviewHover=true;
+  public bool NoticePreviewHover=true,NoticePreviewFollowMusic=false;
   public int NoticePreviewWidth=420,NoticePreviewCount=1;
   public bool LaunchChatGPTOnStart=false,LaunchMusicOnStart=false,NoticeSound=false,NoticeQuiet=false;public int CompletionNoticeSeconds=6,NotificationGraceSeconds=30;
   public bool HasPosition=false,LockPetPosition=false,LockMusicPosition=false,SmoothTransitions=true;
@@ -37,6 +37,7 @@ namespace KianaPet {
   public int MusicScalePercent=100,MusicWidth=238;
   public bool MusicHoverOnly=true,MusicHasPosition=false;
   public string MusicPosition="below";
+  public string MusicDefaultPosition="below";
   public double MusicX=0,MusicY=0;
   public bool Walking=true, Gravity=true, SleepSchedule=true, IdleSleep=true, HideFullscreen=true, Bubbles=true, LinkChatGPT=true, HoverToolbar=true;
   public string Bedtime="02:00", WakeTime="09:00";
@@ -49,6 +50,7 @@ namespace KianaPet {
    BackupKeepCount=Math.Max(1,Math.Min(10,BackupKeepCount));MutedNoticeSources=(MutedNoticeSources??new string[0]).Where(s=>!string.IsNullOrWhiteSpace(s)&&s.Length<=60).Distinct(StringComparer.Ordinal).Take(50).ToArray();
    if(!PetHotkey.Valid(RecoverHotkeyModifiers,RecoverHotkeyKey)){RecoverHotkeyEnabled=false;RecoverHotkeyModifiers=PetHotkey.Control|PetHotkey.Alt;RecoverHotkeyKey=0x50;}
    if(!new[]{"below","left","right","free"}.Contains(MusicPosition))MusicPosition="below";
+   if(!new[]{"below","left","right"}.Contains(MusicDefaultPosition))MusicDefaultPosition="below";
    if(double.IsNaN(MusicX)||double.IsInfinity(MusicX)||double.IsNaN(MusicY)||double.IsInfinity(MusicY)){MusicX=MusicY=0;MusicHasPosition=false;}
    Size=Math.Max(96,Math.Min(320,Size)); IdleMinutes=Math.Max(1,Math.Min(120,IdleMinutes));
    TimeSpan a,b; if(!TimeSpan.TryParse(Bedtime,out a)||a.TotalHours<0||a.TotalHours>=24)Bedtime="02:00";
