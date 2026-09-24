@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.7.8",
+  "version": "0.7.9",
   "files": [
     "安装独立桌宠.cmd",
     "启动独立桌宠.cmd",
@@ -34,6 +34,7 @@
     "docs/demo/music.png",
     "docs/demo/task-list.png",
     "docs/demo/notification-banner.png",
+    "docs/demo/notification-source-styles.png",
     "install.ps1",
     "KianaDesktopPet.exe",
     "KianaDesktopPet.exe.config",

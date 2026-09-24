@@ -4,7 +4,7 @@ namespace KianaPet {
  public sealed class PackageManifest {public int schema;public string product,version;public PackageEntry[] files;}
  public sealed class PreparedUpdate {public string Folder,Version,Notes;public PackageManifest Manifest;}
  public static class Maintenance {
-  public const string Version="0.7.8";
+  public const string Version="0.7.9";
   public static bool RuntimeFile(string path){return Regex.IsMatch(path,@"^(assets/|licenses/|docs/demo/|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)");}
   public static string SafePath(string root,string relative){if(string.IsNullOrWhiteSpace(relative)||relative.Contains(":")||relative.Contains("\\")||relative.StartsWith("/")||relative.Split('/').Any(p=>p==".."||p=="."||p.Length==0)||relative.Split('/').Any(p=>p.EndsWith(".")||p.EndsWith(" ")))throw new Exception("安装包包含无效路径。");string prefix=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;string target=Path.GetFullPath(Path.Combine(root,relative));if(!target.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))throw new Exception("文件超出安装范围。");return target;}
   public static string Hash(Stream stream){using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}

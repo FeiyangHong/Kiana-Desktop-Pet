@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.7.8-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.7.9-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -52,6 +52,20 @@ cd Kiana-Desktop-Pet
 
 可直接打开对应任务、将本地任务标为已读，或点击右侧列表小图标查看全部任务及筛选。打开预览不会改变已读状态，也不会擅自修改 ChatGPT 原生通知的已读状态。短暂断线时保留上次状态并暂停跳转；宠物隐藏、拖动或外部菜单优先显示时速览收起。
 
+### 通知来源图标与布局
+
+在 **设置 → 通知中心 → 通知浮窗外观 → 应用标识样式** 选择：
+
+- **图标＋应用名**：默认样式，在状态行显示小图标与应用名称。
+- **只显示图标**：隐藏应用名称，保留图标和任务状态。
+- **左侧大图标＋右侧通知内容**：应用图标放最左侧，右侧先显示任务标题，再显示状态。
+- **纯文字应用名**：不显示应用图标。
+
+选好后使用同页的“显示测试通知横幅”查看实际效果。隐藏名称时仍可悬停图标查看来源，测试标记和状态色始终保留。样式自动保存，可随通用偏好导出/导入。
+
+![四种通知应用标识样式（测试示例）](docs/demo/notification-source-styles.png)
+
+ChatGPT 图标读取本机已安装应用的浅色 / 深色图标，不依赖固定安装版本或在线下载；读取不到时回退为通用通知标识。其他来源可由进程内适配器调用 `NoticeSourceIcons.Register(source, icon)` 注册图标，未提供的来源使用通用图标；这不代表新增了外部应用接入。
 ## 功能说明
 
 - 六套琪亚娜衣装、触摸反馈、自由走动、作息、跨屏拖动和效果预览。

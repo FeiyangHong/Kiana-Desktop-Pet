@@ -17,6 +17,7 @@ namespace KianaPet {
   public bool BackgroundMini=true;
   public bool NoticePreviewHover=true,NoticePreviewFollowMusic=false;
   public int NoticePreviewWidth=420,NoticePreviewCount=1;
+  public string NoticeSourceStyle="icon-name";
   public bool LaunchChatGPTOnStart=false,LaunchMusicOnStart=false,NoticeSound=false,NoticeQuiet=false;public int CompletionNoticeSeconds=6,NotificationGraceSeconds=30;
   public bool HasPosition=false,LockPetPosition=false,LockMusicPosition=false,SmoothTransitions=true;
   public string WalkProfile="occasional";
@@ -44,6 +45,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   if(!NoticeSourceIcons.Styles.Contains(NoticeSourceStyle))NoticeSourceStyle="icon-name";
    NoticePreviewWidth=Math.Max(320,Math.Min(560,NoticePreviewWidth));NoticePreviewCount=Math.Max(1,Math.Min(4,NoticePreviewCount));
    ComfortRules.Validate(this);CompletionNoticeSeconds=Math.Max(2,Math.Min(30,CompletionNoticeSeconds));NotificationGraceSeconds=Math.Max(10,Math.Min(120,NotificationGraceSeconds));
    PolishRules.Validate(this);
