@@ -16,10 +16,39 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.7.5-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.7.6-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
+
+## 从 Git 仓库更新与开发
+
+已安装本版本后，在 **设置 → 场景与维护 → 仓库更新** 使用两个按钮：
+
+| 入口 | 行为 |
+| --- | --- |
+| 拉取 GitHub 更新并应用 | 检查未提交修改，执行 `git pull --ff-only`，构建、校验、备份并重启 |
+| 构建并运行本机修改 | 不拉取，直接构建当前源码，保留未提交修改，部署并重启 |
+
+仓库根目录也提供 [拉取更新并运行.cmd](拉取更新并运行.cmd) 和 [构建本机修改并运行.cmd](构建本机修改并运行.cmd)，可直接双击。进度窗口会保留成功或错误信息，按回车关闭。需要 Git、.NET Framework 4.8 和 PowerShell 7；脚本优先使用系统 PowerShell 7，也可使用本机已有的 Codex 运行时。
+
+运行目录在仓库的 `runtime/KianaDesktopPet` 下时，设置自动识别仓库；其他位置可用“选择本机仓库目录…”绑定。**首次使用新脚本，建议从当前桌宠的设置按钮运行一次**，它会记录当前安装目录。此后根目录脚本使用相同目录；没有绑定时默认使用本仓库的 `runtime/KianaDesktopPet`。也可以显式指定：
+
+```powershell
+# PowerShell 7；路径按本机实际位置填写
+.\scripts\Repository-Deploy.ps1 -Mode build -InstallRoot 'F:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\scripts\Repository-Deploy.ps1 -Mode update -InstallRoot 'F:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+```
+
+脚本先完成构建和包校验，再让当前安装保存、退出。构建、网络或 Git 检查失败时，运行中的桌宠不受影响；重复启动更新会被拦截。不会自动提交、推送、暂存、覆盖本地修改或解决分叉。ChatGPT 平滑组件及其会话保持原样。程序备份在运行目录的 `managed-backups/`，最近部署日志在 `.local/last-deploy.log`。
+
+两台电脑分别保留自己的仓库路径、偏好与联动会话；`runtime/` 和 `.local/` 已由 Git 忽略。源码修改经测试后自行提交、推送，另一台再“拉取 GitHub 更新并应用”。仅执行 `git pull` 不会替换正在运行的程序。通用偏好仍通过设置导出/导入，不复制整个运行目录。
+
+## 通知速览
+
+鼠标在铃铛上停留片刻会展开速览，移开后自动收起；首次点击铃铛会固定展开，点空白处、关闭按钮或按 Esc 收起。浮窗优先列出需要处理和正在进行的任务，最多预览四条，显示标题、状态和更新时间；来源未提供的内容会明确标注。
+
+可直接打开对应任务、将本地任务标为已读，或点击底部“进入完整通知中心”查看全部任务及筛选。打开预览不会改变已读状态，也不会擅自修改 ChatGPT 原生通知的已读状态。短暂断线时保留上次状态并暂停跳转；宠物隐藏、拖动或外部菜单优先显示时速览收起。
 
 ## 功能说明
 

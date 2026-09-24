@@ -1,4 +1,4 @@
-﻿# Keep one pet entry. Archive only known shortcuts owned by this installation.
+# Keep one pet entry. Archive only known shortcuts owned by this installation.
 function Set-KianaShortcuts {
  param([Parameter(Mandatory=$true)][string]$InstallRoot,
  [string]$DesktopFolder=[Environment]::GetFolderPath('Desktop'),
@@ -19,7 +19,10 @@ function Set-KianaShortcuts {
     if($existing.TargetPath -ine $legacyExe -or $existing.Arguments -notlike ('*'+$legacyRoot+'*')){throw ('同名入口指向其他程序，未覆盖：'+$canonical)}
     $saved=Join-Path $archive $pair[0]
     New-Item -ItemType Directory -Path $saved -Force | Out-Null
-    Copy-Item -LiteralPath $canonical -Destination (Join-Path $saved '琪亚娜桌宠.lnk')
+    $destination=Join-Path $saved '琪亚娜桌宠.lnk'
+    [IO.File]::WriteAllBytes($destination,[IO.File]::ReadAllBytes($canonical))
+    if((Get-FileHash -LiteralPath $canonical).Hash -ne (Get-FileHash -LiteralPath $destination).Hash){throw ('快捷方式备份校验失败：'+$canonical)}
+    $records+=@{original=$canonical;backup=$destination}
    }
   }
   $link=$shell.CreateShortcut($canonical);$link.TargetPath=$exe;$link.Arguments='--state-dir "'+[IO.Path]::GetFullPath($InstallRoot)+'"';$link.WorkingDirectory=$appRoot;$link.IconLocation=$exe+',0';$link.Description='琪亚娜桌宠 · 换装、互动、音乐与 ChatGPT';$link.Save()

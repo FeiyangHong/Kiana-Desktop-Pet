@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +14,7 @@ namespace KianaPet {
   Border notificationSeparator;Button chatButton,voiceButton,notificationButton;double toolbarUntil;bool toolbarBusy;ContextMenu toolbarMenu;
   bool toolbarShown;int toolbarTransition;readonly ScaleTransform toolbarScale=new ScaleTransform(.92,.92);readonly TranslateTransform toolbarSlide=new TranslateTransform(0,-4);
   public bool ToolbarVisible{get{return hoverBar.Visibility==Visibility.Visible;}}
-  bool ToolbarActive{get{return keyboardToolbarMode||MusicInteractionActive||(toolbarMenu!=null&&toolbarMenu.IsOpen)||Settings.HoverToolbar&&(hoverBar.IsMouseOver||clock.Elapsed.TotalSeconds<toolbarUntil);}}
+  bool ToolbarActive{get{return NoticePreviewOpen||keyboardToolbarMode||MusicInteractionActive||(toolbarMenu!=null&&toolbarMenu.IsOpen)||Settings.HoverToolbar&&(hoverBar.IsMouseOver||clock.Elapsed.TotalSeconds<toolbarUntil);}}
   void BuildToolbar(Grid root){
    hoverBar.CornerRadius=new CornerRadius(16);hoverBar.Background=new SolidColorBrush(Color.FromArgb(245,255,255,255));hoverBar.BorderThickness=new Thickness(0);hoverBar.Padding=new Thickness(4,0,4,0);hoverBar.Margin=new Thickness(2,2,2,4);hoverBar.HorizontalAlignment=HorizontalAlignment.Center;hoverBar.VerticalAlignment=VerticalAlignment.Center;hoverBar.Visibility=Visibility.Hidden;hoverBar.Opacity=0;hoverBar.IsHitTestVisible=false;hoverBar.UseLayoutRounding=true;hoverBar.SnapsToDevicePixels=true;
    TransformGroup transform=new TransformGroup();transform.Children.Add(toolbarScale);transform.Children.Add(toolbarSlide);hoverBar.RenderTransform=transform;hoverBar.RenderTransformOrigin=new Point(.5,0);
@@ -25,7 +25,7 @@ namespace KianaPet {
    notificationButton=ToolbarButton("bell","查看 ChatGPT 通知 / 联动状态",OpenToolbarNotifications);
    Grid badgeContainer=new Grid();var bell=(UIElement)notificationButton.Content;notificationButton.Content=null;badgeContainer.Children.Add(bell);
    notificationBadge.Background=new SolidColorBrush(Color.FromRgb(65,123,238));notificationBadge.CornerRadius=new CornerRadius(7);notificationBadge.MinWidth=13;notificationBadge.Height=13;notificationBadge.Padding=new Thickness(2,0,2,0);notificationBadge.HorizontalAlignment=HorizontalAlignment.Right;notificationBadge.VerticalAlignment=VerticalAlignment.Top;notificationBadge.Margin=new Thickness(0,-3,-4,0);notificationBadge.IsHitTestVisible=false;notificationBadge.Visibility=Visibility.Hidden;
-   notificationNumber.FontSize=9;notificationNumber.Foreground=Brushes.White;notificationNumber.TextAlignment=TextAlignment.Center;notificationBadge.Child=notificationNumber;badgeContainer.Children.Add(notificationBadge);notificationButton.Content=badgeContainer;buttons.Children.Add(notificationButton);
+   notificationNumber.FontSize=9;notificationNumber.Foreground=Brushes.White;notificationNumber.TextAlignment=TextAlignment.Center;notificationBadge.Child=notificationNumber;badgeContainer.Children.Add(notificationBadge);notificationButton.Content=badgeContainer;buttons.Children.Add(notificationButton);ToolTipService.SetIsEnabled(notificationButton,false);SetupNoticePreview();
    root.MouseEnter+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};root.MouseLeave+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};
    hoverBar.MouseEnter+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};
   }
@@ -55,15 +55,16 @@ namespace KianaPet {
    hoverBar.BeginAnimation(OpacityProperty,fade);toolbarScale.BeginAnimation(ScaleTransform.ScaleXProperty,Motion(show?1:.96,duration));toolbarScale.BeginAnimation(ScaleTransform.ScaleYProperty,Motion(show?1:.96,duration));toolbarSlide.BeginAnimation(TranslateTransform.YProperty,Motion(show?0:-3,duration));
   }
   void UpdateToolbar(double now){
+   if(!CanShowNoticePreview)CloseNoticePreview();
    if(menuLayerYielding&&IsVisible&&!manualHidden&&!fullscreenHidden)return;
    if(hover||hoverBar.IsMouseOver)toolbarUntil=now+.65;
-   bool show=Settings.HoverToolbar&&IsVisible&&!manualHidden&&!fullscreenHidden&&!pressed&&!dragging&&(Settings.ToolbarPinned||keyboardToolbarMode||(toolbarMenu!=null&&toolbarMenu.IsOpen)||hover||hoverBar.IsMouseOver||now<toolbarUntil||(Settings.MusicHoverOnly&&MusicInteractionActive));
+   bool show=Settings.HoverToolbar&&IsVisible&&!manualHidden&&!fullscreenHidden&&!pressed&&!dragging&&(NoticePreviewOpen||Settings.ToolbarPinned||keyboardToolbarMode||(toolbarMenu!=null&&toolbarMenu.IsOpen)||hover||hoverBar.IsMouseOver||now<toolbarUntil||(Settings.MusicHoverOnly&&MusicInteractionActive));
    SetToolbarVisible(show,!Settings.HoverToolbar||!IsVisible||manualHidden||fullscreenHidden||pressed||dragging);
    bool live=Settings.LinkChatGPT&&Link.Current.Connected&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10);
    voiceButton.IsEnabled=!toolbarBusy&&live&&Link.Current.CanVoice;chatButton.IsEnabled=!toolbarBusy;
    voiceButton.ToolTip=live&&Link.Current.CanVoice?"开始 ChatGPT 语音聊天（使用 ChatGPT 的麦克风权限）":"请通过平滑启动器打开 ChatGPT 并显示 Mini；语音需在 ChatGPT 内可用";
    bool nativeNotifications=NotificationsAvailable&&Link.Current.CanNotifications&&Link.Current.NotificationCount>0;int localCount=LocalNoticeCount;bool hasNotifications=nativeNotifications||localCount>0;
-   notificationButton.Visibility=hasNotifications?Visibility.Visible:Visibility.Collapsed;notificationSeparator.Visibility=notificationButton.Visibility;
+   notificationButton.Visibility=hasNotifications||NoticePreviewOpen?Visibility.Visible:Visibility.Collapsed;notificationSeparator.Visibility=notificationButton.Visibility;
    if(hasNotifications){Color color=Color.FromRgb(128,130,135);if(System.Text.RegularExpressions.Regex.IsMatch(Link.Current.NotificationColor??"","^#[0-9a-fA-F]{6}$"))color=(Color)ColorConverter.ConvertFromString(Link.Current.NotificationColor);
     if(!nativeNotifications&&localCount>0){var notices=VisibleNotices.Where(n=>n.Unread);color=notices.Any(n=>n.Status=="failed"||n.Status=="waiting")?Color.FromRgb(245,149,40):notices.Any(n=>n.Status=="running")?Color.FromRgb(58,131,247):Color.FromRgb(48,200,90);}
     SolidColorBrush brush=notificationBadge.Background as SolidColorBrush;if(brush==null||brush.Color!=color)notificationBadge.Background=new SolidColorBrush(color);
@@ -84,11 +85,6 @@ namespace KianaPet {
    foreach(var notice in Link.Current.Notices){var selected=notice;string title=string.IsNullOrWhiteSpace(notice.Title)?"ChatGPT 任务":notice.Title;Add(toolbarMenu,Bridge.Name(notice.State)+" · "+title,async delegate{try{if(!await Link.OpenMainNotification(selected.Id))Say("当前无法打开任务，请切换到 ChatGPT 查看。",4);}catch{Say("联动暂不可用，请稍后重试。",4);}});}
    ShowPetMenu(toolbarMenu);
   }
-  void OpenToolbarNotifications(){if(LocalNoticeCount>0||NotificationsAvailable&&Link.Current.NotificationCount>0){OpenNoticeCenter();return;}
-   if(Settings.LinkChatGPT&&Link.Current.Connected&&Link.Current.CanNotifications){if(Link.Current.NotificationSource=="main")OpenMainNotificationMenu();else RunToolbarAction("notifications");return;}
-   toolbarMenu=PetMenus.Create();toolbarMenu.PlacementTarget=hoverBar;toolbarMenu.Placement=PlacementMode.Top;
-   toolbarMenu.Items.Add(new MenuItem{Header=StatusText,IsEnabled=false});toolbarMenu.Items.Add(new MenuItem{Header="当前没有可打开的 Mini 通知入口",IsEnabled=false});
-   Add(toolbarMenu,"打开联动设置",OpenSettings);ShowPetMenu(toolbarMenu);
-  }
+  void OpenToolbarNotifications(){if(NoticePreviewOpen&&noticePreview.Pinned){CloseNoticePreview();return;}ShowNoticePreview(true);}
  }
 }

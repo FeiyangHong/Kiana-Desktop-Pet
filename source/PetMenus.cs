@@ -68,16 +68,17 @@ namespace KianaPet {
   [DllImport("user32.dll")]static extern bool UnhookWindowsHookEx(IntPtr hook);
   [DllImport("user32.dll")]static extern IntPtr CallNextHookEx(IntPtr hook,int code,IntPtr message,IntPtr data);
   [DllImport("kernel32.dll",CharSet=CharSet.Unicode)]static extern IntPtr GetModuleHandle(string name);
-  readonly ContextMenu menu;readonly Callback callback;IntPtr hook;bool disposed;
-  public MenuOutsideClick(ContextMenu value){menu=value;callback=Observe;hook=SetWindowsHookEx(14,callback,GetModuleHandle(null),0);if(hook==IntPtr.Zero)Store.Log("Menu outside-click listener unavailable; WPF dismissal remains active.");}
+  readonly Dispatcher dispatcher;readonly Func<Point,bool> contains;readonly Action dismiss;readonly Callback callback;IntPtr hook;bool disposed;
+  public MenuOutsideClick(ContextMenu value):this(value.Dispatcher,p=>ContainsMenu(value,p),delegate{value.IsOpen=false;}){}
+  public MenuOutsideClick(Dispatcher ui,Func<Point,bool> hitTest,Action close){dispatcher=ui;contains=hitTest;dismiss=close;callback=Observe;hook=SetWindowsHookEx(14,callback,GetModuleHandle(null),0);if(hook==IntPtr.Zero)Store.Log("Outside-click listener unavailable.");}
   IntPtr Observe(int code,IntPtr message,IntPtr data){
    int msg=message.ToInt32();if(code>=0&&(msg==0x201||msg==0x204||msg==0x207||msg==0x20B)){
     MouseData info=(MouseData)Marshal.PtrToStructure(data,typeof(MouseData));Point point=new Point(info.Point.X,info.Point.Y);
-    menu.Dispatcher.BeginInvoke(DispatcherPriority.Input,new Action(delegate{if(!disposed&&menu.IsOpen&&!ContainsMenu(menu,point))menu.IsOpen=false;}));
+    dispatcher.BeginInvoke(DispatcherPriority.Input,new Action(delegate{if(!disposed&&!contains(point))dismiss();}));
    }
    return CallNextHookEx(hook,code,message,data);
   }
-  static bool ContainsElement(FrameworkElement element,Point point){if(element==null||!element.IsVisible)return false;try{return new Rect(element.PointToScreen(new Point(0,0)),element.PointToScreen(new Point(element.ActualWidth,element.ActualHeight))).Contains(point);}catch(InvalidOperationException){return false;}}
+  internal static bool ContainsElement(FrameworkElement element,Point point){if(element==null||!element.IsVisible)return false;try{return new Rect(element.PointToScreen(new Point(0,0)),element.PointToScreen(new Point(element.ActualWidth,element.ActualHeight))).Contains(point);}catch(InvalidOperationException){return false;}}
   internal static bool ContainsMenu(ItemsControl menu,Point point){
    if(ContainsElement(menu,point))return true;
    foreach(object value in menu.Items){MenuItem item=value as MenuItem;if(item==null||!item.IsSubmenuOpen)continue;Popup popup=item.Template.FindName("PART_Popup",item) as Popup;if(popup!=null&&ContainsElement(popup.Child as FrameworkElement,point))return true;if(ContainsMenu(item,point))return true;}
@@ -88,6 +89,7 @@ namespace KianaPet {
  public sealed partial class PetWindow {
   MenuOutsideClick menuOutsideClick;
   void ShowPetMenu(ContextMenu menu){
+   CloseNoticePreview();
    ClosePetMenu();toolbarMenu=menu;Native.SetMenuActivation(handle,true);Activate();Native.FocusPetForMenu(handle);
    MenuOutsideClick listener=null;bool cleaned=false;
    var descriptor=System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ContextMenu.IsOpenProperty,typeof(ContextMenu));EventHandler changed=null;

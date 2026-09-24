@@ -6,6 +6,9 @@
 !/ChatGPT平滑联动组件.zip
 
 # Local installation state
+/runtime/
+/.local/
+/repository.json
 /settings.json
 /status.json
 /session.json

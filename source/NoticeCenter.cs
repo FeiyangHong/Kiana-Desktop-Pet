@@ -1,4 +1,4 @@
-﻿using System;using System.Linq;using System.Collections.Generic;using System.Windows;using System.Windows.Controls;using System.Windows.Input;using System.Windows.Media;using System.Windows.Threading;
+using System;using System.Linq;using System.Collections.Generic;using System.Windows;using System.Windows.Controls;using System.Windows.Input;using System.Windows.Media;using System.Windows.Threading;
 namespace KianaPet {
  public static class CompanionControls {
   public static Button Button(string text,Action action){var b=new Button{Content=text,Padding=new Thickness(12,7,12,7),Margin=new Thickness(0,4,8,4),MinHeight=32,Background=PetPalette.Brush(PetPalette.Background),Foreground=PetPalette.Brush(PetPalette.Ink),BorderBrush=PetPalette.Brush(PetPalette.Line),BorderThickness=new Thickness(1),Cursor=Cursors.Hand};PetVisuals.RoundButton(b);System.Windows.Automation.AutomationProperties.SetName(b,text);b.Click+=delegate{action();};return b;}
@@ -45,7 +45,7 @@ namespace KianaPet {
   public bool NoticeMuted(TaskNotice n){return TaskNotices.IsMuted(n)||Settings.MutedNoticeSources.Contains(n.Source);}
   public TaskNotice[] VisibleNotices{get{return TaskNotices.Snapshot().Where(n=>!NoticeMuted(n)).ToArray();}}
   public void MuteSource(string name,bool muted){Settings.MutedNoticeSources=muted?Settings.MutedNoticeSources.Concat(new[]{name}).Distinct().Take(50).ToArray():Settings.MutedNoticeSources.Where(s=>s!=name).ToArray();ApplySettings();}
-  public void OpenNoticeCenter(){if(noticeCenter!=null){noticeCenter.Activate();return;}noticeCenter=new NoticeCenter(this);noticeCenter.Closed+=delegate{noticeCenter=null;};noticeCenter.Show();}
+  public void OpenNoticeCenter(){CloseNoticePreview();if(noticeCenter!=null){noticeCenter.Activate();return;}noticeCenter=new NoticeCenter(this);noticeCenter.Closed+=delegate{noticeCenter=null;};noticeCenter.Show();}
   public void OpenNativeNotifications(){OpenNoticeCenter();}
   public void OpenOriginalNotifications(){RunToolbarAction("notifications");}
  }
