@@ -1,6 +1,6 @@
 ﻿using System;using System.IO;using System.Text;using System.Collections.Generic;using System.Linq;
 namespace KianaPet {
- public sealed class PreferencePackage {public int Schema=1;public string Product="KianaDesktopPet";public string Version="0.7.1";public string Scope="all";public DateTime? ExportedAt;public string[] IncludedKeys;public Config Preferences;}
+ public sealed class PreferencePackage {public int Schema=1;public string Product="KianaDesktopPet";public string Version=Maintenance.Version;public string Scope="all";public DateTime? ExportedAt;public string[] IncludedKeys;public Config Preferences;}
  public static class PreferenceTransfer {
   public static Config Copy(Config c){return Store.Json.Deserialize<Config>(Store.Json.Serialize(c));}
   public static void WithoutPosition(Config c){c.X=c.Y=-1;c.HasPosition=false;c.MusicX=c.MusicY=0;c.MusicHasPosition=false;if(c.MusicPosition=="free")c.MusicPosition="below";}

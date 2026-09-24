@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.7.3",
+  "version": "0.7.4",
   "files": [
     "0.4.0回归记录.json",
     "0.5.0校验记录.json",
@@ -231,6 +231,8 @@
     "音乐栏歌词预览.png",
     "音乐栏预览.png",
     "build-release.ps1",
-    "release-files.json"
+    "release-files.json",
+    "LICENSE",
+    "ASSET_NOTICE.md"
   ]
 }
