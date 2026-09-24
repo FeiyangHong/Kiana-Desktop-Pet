@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "kiana-winter-wish",
+    "Name": "冬祈新愿",
+    "Atlas": "kiana-winter-wish.png"
+  },
+  {
+    "Id": "kiana-fiery-wishing-star",
+    "Name": "咚！炽愿吉星",
+    "Atlas": "kiana-fiery-wishing-star.png"
+  },
+  {
+    "Id": "time-runner-kiana",
+    "Name": "时砾逐光",
+    "Atlas": "time-runner-kiana.png"
+  },
+  {
+    "Id": "kiana-winter-wish-round",
+    "Name": "冬祈新愿·圆润Q版",
+    "Atlas": "kiana-winter-wish-round.png"
+  },
+  {
+    "Id": "kiana-fiery-wishing-star-round",
+    "Name": "炽愿吉星·圆润Q版",
+    "Atlas": "kiana-fiery-wishing-star-round.png"
+  },
+  {
+    "Id": "time-runner-kiana-round",
+    "Name": "时砾逐光·圆润Q版",
+    "Atlas": "time-runner-kiana-round.png"
+  }
+]

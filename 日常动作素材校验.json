@@ -1,0 +1,146 @@
+[
+  {
+    "id": "kiana-winter-wish-round",
+    "source": [
+      1240,
+      1269
+    ],
+    "frames": 4,
+    "cell": [
+      384,
+      416
+    ],
+    "uniformScale": 0.7702407002188184,
+    "alphaPreserved": true,
+    "actions": [
+      "groom",
+      "stretch"
+    ],
+    "bounds": [
+      {
+        "left": 110,
+        "top": 92,
+        "right": 547,
+        "bottom": 567,
+        "pixels": 125670
+      },
+      {
+        "left": 721,
+        "top": 91,
+        "right": 1151,
+        "bottom": 567,
+        "pixels": 125486
+      },
+      {
+        "left": 103,
+        "top": 707,
+        "right": 555,
+        "bottom": 1187,
+        "pixels": 131501
+      },
+      {
+        "left": 709,
+        "top": 704,
+        "right": 1161,
+        "bottom": 1186,
+        "pixels": 131561
+      }
+    ]
+  },
+  {
+    "id": "kiana-fiery-wishing-star-round",
+    "source": [
+      1247,
+      1261
+    ],
+    "frames": 4,
+    "cell": [
+      384,
+      416
+    ],
+    "uniformScale": 0.6317512274959084,
+    "alphaPreserved": true,
+    "actions": [
+      "groom",
+      "stretch"
+    ],
+    "bounds": [
+      {
+        "left": 107,
+        "top": 13,
+        "right": 572,
+        "bottom": 618,
+        "pixels": 172609
+      },
+      {
+        "left": 677,
+        "top": 12,
+        "right": 1150,
+        "bottom": 618,
+        "pixels": 175283
+      },
+      {
+        "left": 107,
+        "top": 628,
+        "right": 585,
+        "bottom": 1226,
+        "pixels": 165206
+      },
+      {
+        "left": 691,
+        "top": 623,
+        "right": 1164,
+        "bottom": 1226,
+        "pixels": 166393
+      }
+    ]
+  },
+  {
+    "id": "time-runner-kiana-round",
+    "source": [
+      1223,
+      1286
+    ],
+    "frames": 4,
+    "cell": [
+      384,
+      416
+    ],
+    "uniformScale": 0.6166134185303515,
+    "alphaPreserved": true,
+    "actions": [
+      "groom",
+      "stretch"
+    ],
+    "bounds": [
+      {
+        "left": 52,
+        "top": 5,
+        "right": 590,
+        "bottom": 620,
+        "pixels": 190794
+      },
+      {
+        "left": 644,
+        "top": 5,
+        "right": 1177,
+        "bottom": 620,
+        "pixels": 189851
+      },
+      {
+        "left": 55,
+        "top": 639,
+        "right": 595,
+        "bottom": 1245,
+        "pixels": 186354
+      },
+      {
+        "left": 648,
+        "top": 623,
+        "right": 1187,
+        "bottom": 1244,
+        "pixels": 189666
+      }
+    ]
+  }
+]

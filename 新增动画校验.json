@@ -1,0 +1,158 @@
+[
+  {
+    "id": "kiana-winter-wish-round",
+    "sourceWidth": 1024,
+    "sourceHeight": 1536,
+    "poses": 6,
+    "cellWidth": 384,
+    "cellHeight": 416,
+    "trueAlpha": true,
+    "actions": [
+      "pat",
+      "carry",
+      "sleep"
+    ],
+    "bounds": [
+      {
+        "left": 29,
+        "top": 18,
+        "width": 484,
+        "height": 523
+      },
+      {
+        "left": 548,
+        "top": 24,
+        "width": 463,
+        "height": 525
+      },
+      {
+        "left": 21,
+        "top": 574,
+        "width": 502,
+        "height": 517
+      },
+      {
+        "left": 539,
+        "top": 574,
+        "width": 478,
+        "height": 526
+      },
+      {
+        "left": 21,
+        "top": 1163,
+        "width": 484,
+        "height": 335
+      },
+      {
+        "left": 529,
+        "top": 1157,
+        "width": 488,
+        "height": 340
+      }
+    ]
+  },
+  {
+    "id": "kiana-fiery-wishing-star-round",
+    "sourceWidth": 1024,
+    "sourceHeight": 1536,
+    "poses": 6,
+    "cellWidth": 384,
+    "cellHeight": 416,
+    "trueAlpha": true,
+    "actions": [
+      "pat",
+      "carry",
+      "sleep"
+    ],
+    "bounds": [
+      {
+        "left": 76,
+        "top": 8,
+        "width": 388,
+        "height": 533
+      },
+      {
+        "left": 589,
+        "top": 13,
+        "width": 374,
+        "height": 528
+      },
+      {
+        "left": 71,
+        "top": 552,
+        "width": 419,
+        "height": 524
+      },
+      {
+        "left": 577,
+        "top": 553,
+        "width": 424,
+        "height": 526
+      },
+      {
+        "left": 21,
+        "top": 1145,
+        "width": 477,
+        "height": 320
+      },
+      {
+        "left": 529,
+        "top": 1145,
+        "width": 472,
+        "height": 323
+      }
+    ]
+  },
+  {
+    "id": "time-runner-kiana-round",
+    "sourceWidth": 1024,
+    "sourceHeight": 1536,
+    "poses": 6,
+    "cellWidth": 384,
+    "cellHeight": 416,
+    "trueAlpha": true,
+    "actions": [
+      "pat",
+      "carry",
+      "sleep"
+    ],
+    "bounds": [
+      {
+        "left": 33,
+        "top": 27,
+        "width": 451,
+        "height": 504
+      },
+      {
+        "left": 533,
+        "top": 29,
+        "width": 452,
+        "height": 502
+      },
+      {
+        "left": 45,
+        "top": 557,
+        "width": 473,
+        "height": 507
+      },
+      {
+        "left": 528,
+        "top": 560,
+        "width": 478,
+        "height": 507
+      },
+      {
+        "left": 24,
+        "top": 1131,
+        "width": 462,
+        "height": 333
+      },
+      {
+        "left": 528,
+        "top": 1131,
+        "width": 465,
+        "height": 336
+      }
+    ]
+  }
+]

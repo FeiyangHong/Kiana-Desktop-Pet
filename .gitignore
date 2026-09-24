@@ -1,0 +1,30 @@
+# Build outputs
+/KianaDesktopPet.exe
+/package-manifest.json
+/dist/
+/*.zip
+!/ChatGPT平滑联动组件.zip
+
+# Local installation state
+/settings.json
+/status.json
+/session.json
+/installation.json
+/desktop.log
+/agent.log
+/agent-error.log
+/launcher.log
+/bootstrap.log
+/bootstrap-error.log
+/managed-backups/
+/preference-backups/
+/setup-cache/
+/update-cache/
+/update-jobs/
+/shortcut-backups/
+
+# Editor and temporary files
+/.vs/
+/.vscode/
+*.tmp
+*.bak

@@ -1,0 +1,19 @@
+﻿using System;using System.Linq;using System.Windows;using System.Windows.Threading;using System.Windows.Media.Imaging;using System.IO;
+namespace KianaPet {
+ public sealed partial class PetWindow {
+  readonly NoticeBatcher noticeBatcher=new NoticeBatcher();readonly AmbientPlanner ambientPlanner=new AmbientPlanner();
+  readonly System.Collections.Generic.Dictionary<string,BitmapSource[]> ambientFrames=new System.Collections.Generic.Dictionary<string,BitmapSource[]>();
+  int linkFailures,musicFailures;double lastStatusWrite,lastThemeCheck;
+  void StartPolish(){StartDisplayMemory();ApplyAppearance();}
+  void TickPolish(double now){CheckDisplay(now);if(now-lastThemeCheck>3){lastThemeCheck=now;ApplyAppearance();}var currentNotices=TaskNotices.Snapshot();noticeBatcher.RemoveWhere(n=>n.Source=="ChatGPT"?(!Settings.LinkChatGPT||(Link.Current.Connected&&!Link.Current.Stale&&(Link.Current.NotificationCount==0||(n.TaskId!="native-state"&&!Link.Current.Notices.Any(c=>c.Id==n.TaskId))))):(!Settings.TaskNoticesEnabled||NoticeMuted(n)||!currentNotices.Any(c=>c.Source==n.Source&&c.TaskId==n.TaskId&&c.Unread)));string summary=noticeBatcher.Flush(DateTime.UtcNow,quietActive||sessionLocked||manualHidden||fullscreenHidden||menuLayerYielding,(Settings.TaskNoticesEnabled||Settings.LinkChatGPT)&&!Settings.NoticeQuiet,Settings.NoticeSilentSuccess);if(summary!=null)ShowNoticeSummary(summary);
+   int interval=PolishRules.FrameInterval(Settings.ResourceSaving,!IsVisible,sleeping,dragging||pressed||now<walkUntil||interaction!=null,hover||ToolbarActive);if(animation.Interval.TotalMilliseconds!=interval)animation.Interval=TimeSpan.FromMilliseconds(interval);
+  }
+  public void ApplyScene(int index){if(index<0||index>=Settings.Scenes.Length)return;Save();PreferenceTransfer.Backup();Settings.Scenes[index].Apply(Settings);manualQuiet=false;ApplySettings();if(settingsWindow!=null)RefreshSettingsWindow();}
+  public void SaveScene(string name){name=(name??"").Trim();if(name.Length==0||name.Length>24)throw new Exception("场景名称请输入 1–24 个字。");var list=Settings.Scenes.Where(s=>s.Name!=name).ToList();if(list.Count>=12)throw new Exception("最多保存 12 套场景，请先删除不用的方案。");list.Add(ScenePreset.Capture(name,Settings));Settings.Scenes=list.ToArray();Save();}
+  public void DeleteScene(int index){if(index<0||index>=Settings.Scenes.Length||Settings.Scenes.Length<=1)return;Settings.Scenes=Settings.Scenes.Where((s,i)=>i!=index).ToArray();Save();}
+  void EnsureAmbient(){if(ambientFrames.ContainsKey(Settings.Skin))return;string file=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets",Settings.Skin+"-ambient.png");if(!File.Exists(file)){ambientFrames[Settings.Skin]=null;return;}var atlas=new BitmapImage();atlas.BeginInit();atlas.CacheOption=BitmapCacheOption.OnLoad;atlas.UriSource=new Uri(file);atlas.EndInit();atlas.Freeze();if(atlas.PixelWidth!=768||atlas.PixelHeight!=832)throw new Exception("日常动作图集尺寸错误");var cells=new BitmapSource[4];for(int i=0;i<4;i++){var cell=new CroppedBitmap(atlas,new Int32Rect(i%2*384,i/2*416,384,416));cell.Freeze();cells[i]=cell;}ambientFrames[Settings.Skin]=cells;}
+  bool DrawAmbient(double elapsed){if(state=="blink"){SetFrame(0,elapsed<140?0:elapsed<340?2:0);return true;}if(state!="groom"&&state!="stretch")return false;EnsureAmbient();var cells=ambientFrames[Settings.Skin];if(cells==null){SetFrame(Rules.Row(state=="groom"?"waving":"jumping"),Rules.Frame(state=="groom"?"waving":"jumping",elapsed));return true;}int row=state=="groom"?0:1;int col=elapsed<450?0:elapsed<1550?1:0;int index=row*2+col;if(lastFrame!=200+index){lastFrame=200+index;ShowSprite(cells[index],"ambient",index);}return true;}
+  void AmbientTick(double now,bool available){if(!Settings.AmbientActions)return;string action=ambientPlanner.Next(now,available,random);if(action!=null){interaction=action;interactionUntil=now+(action=="blink"?.5:2.1);walkUntil=0;}}
+ }
+}
+

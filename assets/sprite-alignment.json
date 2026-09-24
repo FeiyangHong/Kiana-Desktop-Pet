@@ -1,0 +1,245 @@
+[
+  {
+    "Skin": "kiana-winter-wish-round",
+    "ReferenceFaceWidth": 115,
+    "ReferenceFoot": 398,
+    "Extra": [
+      {
+        "Scale": 0.884615,
+        "OffsetX": 25.8846,
+        "OffsetY": 44.1538
+      },
+      {
+        "Scale": 0.884615,
+        "OffsetX": 28.9808,
+        "OffsetY": 44.1538
+      },
+      {
+        "Scale": 0.912698,
+        "OffsetX": 16.6032,
+        "OffsetY": 32.9206
+      },
+      {
+        "Scale": 0.912698,
+        "OffsetX": 15.2341,
+        "OffsetY": 33.8333
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -1
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -1
+      }
+    ],
+    "Ambient": [
+      {
+        "Scale": 0.966387,
+        "OffsetX": 6.8319,
+        "OffsetY": 12.4118
+      },
+      {
+        "Scale": 0.966387,
+        "OffsetX": 13.5966,
+        "OffsetY": 11.4454
+      },
+      {
+        "Scale": 0.927419,
+        "OffsetX": 11.2742,
+        "OffsetY": 27.0323
+      },
+      {
+        "Scale": 0.927419,
+        "OffsetX": 16.375,
+        "OffsetY": 27.0323
+      }
+    ],
+    "Transition": [
+      {
+        "Scale": 0.927419,
+        "OffsetX": 13.129,
+        "OffsetY": 27.0323
+      },
+      {
+        "Scale": 0.927419,
+        "OffsetX": 14.0565,
+        "OffsetY": 27.0323
+      },
+      {
+        "Scale": 0.934959,
+        "OffsetX": 10.4146,
+        "OffsetY": 24.0163
+      },
+      {
+        "Scale": 0.934959,
+        "OffsetX": 11.8171,
+        "OffsetY": 24.0163
+      }
+    ]
+  },
+  {
+    "Skin": "kiana-fiery-wishing-star-round",
+    "ReferenceFaceWidth": 119,
+    "ReferenceFoot": 398,
+    "Extra": [
+      {
+        "Scale": 0.952,
+        "OffsetX": 21.184,
+        "OffsetY": 18.152
+      },
+      {
+        "Scale": 0.952,
+        "OffsetX": 14.52,
+        "OffsetY": 18.152
+      },
+      {
+        "Scale": 0.881481,
+        "OffsetX": 48.1926,
+        "OffsetY": 46.2889
+      },
+      {
+        "Scale": 0.881481,
+        "OffsetX": 52.1593,
+        "OffsetY": 45.4074
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -1
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -1
+      }
+    ],
+    "Ambient": [
+      {
+        "Scale": 0.991667,
+        "OffsetX": 8.9667,
+        "OffsetY": 1.3333
+      },
+      {
+        "Scale": 0.991667,
+        "OffsetX": 6.9833,
+        "OffsetY": 1.3333
+      },
+      {
+        "Scale": 0.952,
+        "OffsetX": 20.232,
+        "OffsetY": 17.2
+      },
+      {
+        "Scale": 0.952,
+        "OffsetX": 20.232,
+        "OffsetY": 17.2
+      }
+    ],
+    "Transition": [
+      {
+        "Scale": 0.97541,
+        "OffsetX": 15.7295,
+        "OffsetY": 7.8361
+      },
+      {
+        "Scale": 0.97541,
+        "OffsetX": 14.2664,
+        "OffsetY": 7.8361
+      },
+      {
+        "Scale": 0.944444,
+        "OffsetX": 19.1667,
+        "OffsetY": 20.2222
+      },
+      {
+        "Scale": 0.944444,
+        "OffsetX": 18.6944,
+        "OffsetY": 20.2222
+      }
+    ]
+  },
+  {
+    "Skin": "time-runner-kiana-round",
+    "ReferenceFaceWidth": 121,
+    "ReferenceFoot": 398,
+    "Extra": [
+      {
+        "Scale": 0.889706,
+        "OffsetX": 15.9191,
+        "OffsetY": 42.1176
+      },
+      {
+        "Scale": 0.889706,
+        "OffsetX": 19.0331,
+        "OffsetY": 42.1176
+      },
+      {
+        "Scale": 0.902985,
+        "OffsetX": 32.6642,
+        "OffsetY": 36.806
+      },
+      {
+        "Scale": 0.902985,
+        "OffsetX": 36.2761,
+        "OffsetY": 37.709
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -1
+      },
+      {
+        "Scale": 1,
+        "OffsetX": 0,
+        "OffsetY": -2
+      }
+    ],
+    "Ambient": [
+      {
+        "Scale": 0.902985,
+        "OffsetX": 16.4104,
+        "OffsetY": 36.806
+      },
+      {
+        "Scale": 0.902985,
+        "OffsetX": 19.1194,
+        "OffsetY": 36.806
+      },
+      {
+        "Scale": 0.909774,
+        "OffsetX": 18.4812,
+        "OffsetY": 34.0902
+      },
+      {
+        "Scale": 0.916667,
+        "OffsetX": 10.5,
+        "OffsetY": 30.4167
+      }
+    ],
+    "Transition": [
+      {
+        "Scale": 0.909774,
+        "OffsetX": 16.6617,
+        "OffsetY": 35
+      },
+      {
+        "Scale": 0.909774,
+        "OffsetX": 15.7519,
+        "OffsetY": 34.0902
+      },
+      {
+        "Scale": 0.916667,
+        "OffsetX": 14.1667,
+        "OffsetY": 31.3333
+      },
+      {
+        "Scale": 0.916667,
+        "OffsetX": 15.0833,
+        "OffsetY": 31.3333
+      }
+    ]
+  }
+]

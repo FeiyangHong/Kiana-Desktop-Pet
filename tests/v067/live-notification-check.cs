@@ -1,0 +1,9 @@
+using System;using System.Reflection;using System.Threading.Tasks;using KianaPet;
+class LiveNotificationCheck {
+ static int Main(string[] args){Store.Root=args[0];try{Run().GetAwaiter().GetResult();return 0;}catch(Exception e){Store.Atomic("live-notification-check.json",new{passed=false,error=e.ToString()});return 1;}}
+ static Task<string> Eval(Bridge b,string script){return (Task<string>)typeof(Bridge).GetMethod("Evaluate",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(b,new object[]{script,false,false,false});}
+ static async Task Run(){using(var b=new Bridge()){await b.Poll(true,true);var s=b.Current;if(!s.Connected)throw new Exception(s.Label);bool recovered=false;
+  string safe=await Eval(b,"(()=>{const draft=[...document.querySelectorAll('textarea,[contenteditable=true]')].some(e=>(e.value||e.textContent||'').trim());const voice=[...document.querySelectorAll('[data-avatar-overlay-native-surface-id=\"voice-controls\"] button')].every(e=>['开始语音聊天','Start voice chat'].includes(e.getAttribute('aria-label')));return !draft&&voice&&document.documentElement.getAttribute('data-kiana-background-mini')==='parked'?'safe':'busy';})()");
+  if(safe=="safe"){await Eval(b,"(async()=>{await window.electronBridge.sendMessageFromView({type:'avatar-overlay-hide'});return 'hidden';})()");b.RequestReconnect();await b.Poll(true,true);string state=await Eval(b,System.IO.File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","mini-open-state.js")));if(state!="open")throw new Exception("Closed Mini was not reopened");recovered=true;}
+  Store.Atomic("live-notification-check.json",new{passed=true,closedMiniRecovery=recovered,source=s.NotificationSource,state=s.State,count=s.NotificationCount,color=s.NotificationColor,connected=s.Connected,canChat=s.CanChat,canVoice=s.CanVoice});}}
+}

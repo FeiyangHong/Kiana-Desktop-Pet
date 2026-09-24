@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kiana reserved task notice v1",
+  "description": "Reserved data contract only. This release has no external transport or network listener.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "Source",
+    "TaskId",
+    "Title",
+    "Status"
+  ],
+  "properties": {
+    "Source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "TaskId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "Title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "Status": {
+      "enum": [
+        "running",
+        "succeeded",
+        "failed",
+        "waiting"
+      ]
+    },
+    "ActionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "description": "Optional registered in-process action identifier; never a command or URL.",
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    }
+  }
+}
