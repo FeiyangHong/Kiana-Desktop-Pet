@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.7.6-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.7.7-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -46,7 +46,9 @@ cd Kiana-Desktop-Pet
 
 ## 通知速览
 
-鼠标在铃铛上停留片刻会展开速览，移开后自动收起；首次点击铃铛会固定展开，点空白处、关闭按钮或按 Esc 收起。浮窗优先列出需要处理和正在进行的任务，最多预览四条，显示标题、状态和更新时间；来源未提供的内容会明确标注。
+![手机通知式横幅（示例任务）](docs/demo/notification-banner.png)
+
+鼠标在铃铛上停留片刻会展开速览，移开后自动收起；首次点击铃铛会固定展开，点空白处、关闭按钮或按 Esc 收起。浮窗优先列出需要处理和正在进行的任务，默认使用 420 宽的单条紧凑横幅，显示标题、状态和更新时间；在 **设置 → 通知中心 → 通知浮窗外观** 可调整宽度（320–560）、条数（1–4）、紧凑布局和悬停开关；来源未提供的内容会明确标注。
 
 可直接打开对应任务、将本地任务标为已读，或点击底部“进入完整通知中心”查看全部任务及筛选。打开预览不会改变已读状态，也不会擅自修改 ChatGPT 原生通知的已读状态。短暂断线时保留上次状态并暂停跳转；宠物隐藏、拖动或外部菜单优先显示时速览收起。
 

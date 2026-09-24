@@ -15,6 +15,8 @@ namespace KianaPet {
   public bool RecoverHotkeyEnabled=false;
   public uint RecoverHotkeyModifiers=PetHotkey.Control|PetHotkey.Alt,RecoverHotkeyKey=0x50;
   public bool BackgroundMini=true;
+  public bool NoticePreviewCompact=true,NoticePreviewHover=true;
+  public int NoticePreviewWidth=420,NoticePreviewCount=1;
   public bool LaunchChatGPTOnStart=false,LaunchMusicOnStart=false,NoticeSound=false,NoticeQuiet=false;public int CompletionNoticeSeconds=6,NotificationGraceSeconds=30;
   public bool HasPosition=false,LockPetPosition=false,LockMusicPosition=false,SmoothTransitions=true;
   public string WalkProfile="occasional";
@@ -41,6 +43,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   NoticePreviewWidth=Math.Max(320,Math.Min(560,NoticePreviewWidth));NoticePreviewCount=Math.Max(1,Math.Min(4,NoticePreviewCount));
    ComfortRules.Validate(this);CompletionNoticeSeconds=Math.Max(2,Math.Min(30,CompletionNoticeSeconds));NotificationGraceSeconds=Math.Max(10,Math.Min(120,NotificationGraceSeconds));
    PolishRules.Validate(this);
    BackupKeepCount=Math.Max(1,Math.Min(10,BackupKeepCount));MutedNoticeSources=(MutedNoticeSources??new string[0]).Where(s=>!string.IsNullOrWhiteSpace(s)&&s.Length<=60).Distinct(StringComparer.Ordinal).Take(50).ToArray();
