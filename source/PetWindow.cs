@@ -66,7 +66,7 @@ namespace KianaPet {
    if(now-lastSlow>0.6){lastSlow=now;UpdateQuiet(now);fullscreenHidden=Settings.HideFullscreen&&Native.IsFullscreen(handle);string hidden=RefreshPetVisibility();
     MaintainWindowStack();
     if(!preview){CheckLinkHealth();string exitRequest=Path.Combine(Store.Root,"exit.request");if(File.Exists(exitRequest)){try{File.Delete(exitRequest);}catch{}Close();return;}string request=Path.Combine(Store.Root,"show.request");if(File.Exists(request)){try{File.Delete(request);}catch{}Recover();}
-     if(now-lastStatusWrite>3){lastStatusWrite=now;try{Store.Atomic("status.json",new{version=Maintenance.Version,action=state,skin=Settings.Skin,hidden=hidden,menuYielding=menuLayerYielding,fullscreenReason=Settings.HideFullscreen?Native.FullscreenReason:"disabled",chatgpt=Link.Current,aiEnabled=false});}catch{}}}
+     if(now-lastStatusWrite>3){lastStatusWrite=now;try{Store.Atomic("status.json",new{version=Maintenance.Version,action=state,skin=Settings.Skin,hidden=hidden,menuYielding=menuLayerYielding,menuCandidates=externalMenus==null?0:externalMenus.PriorityWindows.Length,menuMonitorActive=externalMenus!=null&&externalMenus.Active,menuFallback=fallbackMenu!=IntPtr.Zero,fullscreenReason=Settings.HideFullscreen?Native.FullscreenReason:"disabled",chatgpt=Link.Current,aiEnabled=false});}catch{}}}
     if(settingsWindow!=null)settingsWindow.UpdateStatus();
    }
    TickPolish(now);UpdateToolbar(now);UpdateMusic();if(!IsVisible)return;if(menuLayerYielding||displayPending){DrawAnimation((now-stateAt)*1000);return;}

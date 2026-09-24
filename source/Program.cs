@@ -13,7 +13,7 @@ namespace KianaPet {
    using(Mutex single=new Mutex(true,"Local.KianaDesktopPet."+suffix,out created)){
     if(!created){try{Directory.CreateDirectory(Store.Root);File.WriteAllText(Path.Combine(Store.Root,"show.request"),"show");}catch{}return 0;}
     try{Application app=new Application();app.ShutdownMode=ShutdownMode.OnExplicitShutdown;
-     app.DispatcherUnhandledException+=delegate(object sender,DispatcherUnhandledExceptionEventArgs e){Store.Log(e.Exception.ToString());MessageBox.Show("桌宠出现错误，详情已保存到文档目录中的 desktop.log。\n"+e.Exception.Message,"琪亚娜桌宠");e.Handled=true;app.Shutdown(1);};
+     app.DispatcherUnhandledException+=delegate(object sender,DispatcherUnhandledExceptionEventArgs e){Store.Log(e.Exception.ToString());MessageBox.Show("桌宠出现错误，详情已保存到运行数据目录中的 desktop.log。\n"+e.Exception.Message,"琪亚娜桌宠");e.Handled=true;app.Shutdown(1);};
      PetWindow pet=new PetWindow(preview);app.Run(pet);return 0;
     }catch(Exception e){Store.Log(e.ToString());MessageBox.Show("桌宠启动失败：\n"+e.Message,"琪亚娜桌宠");return 1;}
   }

@@ -7,7 +7,7 @@ namespace KianaPet {
  }
  public static class CompanionLauncher {
   public static bool Running(string name){var list=Process.GetProcessesByName(name);try{return list.Length>0;}finally{foreach(var p in list)p.Dispose();}}
-  public static ProcessStartInfo ChatGPT(bool interactive){string path=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Codex","PetTools","KianaSmoothPet","app","scripts","launch.cmd");if(!File.Exists(path))throw new FileNotFoundException("请安装完整迁移包中的 ChatGPT 联动组件。",path);return new ProcessStartInfo{FileName=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),"cmd.exe"),Arguments="/d /k \"\""+path+"\"\"",UseShellExecute=true,WindowStyle=interactive?ProcessWindowStyle.Normal:ProcessWindowStyle.Hidden};}
+  public static ProcessStartInfo ChatGPT(bool interactive){string path=Path.Combine(CompanionPaths.SmoothRoot(),"app","scripts","launch.cmd");if(!File.Exists(path))throw new FileNotFoundException("请安装完整迁移包中的 ChatGPT 联动组件。",path);return new ProcessStartInfo{FileName=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),"cmd.exe"),Arguments="/d /k \"\""+path+"\"\"",UseShellExecute=true,WindowStyle=interactive?ProcessWindowStyle.Normal:ProcessWindowStyle.Hidden};}
   public static void StartChatGPT(bool interactive){Process.Start(ChatGPT(interactive));}
   public static void StartMusicQuietly(){string path=MusicBridge.FindApp();if(string.IsNullOrEmpty(path))throw new FileNotFoundException("没有找到网易云音乐客户端。" );Process.Start(new ProcessStartInfo{FileName=path,Arguments="--remote-debugging-port="+MusicBridge.Port+" --remote-debugging-address=127.0.0.1",WorkingDirectory=Path.GetDirectoryName(path),UseShellExecute=true});}
  }

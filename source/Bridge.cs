@@ -61,7 +61,7 @@ if(notifications){const candidates=[...notifications.querySelectorAll('span'),no
   async Task<string> Evaluate(string expression,bool ensureMini=false,bool userGesture=false,bool mainOnly=false){await access.WaitAsync(shutdown.Token).ConfigureAwait(false);try{return await EvaluateCore(expression,ensureMini,userGesture,mainOnly).ConfigureAwait(false);}finally{access.Release();}}
   static bool MiniTarget(object target){return Str(target,"type")=="page"&&Str(target,"url").StartsWith("app://",StringComparison.Ordinal)&&Uri.UnescapeDataString(Str(target,"url")).Contains("/avatar-overlay");}
   async Task<string> EvaluateCore(string expression,bool ensureMini,bool userGesture,bool mainOnly){
-   string root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Codex","PetTools","KianaSmoothPet");string file=Path.Combine(root,"session.json");
+   string root=CompanionPaths.SmoothRoot();string file=Path.Combine(root,"session.json");
    if(!File.Exists(file))throw new Exception("请先使用 ChatGPT 平滑桌宠启动器。");
    object saved=Parse(File.ReadAllText(file));int port=Convert.ToInt32(Get(saved,"port"));string browser=Str(saved,"browserId"),app=Str(saved,"app");
    if(port<1024||port>65535||!System.Text.RegularExpressions.Regex.IsMatch(browser,"^[A-Za-z0-9._-]{1,200}$")||!Native.TrustedPort(port,app))throw new Exception("Endpoint unavailable: "+Native.PortCheck);

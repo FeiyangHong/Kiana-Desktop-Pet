@@ -3,7 +3,7 @@ function Set-KianaShortcuts {
  param([Parameter(Mandatory=$true)][string]$InstallRoot,
  [string]$DesktopFolder=[Environment]::GetFolderPath('Desktop'),
  [string]$ProgramsFolder=[Environment]::GetFolderPath('Programs'),
- [string]$SmoothRoot=(Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Codex/PetTools/KianaSmoothPet'))
+ [string]$SmoothRoot=(Join-Path (Split-Path ([IO.Path]::GetFullPath($InstallRoot).TrimEnd('\')) -Parent) 'KianaSmoothPet'))
  $appRoot=Join-Path ([IO.Path]::GetFullPath($InstallRoot)) 'app'
  $exe=Join-Path $appRoot 'KianaDesktopPet.exe'
  $shell=New-Object -ComObject WScript.Shell
@@ -11,7 +11,17 @@ function Set-KianaShortcuts {
  $records=@()
  foreach($pair in @(@('Desktop',$DesktopFolder),@('Programs',$ProgramsFolder))){
   $folder=[IO.Path]::GetFullPath($pair[1]);$canonical=Join-Path $folder '琪亚娜桌宠.lnk'
-  if(Test-Path -LiteralPath $canonical){$existing=$shell.CreateShortcut($canonical);if($existing.TargetPath -ine $exe){throw ('同名入口指向其他程序，未覆盖：'+$canonical)}}
+  if(Test-Path -LiteralPath $canonical){
+   $existing=$shell.CreateShortcut($canonical)
+   if($existing.TargetPath -ine $exe){
+    $legacyRoot=Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Codex/PetTools/KianaDesktopPet'
+    $legacyExe=Join-Path $legacyRoot 'app/KianaDesktopPet.exe'
+    if($existing.TargetPath -ine $legacyExe -or $existing.Arguments -notlike ('*'+$legacyRoot+'*')){throw ('同名入口指向其他程序，未覆盖：'+$canonical)}
+    $saved=Join-Path $archive $pair[0]
+    New-Item -ItemType Directory -Path $saved -Force | Out-Null
+    Copy-Item -LiteralPath $canonical -Destination (Join-Path $saved '琪亚娜桌宠.lnk')
+   }
+  }
   $link=$shell.CreateShortcut($canonical);$link.TargetPath=$exe;$link.Arguments='--state-dir "'+[IO.Path]::GetFullPath($InstallRoot)+'"';$link.WorkingDirectory=$appRoot;$link.IconLocation=$exe+',0';$link.Description='琪亚娜桌宠 · 换装、互动、音乐与 ChatGPT';$link.Save()
   foreach($name in @('琪亚娜独立桌宠.lnk','网易云音乐 桌宠联动.lnk','ChatGPT 平滑桌宠.lnk','关闭桌宠平滑采样.lnk')){
    $path=Join-Path $folder $name;if(-not(Test-Path -LiteralPath $path -PathType Leaf)){continue}

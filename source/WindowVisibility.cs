@@ -36,6 +36,11 @@ namespace KianaPet {
  public sealed partial class PetWindow {
   IntPtr lastStackForeground;Native.Rect lastStackBounds;bool wasStackVisible,lastStackMaximized,stackRepairAttempted;
   void MaintainWindowStack(){
+   IntPtr detected=!preview&&Settings.YieldToMenus?Native.ChromiumTrayPriority(handle):IntPtr.Zero;
+   if(detected!=IntPtr.Zero)fallbackMenu=detected;
+   else if(!Settings.YieldToMenus||preview||fallbackMenu!=Native.GetForegroundWindow())fallbackMenu=IntPtr.Zero;
+   bool priority=(externalMenus!=null&&externalMenus.Active)||fallbackMenu!=IntPtr.Zero;
+   if(menuLayerYielding!=priority)UpdateMenuPriority(priority);
    if(menuLayerYielding){ApplyMenuLayers();wasStackVisible=false;return;}if(preview)return;if(!IsVisible||lastHidden.Length>0){wasStackVisible=false;return;}
    IntPtr foreground=Native.GetForegroundWindow();Native.Rect bounds;Native.GetWindowRect(foreground,out bounds);bool maximized=Native.IsZoomed(foreground);
    bool changed=!wasStackVisible||foreground!=lastStackForeground||maximized!=lastStackMaximized||!bounds.Equals(lastStackBounds);

@@ -1,14 +1,35 @@
 ﻿using System;using System.Collections.Generic;using System.Linq;using System.Runtime.InteropServices;using System.Text;using System.Windows;using System.Windows.Threading;using Forms=System.Windows.Forms;
 namespace KianaPet {
- public sealed class MenuWindowInfo {public IntPtr Handle;public string ClassName;public Native.Rect Bounds;public long Style;}
+ public sealed class MenuWindowInfo {public IntPtr Handle;public string ClassName;public Native.Rect Bounds;public long Style,ExStyle;public uint Dpi;}
  public static class MenuPriorityRules {
   public static bool TrayPanel(string name){return name=="NotifyIconOverflowWindow"||name=="TopLevelWindowForOverflowXamlIsland";}
   public static bool StandardPopup(string name,long style){return name=="#32768"||(name.StartsWith("WindowsForms10.Window",StringComparison.Ordinal)&&(style&0x80000000L)!=0&&(style&0x00C40000L)==0);}
   public static bool TrayPopup(MenuWindowInfo window,Native.Point anchor,System.Drawing.Rectangle screen){
-   var r=window.Bounds;if((window.Style&0x80000000L)==0||(window.Style&0x00C40000L)!=0||r.Width<40||r.Height<20||r.Width>screen.Width*.8||r.Height>screen.Height*.9)return false;
-   string c=window.ClassName;if(c.IndexOf("tooltip",StringComparison.OrdinalIgnoreCase)>=0||c=="SysShadow"||c=="Shell_TrayWnd"||c=="Shell_SecondaryTrayWnd")return false;
+   var r=window.Bounds;string c=window.ClassName;
+   double scale=Math.Max(1,window.Dpi/96.0);
+   bool standard=(window.Style&0x80000000L)!=0&&(window.Style&0x00C40000L)==0;
+   // QQ renders its tray menu as a small topmost Chromium window with a caption
+   // style, rather than WS_POPUP. The recent tray click and proximity checks
+   // below keep ordinary Chromium windows out of this path.
+   bool chromiumTray=c=="Chrome_WidgetWin_1"&&(window.ExStyle&8)!=0&&r.Width<=420*scale&&r.Height<=700*scale;
+   if((!standard&&!chromiumTray)||r.Width<40||r.Height<20||r.Width>screen.Width*.8||r.Height>screen.Height*.9)return false;
+   if(c.IndexOf("tooltip",StringComparison.OrdinalIgnoreCase)>=0||c=="SysShadow"||c=="Shell_TrayWnd"||c=="Shell_SecondaryTrayWnd")return false;
    if(r.Right<=screen.Left||r.Left>=screen.Right||r.Bottom<=screen.Top||r.Top>=screen.Bottom)return false;
    int dx=Math.Max(0,Math.Max(r.Left-anchor.X,anchor.X-r.Right)),dy=Math.Max(0,Math.Max(r.Top-anchor.Y,anchor.Y-r.Bottom));return dx<=240&&dy<=240;
+  }
+  public static bool ChromiumTrayMenu(MenuWindowInfo window,System.Drawing.Rectangle screen){
+   var r=window.Bounds;double scale=Math.Max(1,window.Dpi/96.0);
+   return window.ClassName=="Chrome_WidgetWin_1"&&(window.ExStyle&8)!=0&&
+    r.Width>=40&&r.Width<=420*scale&&r.Height>=80&&r.Height<=700*scale&&
+    r.Top>=screen.Top+screen.Height*.25&&
+    r.Right>=screen.Right-420&&r.Right<=screen.Right+80&&
+    r.Bottom>=screen.Bottom-80&&r.Bottom<=screen.Bottom+40;
+  }
+  public static bool ChromiumOverlay(MenuWindowInfo window,Native.Rect pet){
+   var r=window.Bounds;double scale=Math.Max(1,window.Dpi/96.0);
+   return window.ClassName=="Chrome_WidgetWin_1"&&(window.ExStyle&8)!=0&&
+    r.Width>=40&&r.Width<=420*scale&&r.Height>=80&&r.Height<=700*scale&&
+    r.Left<pet.Right&&r.Right>pet.Left&&r.Top<pet.Bottom&&r.Bottom>pet.Top;
   }
   public static string HiddenReason(bool locked,bool manual,bool fullscreen,bool quiet,bool menus){return locked?"locked":manual?"manual":fullscreen?"fullscreen":quiet?"quiet":menus?"external-menu":"";}
  }
@@ -17,12 +38,21 @@ namespace KianaPet {
   [DllImport("user32.dll")]static extern bool EnumWindows(MenuEnumProc callback,IntPtr param);
   [DllImport("user32.dll")]static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")]static extern IntPtr GetAncestor(IntPtr window,uint flags);
+  [DllImport("user32.dll")]static extern uint GetDpiForWindow(IntPtr window);
   [StructLayout(LayoutKind.Sequential)]struct GuiMenuInfo {public uint Size,Flags;public IntPtr Active,Focus,Capture,MenuOwner,MoveSize,Caret;public Rect CaretRect;}
   [DllImport("user32.dll")]static extern bool GetGUIThreadInfo(uint thread,ref GuiMenuInfo info);
   public static bool ForegroundHasExternalMenu(){var info=new GuiMenuInfo{Size=(uint)Marshal.SizeOf(typeof(GuiMenuInfo))};return GetGUIThreadInfo(0,ref info)&&(info.Flags&0x1c)!=0&&info.MenuOwner!=IntPtr.Zero&&!IsOurWindow(info.MenuOwner);}
   static string WindowClass(IntPtr window){var text=new StringBuilder(256);GetClassName(window,text,256);return text.ToString();}
   public static bool IsTrayPoint(Point point){string cls=WindowClass(GetAncestor(WindowFromPoint(point),2));return cls=="Shell_TrayWnd"||cls=="Shell_SecondaryTrayWnd"||cls=="NotifyIconOverflowWindow"||cls=="TopLevelWindowForOverflowXamlIsland";}
-  public static List<MenuWindowInfo> ExternalMenuWindows(){var result=new List<MenuWindowInfo>();EnumWindows(delegate(IntPtr h,IntPtr unused){if(!IsPresented(h)||IsOurWindow(h))return true;Rect rect;if(!GetWindowRect(h,out rect)||rect.Width<=0||rect.Height<=0)return true;result.Add(new MenuWindowInfo{Handle=h,ClassName=WindowClass(h),Bounds=rect,Style=GetStyle(h,-16).ToInt64()});return true;},IntPtr.Zero);return result;}
+  public static List<MenuWindowInfo> ExternalMenuWindows(){var result=new List<MenuWindowInfo>();EnumWindows(delegate(IntPtr h,IntPtr unused){if(!IsPresented(h)||IsOurWindow(h))return true;Rect rect;if(!GetWindowRect(h,out rect)||rect.Width<=0||rect.Height<=0)return true;result.Add(new MenuWindowInfo{Handle=h,ClassName=WindowClass(h),Bounds=rect,Style=GetStyle(h,-16).ToInt64(),ExStyle=GetStyle(h,-20).ToInt64(),Dpi=GetDpiForWindow(h)});return true;},IntPtr.Zero);return result;}
+  public static IntPtr ChromiumTrayPriority(IntPtr pet){
+   Rect petRect;if(pet==IntPtr.Zero||!GetWindowRect(pet,out petRect))return IntPtr.Zero;
+   IntPtr foreground=GetForegroundWindow();Rect frontRect;
+   if(foreground!=IntPtr.Zero&&!IsOurWindow(foreground)&&GetWindowRect(foreground,out frontRect)&&
+    MenuPriorityRules.ChromiumOverlay(new MenuWindowInfo{ClassName=WindowClass(foreground),Bounds=frontRect,ExStyle=GetStyle(foreground,-20).ToInt64(),Dpi=GetDpiForWindow(foreground)},petRect))return foreground;
+   foreach(var w in ExternalMenuWindows())if(MenuPriorityRules.ChromiumOverlay(w,petRect))return w.Handle;
+   return IntPtr.Zero;
+  }
  }
  // Event notifications give prompt response; periodic reconciliation handles missing menu-end
  // events, nested submenus and applications which destroy their menu process abruptly.
@@ -55,7 +85,7 @@ namespace KianaPet {
   public void Scan(){Scan(false);}
   void Scan(bool release){if(disposed)return;var windows=Native.ExternalMenuWindows();visible=new HashSet<IntPtr>(windows.Select(w=>w.Handle));customMenus.IntersectWith(visible);var now=DateTime.UtcNow;
    if(now<armUntil){var screen=Forms.Screen.FromPoint(new System.Drawing.Point(trayAnchor.X,trayAnchor.Y)).Bounds;foreach(var w in windows)if(!baseline.Contains(w.Handle)&&MenuPriorityRules.TrayPopup(w,trayAnchor,screen))customMenus.Add(w.Handle);}
-   PriorityWindows=windows.Where(w=>customMenus.Contains(w.Handle)||MenuPriorityRules.StandardPopup(w.ClassName,w.Style)||MenuPriorityRules.TrayPanel(w.ClassName)).Select(w=>w.Handle).ToArray();
+   PriorityWindows=windows.Where(w=>customMenus.Contains(w.Handle)||MenuPriorityRules.StandardPopup(w.ClassName,w.Style)||MenuPriorityRules.TrayPanel(w.ClassName)||MenuPriorityRules.ChromiumTrayMenu(w,Forms.Screen.FromPoint(new System.Drawing.Point(w.Bounds.Right-1,w.Bounds.Bottom-1)).Bounds)).Select(w=>w.Handle).ToArray();
    bool found=PriorityWindows.Length>0;
    if(found){releaseTimer.Stop();SetActive(true);}else if(active&&!release){if(!releaseTimer.IsEnabled)releaseTimer.Start();}else SetActive(false);
   }
@@ -63,9 +93,9 @@ namespace KianaPet {
   public void Dispose(){if(disposed)return;disposed=true;timer.Stop();releaseTimer.Stop();if(menuHook!=IntPtr.Zero)UnhookWinEvent(menuHook);if(windowHook!=IntPtr.Zero)UnhookWinEvent(windowHook);if(mouseHook!=IntPtr.Zero)UnhookWindowsHookEx(mouseHook);menuHook=windowHook=mouseHook=IntPtr.Zero;customMenus.Clear();GC.KeepAlive(events);GC.KeepAlive(mouse);}
  }
  public sealed partial class PetWindow {
-  ExternalMenuMonitor externalMenus;bool menuLayerYielding;
+  ExternalMenuMonitor externalMenus;bool menuLayerYielding;IntPtr fallbackMenu;
   public bool MenuLayerYielding{get{return menuLayerYielding;}}
-  void StartMenuPriority(){if(preview||externalMenus!=null)return;externalMenus=new ExternalMenuMonitor(Dispatcher,delegate(bool active){UpdateMenuPriority(active);});}
+  void StartMenuPriority(){if(preview||externalMenus!=null)return;externalMenus=new ExternalMenuMonitor(Dispatcher,delegate(bool active){UpdateMenuPriority(active||fallbackMenu!=IntPtr.Zero);});}
   void StopMenuPriority(){if(externalMenus!=null){externalMenus.Dispose();externalMenus=null;}}
   bool menuLayerApplying;
   void ApplyMenuLayers(){ApplyMenuLayers(false);}
@@ -73,6 +103,7 @@ namespace KianaPet {
    if(menuLayerApplying)return;menuLayerApplying=true;
    try{
     var windows=externalMenus==null?null:externalMenus.PriorityWindows;IntPtr below=windows==null||windows.Length==0?IntPtr.Zero:windows[windows.Length-1];
+    if(fallbackMenu!=IntPtr.Zero&&(below==IntPtr.Zero||Native.IsAbove(below,fallbackMenu)))below=fallbackMenu;
     if(menuLayerYielding&&below==IntPtr.Zero)return;
     var handles=new List<IntPtr>{handle};if(musicWindow!=null)handles.Add(new System.Windows.Interop.WindowInteropHelper(musicWindow).Handle);
     Native.SetPetLayer(handles.ToArray(),menuLayerYielding?below:IntPtr.Zero,force);

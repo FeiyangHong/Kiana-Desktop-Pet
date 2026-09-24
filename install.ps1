@@ -15,7 +15,7 @@ if(-not $release -or $release -lt 528040){throw '本程序需要 .NET Framework 
 $appRoot=Join-Path $InstallRoot 'app'
 $running=@(Get-CimInstance Win32_Process -Filter "Name='KianaDesktopPet.exe'" -ErrorAction SilentlyContinue | Where-Object {$_.ExecutablePath -eq (Join-Path $appRoot 'KianaDesktopPet.exe')})
 if($running.Count){throw '独立桌宠正在运行。请先从它的右键菜单或托盘退出，再运行安装器。'}
-$entries=@($manifest.files | Where-Object {$_.path -match '^(assets/|licenses/|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|update-worker\.ps1$|release-notes\.md$)'})
+$entries=@($manifest.files | Where-Object {$_.path -match '^(assets/|licenses/|docs/demo/|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)'})
 $changed=$false
 foreach($entry in $entries){$dest=Join-Path $appRoot $entry.path;if(Test-Path -LiteralPath $dest){if((Get-FileHash -LiteralPath $dest).Hash -ine $entry.sha256){$changed=$true;break}}}
 if($changed){
@@ -32,10 +32,11 @@ if($changed){
 foreach($entry in $entries){$dest=Join-Path $appRoot $entry.path;New-Item -ItemType Directory -Path (Split-Path $dest -Parent) -Force | Out-Null;if((Test-Path -LiteralPath $dest) -and (Get-FileHash -LiteralPath $dest).Hash -ieq $entry.sha256){continue};Copy-Item -LiteralPath (Join-Path $PSScriptRoot $entry.path) -Destination $dest -Force}
 @{schema=1;product='Kiana Desktop Pet';version=$manifest.version;files=$entries} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $appRoot 'runtime-manifest.json') -Encoding UTF8
 if(-not $SkipChatGPT){
- $smooth=Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Codex/PetTools/KianaSmoothPet/app/scripts/launch.cmd'
+ $smoothRoot=Join-Path (Split-Path ([IO.Path]::GetFullPath($InstallRoot).TrimEnd('\')) -Parent) 'KianaSmoothPet'
+ $smooth=Join-Path $smoothRoot 'app/scripts/launch.cmd'
  if(Test-Path -LiteralPath $smooth){Write-Output '已发现现有 ChatGPT 平滑联动组件。'}
  elseif(Get-AppxPackage -Name OpenAI.Codex -ErrorAction SilentlyContinue){
-  try{$support=Join-Path $InstallRoot ('setup-cache/'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'));Expand-Archive -LiteralPath (Join-Path $PSScriptRoot 'ChatGPT平滑联动组件.zip') -DestinationPath $support; & (Join-Path $support 'install.ps1') -NoShortcuts}catch{Write-Warning ('独立桌宠已安装，但 ChatGPT 联动组件未安装成功：'+$_.Exception.Message)}
+  try{$support=Join-Path $InstallRoot ('setup-cache/'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'));Expand-Archive -LiteralPath (Join-Path $PSScriptRoot 'ChatGPT平滑联动组件.zip') -DestinationPath $support; & (Join-Path $support 'install.ps1') -InstallRoot $smoothRoot -NoShortcuts}catch{Write-Warning ('独立桌宠已安装，但 ChatGPT 联动组件未安装成功：'+$_.Exception.Message)}
  }else{Write-Output '未发现对应 ChatGPT 商店应用，独立桌宠仍可使用。以后可单独安装包内联动组件。'}
 }
 if(-not $NoShortcuts){. (Join-Path $PSScriptRoot 'shortcuts.ps1');Set-KianaShortcuts -InstallRoot $InstallRoot}

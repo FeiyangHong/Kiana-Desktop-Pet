@@ -9,7 +9,7 @@ namespace KianaPet {
   // Use the menu's own z-order band. Keeping a topmost pet behind a topmost menu avoids
   // dropping it beneath unrelated app windows. No visibility, opacity or focus changes.
   public static bool SetPetLayer(IntPtr[] windows,IntPtr below,bool force){
-   if(below!=IntPtr.Zero&&!IsPresented(below))return false;
+   if(below!=IntPtr.Zero&&!IsPresented(below)&&GetForegroundWindow()!=below)return false;
    bool topmost=below==IntPtr.Zero||IsTopmost(below);var pending=new List<IntPtr>();
    foreach(var h in windows)if(h!=IntPtr.Zero&&(force||IsTopmost(h)!=topmost||below!=IntPtr.Zero&&IsAbove(h,below)))pending.Add(h);
    if(pending.Count==0)return true;IntPtr after=below==IntPtr.Zero?new IntPtr(-1):below;const uint flags=0x1|0x2|0x10|0x200;
