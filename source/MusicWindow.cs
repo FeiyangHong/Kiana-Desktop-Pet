@@ -11,7 +11,8 @@ using System.Windows.Media.Imaging;
 namespace KianaPet {
  public sealed partial class MusicWindow:Window {
   readonly PetWindow pet;readonly TextBlock title=new TextBlock(),artist=new TextBlock(),lyric=new TextBlock();
-  readonly Image cover=new Image();readonly Button previous,toggle,next,lyrics;readonly StackPanel lyricRow=new StackPanel();
+  readonly Image cover=new Image();readonly Button previous,toggle,next,lyrics;readonly Grid lyricRow=new Grid();readonly Canvas lyricCanvas=new Canvas();readonly TranslateTransform lyricOffset=new TranslateTransform();
+  bool lyricPlaying;string lyricMotionLine;double lyricMotionWidth=-1;bool lyricMotionPlaying,lyricMotionEnabled,lyricMotionVisible;
   Grid outer;Border surface,shadowSurface;bool pointerPressed,shown;int transition;Native.Point dragStart;Native.Rect dragBounds;UIElement dragSurface;
   public bool IsDragging{get;private set;}public bool KeyboardMode{get;private set;}
   public void FocusControls(){KeyboardMode=true;Native.SetMenuActivation(new WindowInteropHelper(this).Handle,true);Activate();Native.FocusPetForMenu(new WindowInteropHelper(this).Handle);toggle.Focus();}
@@ -25,7 +26,8 @@ namespace KianaPet {
    StackPanel info=new StackPanel{Margin=new Thickness(5,0,0,0)};Grid.SetColumn(info,1);title.FontSize=12;title.FontWeight=FontWeights.SemiBold;title.Foreground=Brush("#29272D");title.TextTrimming=TextTrimming.CharacterEllipsis;artist.FontSize=11;artist.Foreground=Brush("#8B8790");artist.Margin=new Thickness(0,1,0,0);artist.TextTrimming=TextTrimming.CharacterEllipsis;info.Children.Add(title);info.Children.Add(artist);head.Children.Add(info);stack.Children.Add(head);
    Grid controls=new Grid{Margin=new Thickness(0,2,0,0)};controls.ColumnDefinitions.Add(new ColumnDefinition());controls.ColumnDefinitions.Add(new ColumnDefinition{Width=GridLength.Auto});StackPanel buttons=new StackPanel{Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center};previous=Button("previous","上一首",delegate{pet.MusicCommand("previous");});toggle=Button("play","播放",delegate{pet.MusicCommand("toggle");});next=Button("next","下一首",delegate{pet.MusicCommand("next");});buttons.Children.Add(previous);buttons.Children.Add(toggle);buttons.Children.Add(next);controls.Children.Add(buttons);
    lyrics=Button("lyrics","显示／隐藏歌词",delegate{pet.Settings.MusicLyrics=!pet.Settings.MusicLyrics;pet.ApplySettings();});lyrics.HorizontalAlignment=HorizontalAlignment.Right;Grid.SetColumn(lyrics,1);controls.Children.Add(lyrics);stack.Children.Add(controls);
-   lyricRow.Margin=new Thickness(0,3,0,0);lyric.FontSize=11;lyric.Foreground=Brush("#71647E");lyric.TextAlignment=TextAlignment.Center;lyric.TextTrimming=TextTrimming.CharacterEllipsis;lyricRow.Children.Add(lyric);stack.Children.Add(lyricRow);Content=outer;
+   lyricRow.Margin=new Thickness(0,3,0,0);lyricRow.Height=18;lyricRow.ClipToBounds=true;lyric.FontSize=11;lyric.Foreground=Brush("#71647E");lyric.RenderTransform=lyricOffset;lyricCanvas.Children.Add(lyric);lyricRow.Children.Add(lyricCanvas);stack.Children.Add(lyricRow);Content=outer;
+   lyricRow.SizeChanged+=delegate{UpdateLyricMotion();};lyricRow.IsVisibleChanged+=delegate{UpdateLyricMotion();};
    dragSurface=head;head.Background=Brushes.Transparent;head.Cursor=Cursors.SizeAll;head.ToolTip="按住封面或歌名拖动；松手后固定位置并避开宠物工具栏";
    head.MouseLeftButtonDown+=delegate(object sender,MouseButtonEventArgs e){if(pet.Settings.LockMusicPosition)return;StopDock();Native.GetCursorPos(out dragStart);Native.GetWindowRect(new WindowInteropHelper(this).Handle,out dragBounds);pointerPressed=true;IsDragging=false;head.CaptureMouse();e.Handled=true;};
    head.MouseMove+=delegate(object sender,MouseEventArgs e){if(!pointerPressed)return;Native.Point p;Native.GetCursorPos(out p);int dx=p.X-dragStart.X,dy=p.Y-dragStart.Y;var source=PresentationSource.FromVisual(this);double dpi=source==null?1:source.CompositionTarget.TransformToDevice.M11;if(Math.Abs(dx)+Math.Abs(dy)>(e.StylusDevice==null?4:12)*dpi)IsDragging=true;if(IsDragging){Native.SetWindowPos(new WindowInteropHelper(this).Handle,IntPtr.Zero,dragBounds.Left+dx,dragBounds.Top+dy,0,0,0x0001|0x0004|0x0010);e.Handled=true;}};
@@ -46,8 +48,22 @@ namespace KianaPet {
   public void Refresh(MusicState state,string line,BitmapSource art,bool busy){((FrameworkElement)dragSurface).Cursor=pet.Settings.LockMusicPosition?Cursors.Arrow:Cursors.SizeAll;((FrameworkElement)dragSurface).ToolTip=pet.Settings.LockMusicPosition?"音乐栏拖动已锁定；仍按设置跟随与避让":"按住封面或歌名拖动音乐栏";RefreshPalette(art);title.Text=state.Title;title.ToolTip=FullText(state.Title);artist.Text=(state.Playing?"":"已暂停 · ")+state.Artist;artist.ToolTip=FullText(state.Artist);cover.Source=art;
    if(state.Title!=lastTitle||state.Playing!=lastPlaying||paletteChanged){toggle.Content=MusicIcon(state.Playing?"pause":"play");toggle.ToolTip=state.Playing?"暂停":"继续播放";System.Windows.Automation.AutomationProperties.SetName(toggle,(string)toggle.ToolTip);lastPlaying=state.Playing;lastTitle=state.Title;}
    previous.IsEnabled=!busy&&state.CanPrevious;toggle.IsEnabled=!busy&&state.CanToggle;next.IsEnabled=!busy&&state.CanNext;
-   bool showLyrics=pet.Settings.MusicLyrics;lyricRow.Visibility=showLyrics?Visibility.Visible:Visibility.Collapsed;ApplyCardSize(showLyrics);foreach(var b in new[]{previous,toggle,next,lyrics}){b.Width=pet.Settings.LargeTouchTargets?38:28;b.Height=pet.Settings.LargeTouchTargets?34:24;}lyrics.Opacity=showLyrics?1:.55;
+   lyricPlaying=state.Playing;bool showLyrics=pet.Settings.MusicLyrics;lyricRow.Visibility=showLyrics?Visibility.Visible:Visibility.Collapsed;ApplyCardSize(showLyrics);foreach(var b in new[]{previous,toggle,next,lyrics}){b.Width=pet.Settings.LargeTouchTargets?38:28;b.Height=pet.Settings.LargeTouchTargets?34:24;}lyrics.Opacity=showLyrics?1:.55;
    if(lastLine!=line){lastLine=line;lyric.Text=line;lyric.ToolTip=line;lyric.BeginAnimation(OpacityProperty,new DoubleAnimation(.25,1,TimeSpan.FromMilliseconds(MotionSettings.Enabled?PetVisuals.ShowMs:0)));}
+   UpdateLyricMotion();
+  }
+  void UpdateLyricMotion(){double width=lyricRow.ActualWidth;if(width<=0)return;bool visible=lyricRow.IsVisible,enabled=MotionSettings.Enabled;
+   if(lyricMotionLine==lyric.Text&&Math.Abs(lyricMotionWidth-width)<.5&&lyricMotionPlaying==lyricPlaying&&lyricMotionEnabled==enabled&&lyricMotionVisible==visible)return;
+   lyricMotionLine=lyric.Text;lyricMotionWidth=width;lyricMotionPlaying=lyricPlaying;lyricMotionEnabled=enabled;lyricMotionVisible=visible;
+   lyricOffset.BeginAnimation(TranslateTransform.XProperty,null);lyricOffset.X=0;lyric.Width=double.NaN;lyric.TextTrimming=TextTrimming.None;lyric.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));double textWidth=lyric.DesiredSize.Width;
+   if(textWidth<=width+1){lyricOffset.X=Math.Max(0,(width-textWidth)/2);return;}
+   if(!visible||!lyricPlaying||!enabled){lyric.Width=width;lyric.TextTrimming=TextTrimming.CharacterEllipsis;return;}
+   double travel=Math.Max(1.4,(textWidth-width)/45),hold=.7,distance=width-textWidth;var motion=new DoubleAnimationUsingKeyFrames{RepeatBehavior=RepeatBehavior.Forever};
+   motion.KeyFrames.Add(new LinearDoubleKeyFrame(0,KeyTime.FromTimeSpan(TimeSpan.FromSeconds(hold))));
+   motion.KeyFrames.Add(new LinearDoubleKeyFrame(distance,KeyTime.FromTimeSpan(TimeSpan.FromSeconds(hold+travel))));
+   motion.KeyFrames.Add(new LinearDoubleKeyFrame(distance,KeyTime.FromTimeSpan(TimeSpan.FromSeconds(hold+travel+hold))));
+   motion.KeyFrames.Add(new LinearDoubleKeyFrame(0,KeyTime.FromTimeSpan(TimeSpan.FromSeconds(hold+travel+hold+travel))));
+   lyricOffset.BeginAnimation(TranslateTransform.XProperty,motion);
   }
   void ApplyCardSize(bool showLyrics){double scale=pet.Settings.MusicScalePercent/100d;double width=pet.Settings.MusicWidth*scale,height=((showLyrics?110:88)+(pet.Settings.LargeTouchTargets?10:0))*scale;var transform=outer.LayoutTransform as ScaleTransform;if(transform!=null&&transform.ScaleX==scale&&Width==width&&Height==height)return;if(transform==null||transform.ScaleX!=scale)outer.LayoutTransform=new ScaleTransform(scale,scale);outer.Margin=new Thickness(6*scale);Width=width;Height=height;UpdateLayout();}
   public void ShowSoft(){if(shown&&IsVisible)return;shown=true;transition++;if(!IsVisible){BeginAnimation(OpacityProperty,null);Opacity=0;Show();}BeginAnimation(OpacityProperty,new DoubleAnimation(1,TimeSpan.FromMilliseconds(MotionSettings.Enabled?PetVisuals.ShowMs:0)));}
