@@ -1,9 +1,9 @@
-﻿param([string[]]$Names=@('reliability-tests','reliability-ui-tests'))
+﻿param([string[]]$Names=@('reliability-tests','reliability-ui-tests','notification-center-tests'))
 $ErrorActionPreference='Stop'
 $bundle=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $testRoot=Join-Path ([IO.Path]::GetTempPath()) ('KianaPet-Tests-'+[guid]::NewGuid().ToString('N'))
 $framework=Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319'
-$classes=@{'reliability-tests'='ReliabilityTests';'reliability-ui-tests'='ReliabilityUiTests'}
+$classes=@{'reliability-tests'='ReliabilityTests';'reliability-ui-tests'='ReliabilityUiTests';'notification-center-tests'='NotificationCenterTests'}
 foreach($name in $Names){
  if(-not $classes.ContainsKey($name)){throw ('Unknown suite: '+$name)}
  $runtime=Join-Path $testRoot $name
