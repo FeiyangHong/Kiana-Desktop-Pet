@@ -10,6 +10,7 @@ namespace KianaPet {
  }
  public sealed class Config {
   public int Schema=1;
+  public string[] SettingsCategoryOrder=new string[0];
   public string Skin="kiana-fiery-wishing-star-round";
   public int Size=176;
   public bool RecoverHotkeyEnabled=false;
@@ -45,6 +46,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   SettingsCategoryOrder=KianaPet.SettingsCategoryOrder.Normalize(SettingsCategoryOrder);
    if(!NoticeSourceIcons.Styles.Contains(NoticeSourceStyle))NoticeSourceStyle="icon-name";
    NoticePreviewWidth=Math.Max(320,Math.Min(560,NoticePreviewWidth));NoticePreviewCount=Math.Max(1,Math.Min(4,NoticePreviewCount));
    ComfortRules.Validate(this);CompletionNoticeSeconds=Math.Max(2,Math.Min(30,CompletionNoticeSeconds));NotificationGraceSeconds=Math.Max(10,Math.Min(120,NotificationGraceSeconds));

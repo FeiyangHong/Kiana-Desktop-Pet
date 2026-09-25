@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.7.10-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.7.11-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -68,6 +68,14 @@ cd Kiana-Desktop-Pet
 ![四种通知应用标识样式（测试示例）](docs/demo/notification-source-styles.png)
 
 ChatGPT 图标读取本机已安装应用的浅色 / 深色图标，不依赖固定安装版本或在线下载；读取不到时回退为通用通知标识。其他来源可由进程内适配器调用 `NoticeSourceIcons.Register(source, icon)` 注册图标，未提供的来源使用通用图标；这不代表新增了外部应用接入。
+### 设置左栏与自定义排序
+
+默认先显示常用、外观与互动、音乐、通知中心等日常选项；最近调整、场景与维护、使用说明放在底部。
+
+点击左栏底部的 **调整顺序**，按住任意分类拖到目标项的上方或下方；靠近列表边缘会自动滚动。也可先选中分类，再用 **↑ / ↓** 按钮，或在分类列表中按 **Alt + ↑ / ↓** 移动。点击 **完成排序** 或按 Esc 退出排序模式；**恢复推荐顺序** 可以随时还原。
+
+顺序自动保存，重新打开设置仍然保留，并可随通用偏好导出、导入到另一台设备；程序更新不会覆盖自定义顺序。打开设置仍默认进入“常用”。搜索期间暂时禁用排序，清空搜索后可继续调整；排序不会重建右侧页面或重置阅读位置。
+
 ## 功能说明
 
 - 六套琪亚娜衣装、触摸反馈、自由走动、作息、跨屏拖动和效果预览。
