@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.2-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.3-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
