@@ -9,7 +9,7 @@ namespace KianaPet {
  public sealed partial class PetWindow {
   Dictionary<string,SkinAlignment> spriteAlignment;FrameAlignment activeAlignment;
   void ShowSprite(BitmapSource source,string group,int index){if(spriteAlignment==null){spriteAlignment=new Dictionary<string,SkinAlignment>();try{string file=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","sprite-alignment.json");foreach(var skin in Store.Json.Deserialize<SkinAlignment[]>(File.ReadAllText(file))){if(skin.Extra.Length!=6||skin.Ambient.Length!=4||skin.Transition.Length!=4||!skin.Extra.Concat(skin.Ambient).Concat(skin.Transition).All(SpriteGeometry.Valid))continue;spriteAlignment[skin.Skin]=skin;}}catch(Exception e){Store.Log("Sprite alignment: "+e.Message);}}
-   activeAlignment=null;SkinAlignment match;if(group!="base"&&spriteAlignment.TryGetValue(Settings.Skin,out match)){var list=group=="extra"?match.Extra:group=="ambient"?match.Ambient:match.Transition;if(index>=0&&index<list.Length)activeAlignment=list[index];}sprite.Source=source;ApplySpriteAlignment();
+   activeAlignment=null;SkinAlignment match;if(group!="base"&&group!="music"&&spriteAlignment.TryGetValue(Settings.Skin,out match)){var list=group=="extra"?match.Extra:group=="ambient"?match.Ambient:match.Transition;if(index>=0&&index<list.Length)activeAlignment=list[index];}sprite.Source=source;ApplySpriteAlignment();
   }
   void ApplySpriteAlignment(){sprite.RenderTransform=new MatrixTransform(SpriteGeometry.Matrix(activeAlignment,Settings.Size));}
  }

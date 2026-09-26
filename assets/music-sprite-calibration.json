@@ -1,0 +1,5 @@
+[
+ {"Skin":"kiana-winter-wish-round","FaceWidth":115,"SourceFaceWidths":[164,164,164,164,164,164],"Centers":[254,236,261,244,255,238],"Feet":[490,490,483,483,510,514],"RowEdges":[0,496,984,1536]},
+ {"Skin":"kiana-fiery-wishing-star-round","FaceWidth":119,"SourceFaceWidths":[164,164,164,164,164,164],"Centers":[255,236,277,246,256,228],"Feet":[500,500,498,498,492,492],"RowEdges":[0,512,1024,1536]},
+ {"Skin":"time-runner-kiana-round","FaceWidth":121,"SourceFaceWidths":[169,169,169,169,169,169],"Centers":[247,226,238,237,245,230],"Feet":[501,501,496,496,490,486],"RowEdges":[0,512,1020,1536]}
+]

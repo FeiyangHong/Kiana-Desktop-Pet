@@ -1,0 +1,15 @@
+using System;using System.Windows;using System.Windows.Controls;
+namespace KianaPet {
+ public sealed partial class SettingsWindow {
+  TextBlock musicReactionStatus;ComboBox songReactionMode;Button chorusStart,chorusEnd,chorusClear;bool syncingMusicReactions;
+  void BuildMusicReactions(Panel page){
+   TitleText(page,"听歌互动与副歌应援");Note(page,"默认安静听歌。抒情歌的副歌仍保持耳机倾听；轻柔模式缓慢挥棒，活力模式举棒与小幅弹跳。应援时耳机保留。三套 Q 版已绘制专属动作，普通三套保持原有动作。");
+   var mode=new ComboBox{ItemsSource=MusicReactions.Labels,SelectedIndex=Array.IndexOf(MusicReactions.Modes,pet.Settings.MusicReactionMode),Padding=new Thickness(8)};System.Windows.Automation.AutomationProperties.SetName(mode,"整体听歌互动方式");mode.SelectionChanged+=delegate{if(mode.SelectedIndex<0)return;pet.Settings.MusicReactionMode=MusicReactions.Modes[mode.SelectedIndex];pet.Save();};page.Children.Add(mode);
+   Check(page,"自动查询副歌时间（仅发送歌曲 ID）",pet.Settings.MusicChorusEnabled,delegate(bool v){pet.Settings.MusicChorusEnabled=v;pet.Save();});Note(page,"连续播放约 8 秒后开始听歌；只有进入已知副歌区间才按所选模式应援。取不到数据时保持耳机听歌，不按音量猜测高潮。副歌数据可能只有一段，可手动标记补充。暂停超过 3 秒、拖动、睡眠、免打扰或需要处理任务时让出动作；减少动态效果时不自动播放音乐动作。");
+   TitleText(page,"这首歌的互动方式");musicReactionStatus=CompanionControls.Text("",12);page.Children.Add(musicReactionStatus);songReactionMode=new ComboBox{ItemsSource=new[]{"跟随整体设置","安静听歌","轻柔应援","活力应援","关闭音乐动作"},Padding=new Thickness(8)};System.Windows.Automation.AutomationProperties.SetName(songReactionMode,"当前歌曲互动方式");songReactionMode.SelectionChanged+=delegate{if(!syncingMusicReactions&&songReactionMode.SelectedIndex>=0)pet.SetSongMusicMode(new[]{"inherit","quiet","gentle","lively","off"}[songReactionMode.SelectedIndex]);};page.Children.Add(songReactionMode);
+   chorusStart=Button("标记副歌起点（当前位置）",delegate{pet.MarkMusicChorus(false);UpdateMusicReactionSettings();},false);chorusEnd=Button("标记副歌终点（当前位置）",delegate{pet.MarkMusicChorus(true);UpdateMusicReactionSettings();},false);chorusClear=Button("清除本曲手动副歌",delegate{pet.ClearMusicChorus();UpdateMusicReactionSettings();},false);page.Children.Add(chorusStart);page.Children.Add(chorusEnd);page.Children.Add(chorusClear);Note(page,"先播放到起点再标记，随后在终点标记；有效手动区间优先于接口数据。音乐栏右键也可快速设置本曲模式与区间。最多记住 100 首歌，随通用偏好导出、导入。");
+   TitleText(page,"音乐动作预览");foreach(string value in new[]{"quiet","gentle","lively"}){string captured=value;page.Children.Add(Button("预览 · "+MusicReactions.Label(value),delegate{pet.PreviewMusicAnimation(captured);},false));}UpdateMusicReactionSettings();
+  }
+  void UpdateMusicReactionSettings(){if(musicReactionStatus==null)return;musicReactionStatus.Text=pet.MusicReactionStatus;musicReactionStatus.Foreground=muted;bool available=pet.Music.Current.Connected&&MusicReactions.SongId(pet.Music.Current.Id);songReactionMode.IsEnabled=chorusStart.IsEnabled=chorusEnd.IsEnabled=chorusClear.IsEnabled=available;var p=MusicReactions.Preference(pet.Settings,pet.Music.Current.Id);syncingMusicReactions=true;try{songReactionMode.SelectedIndex=Array.IndexOf(new[]{"inherit","quiet","gentle","lively","off"},p==null?"inherit":p.Mode);}finally{syncingMusicReactions=false;}}
+ }
+}

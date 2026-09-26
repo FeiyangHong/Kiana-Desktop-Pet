@@ -15,7 +15,7 @@ if(-not $release -or $release -lt 528040){throw '本程序需要 .NET Framework 
 $appRoot=Join-Path $InstallRoot 'app'
 $running=@(Get-CimInstance Win32_Process -Filter "Name='KianaDesktopPet.exe'" -ErrorAction SilentlyContinue | Where-Object {$_.ExecutablePath -eq (Join-Path $appRoot 'KianaDesktopPet.exe')})
 if($running.Count){throw '独立桌宠正在运行。请先从它的右键菜单或托盘退出，再运行安装器。'}
-$entries=@($manifest.files | Where-Object {$_.path -match '^(assets/|licenses/|docs/demo/|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)'})
+$entries=@($manifest.files | Where-Object {$_.path -match '^(assets/|licenses/|docs/demo/|docs/music-animations\.md$|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)'})
 $changed=$false
 foreach($entry in $entries){$dest=Join-Path $appRoot $entry.path;if(Test-Path -LiteralPath $dest){if((Get-FileHash -LiteralPath $dest).Hash -ine $entry.sha256){$changed=$true;break}}}
 if($changed){
