@@ -1,79 +1,91 @@
 # 音乐互动与三套 Q 版动画
 
-## 使用
+## 设置是什么意思
 
-右键桌宠 → 设置 → 音乐 → 听歌互动与副歌应援。整体模式默认 **安静听歌**，也可选择轻柔应援、活力应援或关闭音乐动作。
+打开 **设置 → 音乐 → 音乐动作：平时与副歌分别设置**。音乐栏右键也能为当前歌曲分别设置两个阶段。
 
-- 安静：戴耳机轻轻倾听，副歌也不突然举棒。
-- 轻柔：普通段落戴耳机，已知副歌期间低位缓慢挥棒。
-- 活力：普通段落戴耳机，已知副歌期间举双棒、小幅弹跳，耳机保留。
-- 连续播放约 8 秒后进入音乐状态；短暂停顿收棒，暂停超过 3 秒退出。切歌重新等待，拖动进度按新位置判断。
-- 摸头、拖动、ChatGPT 活动状态、菜单及通知操作、睡眠与免打扰优先。“减少动态效果”开启时不自动播放音乐动作。
+| 选项 | 实际行为 |
+| --- | --- |
+| 平时播放时 | 没进入已知副歌时使用的动作 |
+| 进入副歌时 | 只有进入接口或手动标记的副歌区间才使用 |
+| 保持平时动作 | 副歌也延续平时的动作，包括交替展示 |
+| 坐着听歌＋偶尔轻微应援 | 以坐着听歌为主，约45秒后起身轻微挥棒约15秒，再坐下，循环展示 |
+| 坐着晃身听歌 | 侧坐小圆凳、戴耳机，轻晃头身和腿脚，手放低；鞋尖朝人物侧坐的同一方向 |
+| 轻微挥棒 | 胸前小幅挥动两根应援棒，耳机保留 |
+| 活力挥棒 | 连续抬手、举棒、回落，耳机保留 |
+| 不做音乐动作 | 该阶段使用原来的待机／活动规则 |
 
-**音乐栏右键 → 这首歌的互动方式** 可覆盖整体模式，也可选择“跟随整体设置”。歌曲偏好按网易云歌曲 ID 记录，最多 100 首，随通用偏好导出导入；普通三套保持原动作，三套 Q 版使用新绘制素材。
+可以设置“平时交替坐着听歌与轻微应援，副歌活力挥棒”，也可以平时固定轻微挥棒、到副歌仍保持。**没有副歌数据就使用平时动作**，不是自动切回某一种模式。界面会直接显示当前生效的两阶段规则。
 
-同一菜单和设置页面提供 **标记副歌起点 / 终点（当前位置）**。先在起点标记，再播放或拖动到终点标记；完成后的区间优先于自动数据。清除手动区间后恢复接口数据。当前支持每首歌一个手动区间。
+“这首歌”可以分别覆盖平时／副歌，默认跟随整体；副歌选“保持平时动作”跟随的是该曲实际的平时设置。最多保存100首歌曲，随通用偏好导出导入。旧版的安静／轻柔／活力／关闭设置会迁移为原来的出现规则，不会无故改变旧偏好。
 
-设置页面底部可独立预览三种动作，不修改音乐播放、通知或偏好。
+连续稳定播放约8秒后开始。短暂停顿收棒，暂停超过3秒退出；切歌重新等待。拖动播放进度按新位置判断副歌；交替展示按播放会话计时，不把晃腿或挥棒宣称为实时节拍同步。摸头、拖动、睡眠、免打扰、菜单、通知操作和ChatGPT活动状态优先。“减少动态效果”开启时不自动播放音乐动作。
 
-## 副歌数据
+## 预览与视觉检查
 
-请求 `https://music.163.com/api/song/chorus?ids=[歌曲ID]`，实现依据为 [开源适配源码](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced/blob/main/module/song_chorus.js)。这是非官方接入，不保证所有歌曲都有数据或包含每一段副歌；不根据音量猜测高潮，不录制或分析音频。
+设置页的“音乐动作预览”使用实际运行时素材，不修改音乐播放或偏好。另有可直接在浏览器打开的 [三套动作动态对照](demo/music-motion.html)，可切换背景、暂停、逐帧查看和重播坐下／起身。
 
-“自动查询副歌时间”可关闭联网。请求仅包含歌曲 ID，不发送歌词、音频、账户凭证或桌宠其他状态。接口起止时间从毫秒转换为秒，并校验歌曲 ID 及区间边界。成功结果缓存 30 天，无结果缓存 1 天；失败至少间隔 5 分钟重试，最多缓存 300 首，保存于运行目录 `chorus-cache.json`。查询失败可使用已有缓存，没有数据时保持耳机倾听。手动标记不依赖联网开关。
+每套：坐姿6帧、轻微挥棒6帧、活力挥棒6帧、坐下过渡6帧，起身反向播放。每个动作单独保存1024×1536透明图集，避免把所有小图挤在一张图里。播放按经过时间推进，三种动作有不同停留节奏；音乐活动期间33毫秒调度检查。**这是逐帧动画，不是每秒30张独立绘画，也不是真实歌曲BPM驱动。**
 
-副歌开始前约 1 秒进入应援姿态，结束后返回耳机倾听；挥棒使用绘制的循环节奏，尚不跟随真实歌曲 BPM。
+保留生成的alpha通道。源图透明像素的RGB可能含颜色，应按alpha合成，不按预览底色判断。运行时排除裁切范围里不属于当前姿态的零碎邻格像素，保留主体和凳子及原来的抗锯齿边缘。按原待机头部、脚底和透明留白校准；同一循环使用统一缩放，避免每个姿态忽大忽小。坐姿不会单独按整图高度撑满站姿画布。输出使用768×832帧缓存和高质量平滑采样，换装后释放上一套音乐帧缓存。
 
-## 素材及生成记录
+![原待机、坐着听歌、轻微挥棒、活力挥棒对照](demo/music-actions.png)
 
-使用内置 **image_gen**，没有调用 CLI/API 后备模式。三次调用分别以对应的 `*-round-ambient.png` 为角色及画风参考，新增：
+## 副歌时间
 
-- `assets/kiana-winter-wish-round-music.png`
-- `assets/kiana-fiery-wishing-star-round-music.png`
-- `assets/time-runner-kiana-round-music.png`
+自动查询请求 `https://music.163.com/api/song/chorus?ids=[歌曲ID]`。这是非官方数据接入，不能保证每首歌曲都有数据或包含每一段副歌；不根据音量猜测，不录制音频。开关可关闭自动查询；手动标记仍然有效。
 
-每套 6 张关键姿态：耳机倾听 2 张、轻柔挥棒 2 张、活力应援 2 张。原图 1024×1536 RGBA，保留生成的透明通道；透明像素隐藏的 RGB 可能有颜色，必须按 alpha 合成显示。
+请求只含歌曲ID，不发送歌词、音频或账户凭证。校验返回ID和时间区间，毫秒转换为秒；有结果缓存30天，无结果缓存1天，失败至少5分钟后重试，缓存最多300首，位于运行目录`chorus-cache.json`。失败时使用有效缓存，没有区间就保持平时动作。
 
-运行时按 `assets/music-sprite-calibration.json` 分行裁切，避开相邻皇冠与发饰；按原版脸宽及脚底基线校准，在 384×416 逻辑画布中生成 768×832 帧缓存，用高质量采样显示。原动作图集不覆盖。
+先“标记副歌起点”，再在终点标记；手动区间优先于自动数据，每首目前支持一个区间，清除后恢复接口数据。副歌起点前约1秒切入，终点切回平时动作。
 
-![每行从左到右：原待机、耳机、轻柔、活力](demo/music-actions.png)
+## 素材与生成记录
 
-### 最终生成提示词组
+使用内置 **image_gen** 生成与编辑，没有使用CLI/API后备模式。角色参考为仓库原有三套Q版素材；所有项目素材都已复制到`assets/`，不依赖本机生成目录。每套文件：
 
-公共规格分别配合各套服装说明，三个角色独立生成：
+- `*-round-music.png`：侧坐倾听。
+- `*-round-music-gentle.png`：轻微挥棒。
+- `*-round-music-lively.png`：活力挥棒。
+- `*-round-music-sit.png`：坐下／起身。
+- `music-sprite-calibration.json`：实际裁切矩形、头部尺寸和脚底／凳脚锚点。
 
-```text
-Use case: identity-preserve. NEW production transparent RGBA animation sprite
-sheet for the EXACT chibi Kiana costume in the reference. Reference is identity
-and style input. Preserve hair ornaments, huge silver-white hair, large head,
-tiny body, precise violet contours and crisp intricate costume shading.
-Bright purple/blue-to-cyan eyes with white star highlights, cheerful friendly
-expressions, never dull or vacant.
-Exactly TWO columns THREE rows, SIX separate full-body keyframes, preferably
-1536x2304 or largest portrait resolution. Consistent face size, head/body ratio,
-character center and feet baseline inside each cell; entire hair and props fit.
-Actual transparent alpha, no floor, backdrop, shadow, halo, text, grid lines or
-painted checkerboard. Slim over-ear headphones remain on in ALL SIX poses.
-Row1 quiet listening without rods: left open sparkling eyes, tiny smile, hand
-at earcup; right peaceful closed-eye smile, slight other head tilt, hands near chest.
-Row2 gentle support: two slim lightsticks at chest/shoulder level, alternate
-small left/right sway, warm smile and open sparkling eyes, feet planted, no jump.
-Row3 lively cheering: headphones remain, two rods diagonally raised, cheerful
-open smile and bright eyes; alternate arm swing with small bent-knee bounce.
-Never enlarge the head. Soft glow confined to rods, no dark aura around character.
-```
+下面保留采用的提示词规范及最后修订要求。图集校准与深浅背景校验使用运行时同一条渲染路径。素材适用`ASSET_NOTICE.md`，不属于代码的MIT授权。
 
-各套服装说明：
+### 通用连续姿态规范
 
 ```text
-Winter Wish: blue crystal crown, ice-blue/white detailed dress, icy-blue
-headphones and cyan rods. Preserve crown and all ice ornaments.
-Fiery Wishing Star original: red bow and high silver-white ponytail,
-red/black/white/gold costume and black gloves, red/black headphones and
-warm rose-pink rods. Preserve visible bow and costume details.
-Time Runner: violet-white-blue costume, violet crystal crown, long silver-white
-high side ponytail, asymmetrical dark sleeve; lavender/purple headphones and
-lavender-cyan rods. Preserve crown, sleeve and hair length.
+Production sprite sheet exactly TWO columns THREE rows, SIX consecutive animation frames, transparent RGBA, portrait canvas. Image1 defines EXACT approved chibi Kiana proportions, costume, big head and small compact body. Image2 provides music headphones/rods and continuity reference only. Match image1 proportions and bright lively blue-cyan eyes with white star catchlights, crisp fine purple contours, richly detailed shading. Very important: equal character HEAD SIZE throughout all6 frames, no scale/camera change. Complete hair, headgear, hands, props and feet in each frame. Each character uses no more than 85% of cell width and 85% of cell height: spacious TRUE TRANSPARENT margins on ALL sides of every cell and overall sheet. No overlapping cells, no cropping, no ground shadows, no halo/glow haze, no noise flecks, no text/labels/grid. Opaque white hair. Same asymmetric costume and hair direction EVERY frame; never mirror. Headphones stay on. These are consecutive poses of one cyclical animation with small incremental movement and follow-through, not different scenes. Read left-to-right then next row.
 ```
 
-素材适用 `ASSET_NOTICE.md`，不属于软件代码的 MIT 授权。
+### 轻微挥棒
+
+```text
+GENTLE LIGHTSTICK SWAY: Both short sticks stay low chest level, headphones worn. Six continuous poses 1 upright sticks inward; 2 wrists and shoulders sway left slightly; 3 left sway maximum6degrees sticks angledleft; 4 center relaxed blink; 5 right sway maximum6degrees sticks angledright; 6 returning toward center halfway. Feet planted. Cheerful soft smile. Hair/skirt follow with small delayed movement. Hands hold BOTH sticks always. Sticks colored inside with clean solid contour, ZERO outer glow.
+```
+
+### 活力挥棒
+
+```text
+ENERGETIC LIGHTSTICK ARM CYCLE: TWO sticks always, headphones remain. 1 sticks at shoulder height elbows bent preparation; 2 elbows extend half way upward; 3 arms high wide V with tiny on-toes bounce; 4 elbows bend halfway downward as heels lower; 5 sticks low near chest knees tiny bend preparing next bounce; 6 arms rise back toward shoulder startingpose. Continuous coherent UP then DOWN cycle, not random poses. Hair and skirt follow movement gently. Bright open joyful eyes, mouth smiling. Same size large round face everyframe. Body never shrinks or changes scale. No leg kick. Solid colored rod interiors, ZERO outer glow.
+```
+
+### 坐姿腿部方向与交替
+
+```text
+Create SIX ANIMATION FRAMES for the exact seated headphone-listening Kiana in attached reference. Preserve exact costume, bright starry eyes, large head/tiny body proportions, gentle head sway and the stool. Change leg choreography to a CLEAR ALTERNATING relaxed side-view leg swing. BOTH knees and BOTH boot toes point toward SCREEN LEFT. Soles face DOWN, never the camera. Do not rotate shoes to face us.
+2 columns by3rows, read left-right top-bottom. Pose1: FAR shin extends forward LEFT about20degrees, NEAR shin hangs vertically. Pose2: both shins passing midway with knees fixed. Pose3: NEAR shin extends forward LEFT20degrees, FAR shin hangs vertically. Pose4: both shins passing midway, slight blink. Pose5: FAR shin forward again, NEAR vertical, headtiltotherway. Pose6: passing midway approaching NEAR shin forward. Swap which knee connects to the forward shoe, NOT only the shoe's vertical height. Knees remain in their same natural seated positions, shins pivot at knees, both shoes still facing LEFT. The raised near ankle moves ~45px left at512px cell scale, far ankle returns beneath its knee. The near leg slightly overlaps the far leg naturally in perspective.
+Forward shoe shows SIDE and UPPER surface, never bottomsole. Feet belowknees, no highkick. Same SHORT legs as reference. Stool level fixed in allframes. Handsonthighs, headphones, gentle headtilt and hairfollowthrough, camera and headsizefixed. TrueRGBA transparency no outerglow/haze/floorshadow/text/grid. Crisp detailed fineviolet lineart. Complete fullbodyposes with24px margins.
+```
+
+### 坐姿头身比例修订
+
+```text
+Refine this exact SIX-frame sheet to the original VERY COMPACT CHIBI BODY proportions. Preserve the face/head/hair scale, facial style, sparkling eyes, costume, headphones, action and same side-facing feet. The current body below the chin is too long.
+SHORTEN ONLY the torso, upper arms, thighs and shins: the full neck-to-shoe height should be about 40% SHORTER than current, while the head/face and its ornaments stay exactly same size. Keep natural joints and clothing detail, do not merely rescale the entire character. Match about 65-70% of seated figure height occupied by head including crown and hair, tiny compact torso and short little legs like the approved reference. Stool correspondingly low/compact, fits the seated short thighs and dangling feet. Both feet face sideways same direction, soles down, NEVER toward viewer. Preserve alternating shin motion, natural seated20-35degreeorientation, handsonlap. Same figureproportions ALL6 frames. Maintain24px transparent margins2cols3rows. Actual clean alpha, no shadow/glow, keep hair opaque. Do not enlarge/reduce the canvas or globally scale the whole figure.
+```
+
+### 坐下／起身过渡
+
+```text
+以原有 ambient 图集为人物比例参考、最终坐姿为凳子与耳机参考。六帧站立、屈膝、降低重心、接近凳面、坐下、放松；站立总高约1.5个头，人物原有大头短身比例；头部大小与镜头固定，短腿鞋尖朝侧方、鞋底朝下；保留明亮眼神，透明背景与每格留白。反向播放用于起身。
+```
