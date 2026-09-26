@@ -23,8 +23,9 @@ namespace KianaPet {
   public static string Choose(string mode,bool chorus){if(mode=="off")return null;return chorus&&mode=="gentle"?"music-gentle":chorus&&mode=="lively"?"music-lively":"music-quiet";}
   // Drawn in-betweens, with short eyelid transitions and a longer resting pose.
   // Elapsed time, rather than tick count, keeps the cycle stable after delayed UI ticks.
-  static readonly int[][] durations={new[]{450,450,420,150,420,450},new[]{280,180,280,180,280,180},new[]{180,120,180,120,180,120}};
+  static readonly int[][] durations={new[]{450,450,420,150,420,450},new[]{240,240,240,240,240,240},new[]{180,120,180,120,180,120}};
   public const int FramesPerAction=6;
+  public static double GentleAngle(double elapsed){return Finite(elapsed)?1.1*Math.Sin(Math.Max(0,elapsed)*Math.PI*2/1440):0;}
   public const int SitTransitionMs=720;
   public static int PlaybackFrame(string state,double elapsed,bool reduced,bool rising){if(reduced)return Frame(state,0,true);elapsed=Finite(elapsed)?Math.Max(0,elapsed):0;bool sitting=state=="music-quiet";if((sitting||rising)&&elapsed<SitTransitionMs){int step=Math.Min(5,(int)(elapsed/120));return 18+(sitting?step:5-step);}return Frame(state,elapsed-((sitting||rising)?SitTransitionMs:0),false);}
   public static int Frame(string state,double elapsed,bool reduced){int row=state=="music-gentle"?1:state=="music-lively"?2:0;if(reduced||!Finite(elapsed))return row*FramesPerAction;var times=durations[row];double position=Math.Max(0,elapsed)%times.Sum();for(int i=0;i<times.Length;i++){if(position<times[i])return row*FramesPerAction+i;position-=times[i];}return row*FramesPerAction;}

@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.1-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.2-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -78,7 +78,7 @@ ChatGPT 图标读取本机已安装应用的浅色 / 深色图标，不依赖固
 
 ### 音乐动作：平时与副歌分别设置
 
-三套 Q 版支持侧坐倾听、轻微挥棒、活力挥棒，每种动作各六帧，并有坐下／起身过渡。坐姿轻晃头身与腿脚，鞋尖朝侧坐方向；图集分别保存，使用平滑采样与透明边缘校准。
+三套 Q 版支持侧坐倾听、轻微挥棒、活力挥棒，并有坐下／起身过渡。坐姿使用分层绘制的身体、凳子和两条小腿，双腿按相反相位交替前摆，每周期48个合成姿态；挥棒各有六张绘制姿态，轻微挥棒保留重心变化并加入连续小幅轻摆。以各套原待机分别校准人物比例，保留平滑采样和透明边缘。动态对照页支持慢放、逐帧及脚部放大。
 
 在 **设置 → 音乐** 分别选择 **平时播放时** 和 **进入副歌时** 的动作。平时可以选 **坐着听歌＋偶尔轻微应援**，约45秒坐着听歌、15秒轻微应援交替；也可固定一种动作。副歌可另选动作或保持平时。**没有副歌数据就继续平时动作**。界面直接显示当前生效规则，旧版偏好保持原来的出现规则。
 
