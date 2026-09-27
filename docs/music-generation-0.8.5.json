@@ -1,0 +1,54 @@
+{
+  "version": "0.8.5",
+  "tool": "built-in image_gen.imagegen",
+  "reference": "docs/demo/music-seated-approved-reference.png",
+  "scope": "Use the user's explicitly approved 12-pose Fiery reference. Reduce only excessive extension; transfer motion to winter/time using each original idle. Whole painted frames, no limb transforms.",
+  "assets": [
+    {
+      "skin": "kiana-fiery-wishing-star-round",
+      "output": "assets/kiana-fiery-wishing-star-round-music-seated.png",
+      "prompt": "Use case: precise-object-edit. This exact attached 3-column x 4-row twelve-frame sprite sheet is APPROVED by the user for art style, colors, proportions, hair, lively star-highlight eyes, face, chair, seated direction and motion. Preserve it very closely. Make ONLY a small correction to the most extended feet: in row 1 column 1, row 3 column 3 and row 4 column 1, reduce the forward calf swing about 30 percent, keeping the knee gently bent, the foot lower and nearer the chair. The legs must remain naturally continuous anatomically, no seam across a knee, no detached calf or mechanical joint. Leave other poses and all upper-body drawings, white hair palette, purple-gray shading, eye expression, costume and small chair unchanged. Maintain distinct alternating left and right foot positions and gentle upper-body sway exactly as the reference. Do not homogenize poses or change their order. Both thighs and hips keep the same seated direction, no facing reversal. Crisp transparent sprite sheet, twelve complete figures in exactly 3 columns and 4 rows, ample transparent margin around each figure including top ponytail tips and boots. No background, no text, no glow or colored dust. This is minor leg correction, not a new design. Preserve reference image resolution and fine line detail."
+    },
+    {
+      "skin": "kiana-winter-wish-round",
+      "output": "assets/kiana-winter-wish-round-music-seated.png",
+      "prompt": "Use case: identity-preserve / costume transfer for a game sprite animation. Image 1 is the APPROVED twelve-pose MOTION, CHARACTER PROPORTION, FACE EXPRESSION and thin-line CHIBI RENDERING master: 3 columns,4 rows, Kiana seated quietly listening, opposite feet alternating gently, small torso sway, hips and chair facing fixed. Image 2 is Kiana WINTER WISH original approved idle COSTUME, HAIR COLOR, FACE and EYE reference. Redraw ALL TWELVE whole figures from image 1 wearing exactly image 2's winter blue-white dress, white-silver twin braids with crystalline tips, ice tiara, hair ornament and winter shoes. Match image 2's soft pale pearl-white hair with restrained cool lavender-gray shadows, fine muted blue-gray outlines, bright purple-to-cyan eyes with little white stars, pale skin and gentle smile. Maintain master image 1's small body to big head ratio, same twelve distinct leg poses in the SAME ORDER, same small bent-knee swing amplitude, same tiny simple four-legged stool, fixed hip position and same seated angle in every frame. Headphones small blue earcups suited to winter outfit. Small stool may be ice-blue cushioned but keep simple shape and size. No knee seams, no detached calves, no rigid straight kicks, no sole facing viewer. Do not turn body or reverse viewpoint. Not a front-facing static pose repeated twelve times. Preserve gentle upper-body lean differences and authentic left/right alternation of master. All twelve separated FULL characters, complete tiara and shoes with transparent margins, 3 columns and4 rows, sharp detailed illustration at reference resolution. Transparent background, no scenery, labels, drop shadow, glow, dust. Avoid saturated blue cast over white hair and heavy black outlines.",
+      "marginCorrection": "Precise sprite-sheet framing repair. Preserve ALL artwork, colors, face, hair, costume, twelve poses and order of attached image exactly. Only fix framing: scale each COMPLETE character-and-chair drawing down uniformly to 88% within its existing cell, yielding transparent breathing room all around. Three columns four rows remain. Reconstruct the tiny missing very top crystal tips on the first row, so every ice tiara is COMPLETE and at least 15px away from the top canvas edge. No other redraw or pose changes. Keep opposite-foot alternating swing and body angles exactly as supplied. Soft silver-white hair, subtle shadows and starry eyes unchanged. True transparent background without colored speckles outside figures, no halo, no text. Full sheet approximately 1088x1456 or larger, retain crisp detail."
+    },
+    {
+      "skin": "time-runner-kiana-round",
+      "output": "assets/time-runner-kiana-round-music-seated.png",
+      "prompt": "Use case: identity-preserve / costume transfer for a game sprite animation. Image 1 is the APPROVED twelve-pose MOTION, CHARACTER PROPORTION, FACE EXPRESSION and thin-line CHIBI RENDERING master: 3 columns,4 rows, Kiana seated quietly listening, opposite feet alternating gently, small torso sway, hips and chair facing fixed. Image 2 is Kiana TIME RUNNER original approved idle COSTUME, HAIR COLOR, FACE and EYE reference. Redraw ALL TWELVE whole figures from image 1 wearing exactly image 2's purple-white Time Runner dress, single long white-silver ponytail, purple crystal headpiece and purple-white shoes. Match image 2's soft pale pearl-white hair with restrained lavender-gray shadows, fine muted purple-gray outlines, bright purple-to-cyan eyes with little white stars, pale skin and gentle smile. Maintain master image 1's small body to big head ratio, same twelve distinct leg poses in the SAME ORDER, same small bent-knee swing amplitude, same tiny simple four-legged stool, fixed hip position and same seated angle in every frame. Headphones small purple earcups suited to purple outfit. Small stool may be muted purple cushioned but keep simple shape and size. No knee seams, no detached calves, no rigid straight kicks, no sole facing viewer. Do not turn body or reverse viewpoint. Not a front-facing static pose repeated twelve times. Preserve gentle upper-body lean differences and authentic left/right alternation of master. All twelve separated FULL characters, complete tiara and shoes with transparent margins, 3 columns and4 rows, sharp detailed illustration at reference resolution. Transparent background, no scenery, labels, drop shadow, glow, dust. Avoid saturated blue cast over white hair and heavy black outlines. Frame composition: each whole figure should occupy at most 86% of its cell height and 86% width, leaving an obvious transparent gutter and complete headpiece tips, no cropping."
+    }
+  ],
+  "playback": {
+    "drawings": 12,
+    "steps": 22,
+    "cycleMs": 2400,
+    "sequence": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ]
+  },
+  "validation": "Actual runtime frame exports checked on white and dark backgrounds, original idle comparison, complete knee/calf silhouettes. Automated bounds and playback tests supplement visual review; they do not prove identical art style."
+}

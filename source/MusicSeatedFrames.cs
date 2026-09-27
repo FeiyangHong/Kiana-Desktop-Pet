@@ -8,9 +8,9 @@ namespace KianaPet {
  // Each source cell is a complete painted character. No separated limbs,
  // bone transforms, image warping, or opacity interpolation at playback.
  public static class MusicSeatedFrames {
-  public const int FrameCount=8;
+  public const int FrameCount=12;
   public const double CycleMs=2400;
-  public static readonly int[] Sequence={0,1,2,3,4,5,6,7,6,5,4,3,2,1};
+  public static readonly int[] Sequence={0,1,2,3,4,5,6,7,8,9,10,11,10,9,8,7,6,5,4,3,2,1};
   static string cachedSkin;
   static BitmapSource[] cached;
   public static int FrameIndex(double elapsed) {
