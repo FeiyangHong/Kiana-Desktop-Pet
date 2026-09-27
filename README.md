@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.5-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.6-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -94,7 +94,7 @@ ChatGPT 图标读取本机已安装应用的浅色 / 深色图标，不依赖固
 
 ### 动作图鉴与长歌词滚动
 
-**设置 → 效果预览 → 动作图鉴** 可查看当前使用的20类动作，按日常互动、任务状态、音乐分类，支持切换六套衣装、暂停、逐帧、拖动时间轴、慢放及深浅背景。仅改变预览，不移动桌宠或触发真实任务；音乐专用动作仅三套 Q 版提供。
+**设置 → 效果预览 → 动作图鉴** 可查看20类动作，支持六套衣装、分类、暂停、逐帧、时间轴和深浅背景。选择动作后，在“当前动作速度”输入 **0.10–4.00 倍**，点击“应用到桌宠”保存；实际播放和预览使用相同倍速，六套衣装共用。所有动作默认 **1×**，**坐着听歌默认 0.25×**（完整循环9.6秒）。支持恢复此动作默认值和全部默认值，设置随通用偏好导出导入。坐下和起身可以分别调整；慢速一次性互动会延长动作时长，走动距离、通知停留和歌词滚动保持各自设置。仅切换衣装、动作或逐帧查看不会修改设置。音乐专用动作仅三套Q版提供。
 
 **设置 → 音乐 → 长歌词滚动** 可选择往返、单向停尾、按本句播放进度、不滚动四种方式，调整普通滚动速度与两端停留时间，并直接试播。按本句进度利用歌词时间戳，不是逐字卡拉 OK；无有效时间时回退往返。详见 [动画预览与歌词设置说明](docs/animation-preview-and-lyrics.md)。
 

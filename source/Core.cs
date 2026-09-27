@@ -10,6 +10,7 @@ namespace KianaPet {
  }
  public sealed class Config {
   public int Schema=1;
+  public Dictionary<string,double> AnimationSpeeds=new Dictionary<string,double>();
   public string[] SettingsCategoryOrder=new string[0];
   public string Skin="kiana-fiery-wishing-star-round";
   public int Size=176;
@@ -49,6 +50,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   AnimationTiming.Validate(this);
    LyricMotionRules.Validate(this);
    MusicReactions.Validate(this);
    SettingsCategoryOrder=KianaPet.SettingsCategoryOrder.Normalize(SettingsCategoryOrder);
