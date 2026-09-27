@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.8.7",
+  "version": "0.8.8",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -73,6 +73,7 @@
     "docs/music-animations.md",
     "docs/music-generation-0.8.3.json",
     "docs/music-generation-0.8.5.json",
+    "docs/music-generation-0.8.8.json",
     "install.ps1",
     "licenses/kiana-fiery-wishing-star-round/LICENSE",
     "licenses/kiana-fiery-wishing-star-round/README.md",

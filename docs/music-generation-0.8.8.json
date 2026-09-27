@@ -1,0 +1,103 @@
+{
+  "version": "0.8.8",
+  "approval": "User approved the three round-stool seated loops and second-pass sit/rise transitions, then requested installation.",
+  "tool": "Previously generated with built-in image_gen.imagegen; this release adopts exact approved files without regeneration.",
+  "assets": [
+    {
+      "skin": "kiana-winter-wish-round",
+      "source": "docs/art-preview/0.8.7/winter-seated-after.png",
+      "output": "assets/kiana-winter-wish-round-music-seated.png",
+      "sha256": "4b21dfbc11419c5555d59b09d6b285b33882ed6ab1230355abaae77a2e8558ac",
+      "prompt": "Use case: precise-object-edit. Image 1 is the EDIT TARGET: approved twelve-frame Kiana seated-listening sprite sheet, 3 columns x4 rows. Image 2 is ONLY the stool design reference. Change ONLY the simple square blue chair visible in every image1 cell into image2's small round stool: pale ice-blue circular cushion, blue-white cylindrical band decorated with white four-point stars, a small blue bow and pale ribbon at the front, short blue-white rounded feet. Fit its TOP at exactly the existing contact position under her butt so the entire character remains unmoved. Preserve image1's character pixel appearance as closely as possible: every face, eye highlight, hair color, hair shape, costume, all twelve distinct upper-body poses, knee/shoe positions and leg swings, identical figure scale, framing and order. Do not copy image2's character, body proportions, eyes or strong outline style. Keep all limbs complete painted into each frame, no seam or new joint. Only replace the visible stool portions behind and below her; respect foreground legs and clothing occlusion. New stool consistent shape, perspective and size across all twelve cells. Transparent background, not reference2's gradient backdrop; no glow, no shadow halo. Twelve whole sprites, original layout, margins, sharp detail. No text."
+    },
+    {
+      "skin": "kiana-winter-wish-round",
+      "source": "docs/art-preview/0.8.7/winter-transition-after.png",
+      "output": "assets/kiana-winter-wish-round-music-sit.png",
+      "sha256": "1af5a00061d09df91f225414932f0e16069fbbf05136dc3db04d21e086ea4088",
+      "prompt": "Create six COMPLETE painted animation keyframes of the SAME exact approved Kiana chibi from IMAGE1, in a spacious 2 columns x 3 rows contact sheet, transparent background. Image1 is the ABSOLUTE style/identity/model reference, not loose inspiration: copy her silver-gray shaded white hair, delicate soft violet-gray outline, softly shaded small face, cyan-violet glossy star eyes, compact chibi head/body proportions, exact outfit and ice-blue snowflake headphones. DO NOT reinterpret the art. Image2 gives ONLY the ICE BLUE ROUND STOOL design and sit-down gesture idea; DO NOT copy its character, thick outline, over-saturated blue colors, eye size, shoes, or anatomy. Image3 is original idle to reinforce precise character costume identity. Draw gradual sit-down movement: 1 standing immediately in front of round stool, 2 knees bend slightly, 3 hips lower halfway, 4 bottom contacts cushion, 5 settling one leg in front, 6 seated EXACTLY like first frame of IMAGE1 with same hip direction and relaxed bent alternating legs. Last frame must match image1's first pose so the loop joins. Full figure is always the same size; identical head size and facial structure across all6, stationary round stool. Pale blue cushion and short white/blue circular body with delicate white star pattern, blue bow with pale ribbon, and short white/blue feet, exactly image1. Preserve the exact blue/white winter dress, bare thighs, lace trim and original small blue winter shoes from IMAGE1. Keep the delicate ice crown and pale white hair with neutral gray-lavender shading; no blue hair tint. Light muted pastel painterly anime game chibi style from IMAGE1, never heavy saturated cartoon style from image2. Leave at least30px transparent margin around every figure in each512-square cell, no overlap between cells. Every knee joins calf naturally, no segmented joint lines. No body parts pasted or mechanical deformation. Entirely transparent alpha, no shadow/backdrop/glow/text. Only the sit/rise transition poses are newly painted; the approved12frame seated loop is not to be changed."
+    },
+    {
+      "skin": "kiana-fiery-wishing-star-round",
+      "source": "docs/art-preview/0.8.7/fiery-seated-after.png",
+      "output": "assets/kiana-fiery-wishing-star-round-music-seated.png",
+      "sha256": "a8de18f8b370063ebd1789e10e95a6bbf083e007d660cfcdb87f5d67ef1a6cd2",
+      "prompt": "Use case: precise-object-edit. Image 1 is the EDIT TARGET: approved twelve-frame Kiana seated-listening sprite sheet, 3 columns x4 rows. Image 2 is ONLY the stool design reference. Change ONLY the simple square red chair visible in every image1 cell into image2's small round stool: plush red circular cushion, dark wooden cylindrical rim with fine gold lines, little gold flower emblem and red plum blossom/tassel accent, short dark feet with gold end caps. Fit its TOP at exactly the existing contact position under her butt so the entire character remains unmoved. Preserve image1's character pixel appearance as closely as possible: every face, eye highlight, hair color, hair shape, costume, all twelve distinct upper-body poses, knee/shoe positions and leg swings, identical figure scale, framing and order. Do not copy image2's character, body proportions, eyes or strong outline style. Keep all limbs complete painted into each frame, no seam or new joint. Only replace the visible stool portions behind and below her; respect foreground legs and clothing occlusion. New stool consistent shape, perspective and size across all twelve cells. Transparent background, not reference2's gradient backdrop; no glow, no shadow halo. Twelve whole sprites, original layout, margins, sharp detail. No text."
+    },
+    {
+      "skin": "kiana-fiery-wishing-star-round",
+      "source": "docs/art-preview/0.8.7/fiery-transition-after.png",
+      "output": "assets/kiana-fiery-wishing-star-round-music-sit.png",
+      "sha256": "3ebbbb5ee08b3278d034432a0115b60f207c4d2c1854c63926a356fa2e4678d1",
+      "prompt": "Create six COMPLETE painted animation keyframes of the SAME exact approved Kiana chibi from IMAGE1, in a spacious 2 columns x 3 rows contact sheet, transparent background. Image1 is the ABSOLUTE style/identity/model reference, not loose inspiration: copy her silver-gray shaded white hair, delicate soft violet-gray outline, softly shaded small face, cyan-violet glossy star eyes, compact chibi head/body proportions, exact outfit and floral red headphones. DO NOT reinterpret the art. Image2 gives ONLY the RED ROUND STOOL design and sit-down gesture idea; DO NOT copy its character, thick outline, saturated red/blue colors, eye size, shoes, or anatomy. Image3 is original idle to reinforce precise character costume identity. Draw gradual sit-down movement: 1 standing immediately in front of round stool, 2 knees bend slightly, 3 hips lower halfway, 4 bottom contacts cushion, 5 settling one leg in front, 6 seated EXACTLY like first frame of IMAGE1 with same hip direction and relaxed bent alternating legs. Last frame must match image1's first pose so the loop joins. Full figure is always the same size; identical head size and facial structure across all6, stationary round stool. Red cushion and short dark circular body with gold trim/feet caps and flower ornament, exactly image1. Character has bare thighs and original dark red-black boots from IMAGE1, NO invented large floral shoe ornaments. Light muted pastel painterly anime game chibi style from IMAGE1, never heavy saturated cartoon style from image2. Leave at least30px transparent margin around every figure in each512-square cell, no overlap between cells. Every knee joins calf naturally, no segmented joint lines. No body parts pasted or mechanical deformation. Entirely transparent alpha, no shadow/backdrop/glow/text. Only the sit/rise transition poses are newly painted; the approved12frame seated loop is not to be changed."
+    },
+    {
+      "skin": "time-runner-kiana-round",
+      "source": "docs/art-preview/0.8.7/time-seated-after.png",
+      "output": "assets/time-runner-kiana-round-music-seated.png",
+      "sha256": "f5e14de20c3240f6f599cd5c70702f5ac9fca41a31db840a59593aaa8b5560ac",
+      "prompt": "Use case: precise-object-edit. Image 1 is the EDIT TARGET: approved twelve-frame Kiana seated-listening sprite sheet, 3 columns x4 rows. Image 2 is ONLY the stool design reference. Change ONLY the simple square purple chair visible in every image1 cell into image2's small round stool: pale lavender-white circular cushion, white cylindrical band outlined in violet, violet belt-like trim with a purple diamond crystal at the front, short white feet with violet end caps. Fit its TOP at exactly the existing contact position under her butt so the entire character remains unmoved. Preserve image1's character pixel appearance as closely as possible: every face, eye highlight, hair color, hair shape, costume, all twelve distinct upper-body poses, knee/shoe positions and leg swings, identical figure scale, framing and order. Do not copy image2's character, body proportions, eyes or strong outline style. Keep all limbs complete painted into each frame, no seam or new joint. Only replace the visible stool portions behind and below her; respect foreground legs and clothing occlusion. New stool consistent shape, perspective and size across all twelve cells. Transparent background, not reference2's gradient backdrop; no glow, no shadow halo. Twelve whole sprites, original layout, margins, sharp detail. No text."
+    },
+    {
+      "skin": "time-runner-kiana-round",
+      "source": "docs/art-preview/0.8.7/time-transition-after.png",
+      "output": "assets/time-runner-kiana-round-music-sit.png",
+      "sha256": "fc4cb7c254e246a4a823a1941c4a85b961f45d86075898e5a758effa5796aece",
+      "prompt": "Create six COMPLETE painted animation keyframes of the SAME exact approved Kiana chibi from IMAGE1, in a spacious 2 columns x 3 rows contact sheet, transparent background. Image1 is the ABSOLUTE style/identity/model reference, not loose inspiration: copy her silver-gray shaded white hair, delicate soft violet-gray outline, softly shaded small face, cyan-violet glossy star eyes, compact chibi head/body proportions, exact outfit and small purple patterned headphones. DO NOT reinterpret the art. Image2 gives ONLY the WHITE AND VIOLET ROUND STOOL design and sit-down gesture idea; DO NOT copy its character, thick outline, over-saturated purple/blue colors, eye size, shoes, or anatomy. Image3 is original idle to reinforce precise character costume identity. Draw gradual sit-down movement: 1 standing immediately in front of round stool, 2 knees bend slightly, 3 hips lower halfway, 4 bottom contacts cushion, 5 settling one leg in front, 6 seated EXACTLY like first frame of IMAGE1 with same hip direction and relaxed bent alternating legs. Last frame must match image1's first pose so the loop joins. Full figure is always the same size; identical head size and facial structure across all6, stationary round stool. Pale lavender cushion and short white circular body with delicate violet outlines, a single purple diamond ornament and short white/violet feet, exactly image1. Preserve the exact white skirt, violet-and-white bodice, bare thighs, original white-purple delicate shoes, purple diamond hairpiece and purple earcups of IMAGE1. No invented star-glove details from image2; use image1 costume. Keep silver-white hair with subtle gray-lavender shading, not flat gray or saturated purple. Light muted pastel painterly anime game chibi style from IMAGE1, never heavy saturated cartoon style from image2. Leave at least30px transparent margin around every figure in each512-square cell, no overlap between cells. Every knee joins calf naturally, no segmented joint lines. No body parts pasted or mechanical deformation. Entirely transparent alpha, no shadow/backdrop/glow/text. Only the sit/rise transition poses are newly painted; the approved12frame seated loop is not to be changed."
+    }
+  ],
+  "calibration": [
+    {
+      "Skin": "kiana-winter-wish-round",
+      "PreviousVisibleHead": 212.82284421903512,
+      "VisibleHead": 202.1598272138229,
+      "JoinFace": [
+        160,
+        242.98920086393088
+      ],
+      "Bounds": [
+        33.43412526997841,
+        7.999999999999972,
+        374.2548596112311,
+        408.0
+      ]
+    },
+    {
+      "Skin": "kiana-fiery-wishing-star-round",
+      "PreviousVisibleHead": 209.9520679942679,
+      "VisibleHead": 206.61103852397355,
+      "JoinFace": [
+        160,
+        240.76913330957754
+      ],
+      "Bounds": [
+        34.13786277071702,
+        8.0,
+        331.00704755117397,
+        408.0
+      ]
+    },
+    {
+      "Skin": "time-runner-kiana-round",
+      "PreviousVisibleHead": 221.70939477997,
+      "VisibleHead": 219.2468619246862,
+      "JoinFace": [
+        160,
+        241.47280334728035
+      ],
+      "Bounds": [
+        24.853556485355654,
+        8.0,
+        363.76569037656907,
+        408.0
+      ]
+    }
+  ],
+  "playback": {
+    "seatedFrames": 12,
+    "transitionFrames": 6,
+    "seatedDefaultSpeed": 0.25,
+    "transitionDefaultSpeed": 1,
+    "method": "Whole painted frames; one shared character scale per costume across seated and transition groups; no limb transforms."
+  }
+}
