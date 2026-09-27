@@ -21,6 +21,8 @@ namespace KianaPet {
   public int NoticePreviewWidth=420,NoticePreviewCount=1;
   public string NoticeSourceStyle="icon-name";
   public string MusicSeatedStyle="classic";
+  public int MusicEntryDelaySeconds=3,MusicPlaybackGraceSeconds=5;
+  public bool MusicChorusImmediate=true,MusicContinueAcrossTracks=true;
   public string MusicReactionMode="quiet";public string MusicNormalAction="",MusicChorusAction="";public bool MusicChorusEnabled=true;public SongMusicPreference[] MusicSongPreferences=new SongMusicPreference[0];
   public bool LaunchChatGPTOnStart=false,LaunchMusicOnStart=false,NoticeSound=false,NoticeQuiet=false;public int CompletionNoticeSeconds=6,NotificationGraceSeconds=30;
   public bool HasPosition=false,LockPetPosition=false,LockMusicPosition=false,SmoothTransitions=true;

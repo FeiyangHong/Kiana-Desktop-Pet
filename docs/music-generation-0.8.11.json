@@ -1,0 +1,108 @@
+{
+  "version": "0.8.11",
+  "tool": "built-in imagegen",
+  "reference": "Original idle: assets/kiana-winter-wish-round.png, first 192x208 cell",
+  "scope": "Winter only: all three existing seated styles and shared sit/rise six complete frames. Preserve choreography; punchy nod remains shelved.",
+  "preview": "docs/art-preview/winter-idle-0.8.11/index.html",
+  "assets": [
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-nod.png",
+      "sha256": "169592035417db68e545b666badf1e7c75fd10cf8cdf3d3d271c8245b4fe5ab9"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-sway.png",
+      "sha256": "127cb6d1168309dd624c9e72b344bc195ec4c99ab6f5ddf700bb2099c9885a8d"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated.png",
+      "sha256": "9b5cc045e7212bf2e3ef0d8da5345b0f863e1698c0b41282cdc2ed0e9ddcbfa0"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-sit.png",
+      "sha256": "5148b5941d9e68f639a14369f313698a2da05cc0d5d8f68d8bced2d81e0be38d"
+    },
+    {
+      "path": "assets/music-seated-calibration.json",
+      "sha256": "7d4365027b2a4ea66b06e32f3ae280207d59eafc792e42cdb115ce85eed2ff63"
+    },
+    {
+      "path": "assets/music-seated-nod-calibration.json",
+      "sha256": "de7ba88ac17df945791c1cb028dcdacec25552a360caa41c50f28a2c66a02b4d"
+    },
+    {
+      "path": "assets/music-seated-sway-calibration.json",
+      "sha256": "8de7716b647555c8095f334cee944b6064ac0f58a822bb13b16642f1bb4ae719"
+    },
+    {
+      "path": "assets/music-sprite-calibration.json",
+      "sha256": "1336ad63385e5399d3912500e780040d6cd32d975917ea752aac4e24dd4fc5ab"
+    }
+  ],
+  "prompts": {
+    "tool": "built-in imagegen",
+    "prompts": {
+      "classic": "Precise style alignment, not a new animation.\nIMAGE 1 is the EDIT TARGET: Winter Wish Kiana classic seated listening twelve poses.\nIMAGE 2 is the ONLY authoritative ART STYLE reference: the original standing idle Kiana.\n\nRedraw the FINISH of all twelve image1 figures to look drawn by the SAME hand as image2. The reference is the original IDLE, not another music animation. Lock all target poses, leg swings, head tilt, face direction, hands, chair geometry, body proportions, scale and placement. Exactly 12 full figures in 3 columns and 4 rows. Preserve target's headphones and round decorated stool.\n\nSpecific style corrections: hair should be luminous PALE SILVER WHITE as image2, with a few soft light lavender-gray shadow planes, NOT metallic blue-gray gradients or heavy shaded chunks. Use image2's delicate muted blue-violet outlines, consistent thin weight, no near-black heavy contours or 3D rim lighting. Match light warm ivory-peach skin, subtle pink cheeks, soft diffuse shading. Costume blue is restrained clear sky/ice blue with white, same as image2, not electric cyan/royal blue, glossy saturation or luminous reflections. Small white/pale-blue details must remain readable. Preserve lively open purple-to-cyan eyes with prominent crisp WHITE STAR catchlights matching image2, cheerful small smile. Match the reference's soft 2D hand-drawn cel/watercolor finish, head/body proportion and hair highlight shape, while keeping the target's original anatomy and choreography intact. Do not copy the reference pose, shrink legs, enlarge eyes/head, change chair or erase clothing details.\nImage2 is a low-resolution enlarged idle sample: borrow its STYLE/COLOR, do not borrow its blur; output clean high-resolution contours.\n\nReal transparent alpha background, antialiased delicate edges, NO scene or glow/color halo/ground shadow, no white background from image2. Transparent outer padding and gutters, all crowns, hair ends, shoes and stool feet fully visible. Do not alter motion; no head-turn, mirrored frame or separated body parts.",
+      "sway": "Precise style alignment, not a new animation.\nIMAGE 1 is the EDIT TARGET: Winter Wish Kiana HEAD-SWAY seated listening twelve poses.\nIMAGE 2 is the ONLY authoritative ART STYLE reference: the original standing idle Kiana.\n\nRedraw the FINISH of all twelve image1 figures to look drawn by the SAME hand as image2. The reference is the original IDLE, not another music animation. The head-sway motion is already approved. Do not reduce or redesign its sway. Lock all target poses, leg swings, head tilt, face direction, hands, chair geometry, body proportions, scale and placement. Exactly 12 full figures in 3 columns and 4 rows. Preserve target's headphones and round decorated stool.\n\nSpecific style corrections: hair should be luminous PALE SILVER WHITE as image2, with a few soft light lavender-gray shadow planes, NOT metallic blue-gray gradients or heavy shaded chunks. Use image2's delicate muted blue-violet outlines, consistent thin weight, no near-black heavy contours or 3D rim lighting. Match light warm ivory-peach skin, subtle pink cheeks, soft diffuse shading. Costume blue is restrained clear sky/ice blue with white, same as image2, not electric cyan/royal blue, glossy saturation or luminous reflections. Small white/pale-blue details must remain readable. Preserve lively open purple-to-cyan eyes with prominent crisp WHITE STAR catchlights matching image2, cheerful small smile. Match the reference's soft 2D hand-drawn cel/watercolor finish, head/body proportion and hair highlight shape, while keeping the target's original anatomy and choreography intact. Do not copy the reference pose, shrink legs, enlarge eyes/head, change chair or erase clothing details.\nImage2 is a low-resolution enlarged idle sample: borrow its STYLE/COLOR, do not borrow its blur; output clean high-resolution contours.\n\nReal transparent alpha background, antialiased delicate edges, NO scene or glow/color halo/ground shadow, no white background from image2. Transparent outer padding and gutters, all crowns, hair ends, shoes and stool feet fully visible. Do not alter motion; no head-turn, mirrored frame or separated body parts.",
+      "nod": "Precise style alignment, not a new animation.\nIMAGE 1 is the EDIT TARGET: Winter Wish Kiana SIDE-NOD seated listening twelve poses.\nIMAGE 2 is the ONLY authoritative ART STYLE reference: the original standing idle Kiana.\n\nRedraw the FINISH of all twelve image1 figures to look drawn by the SAME hand as image2. The reference is the original IDLE, not another music animation. The larger side-nod motion is already approved. Do not reduce or redesign its nod. Lock all target poses, leg swings, head tilt, face direction, hands, chair geometry, body proportions, scale and placement. Exactly 12 full figures in 3 columns and 4 rows. Preserve target's headphones and round decorated stool.\n\nSpecific style corrections: hair should be luminous PALE SILVER WHITE as image2, with a few soft light lavender-gray shadow planes, NOT metallic blue-gray gradients or heavy shaded chunks. Use image2's delicate muted blue-violet outlines, consistent thin weight, no near-black heavy contours or 3D rim lighting. Match light warm ivory-peach skin, subtle pink cheeks, soft diffuse shading. Costume blue is restrained clear sky/ice blue with white, same as image2, not electric cyan/royal blue, glossy saturation or luminous reflections. Small white/pale-blue details must remain readable. Preserve lively open purple-to-cyan eyes with prominent crisp WHITE STAR catchlights matching image2, cheerful small smile. Match the reference's soft 2D hand-drawn cel/watercolor finish, head/body proportion and hair highlight shape, while keeping the target's original anatomy and choreography intact. Do not copy the reference pose, shrink legs, enlarge eyes/head, change chair or erase clothing details.\nImage2 is a low-resolution enlarged idle sample: borrow its STYLE/COLOR, do not borrow its blur; output clean high-resolution contours.\n\nReal transparent alpha background, antialiased delicate edges, NO scene or glow/color halo/ground shadow, no white background from image2. Transparent outer padding and gutters, all crowns, hair ends, shoes and stool feet fully visible. Do not alter motion; no head-turn, mirrored frame or separated body parts.",
+      "sit": "Precise style alignment of SIX sit-down / stand-up transition poses.\nIMAGE 1 is the edit target, SIX full figures, TWO columns by THREE rows; frame1 standing beside stool through frame6 seated. It also plays backwards for standing up. Keep all six poses, leg/knee/hand positions, head angles, stool shape, costume details, whole-character size and exact stage progression unchanged.\nIMAGE 2 is the authoritative ORIGINAL IDLE Kiana art style. Restyle target to match image2, do not use the target's glossy shading as the standard.\n\nMatch image2's pale SILVER-WHITE hair, very soft pale lavender-gray shadow planes, thin muted blue-violet outlines, warm light ivory-peach skin and gentle blush, restrained ice-blue/white clothes. The current target is too darkly outlined, blue/saturated and plastically shaded. Remove metallic gradients, harsh deep shadows, neon blue reflections and near-black edges. Use the same gentle 2D anime/chibi rendering as the original idle. Lively OPEN violet-to-cyan eyes with clear small white STAR catchlights matching idle, same cheerful smile and head/body ratio. Preserve high-resolution detail, no blur from the upscaled idle reference. No new outfit, no chair redesign, no leg or hip twist, no head yaw change. Preserve each specific frame's shape and action.\n\nThe output MUST have real transparent alpha background; omit ALL blue glow and background visible behind input1 (that is not part of the character). No ground shadow, aura, halos, gradients or vignette. Give all six COMPLETE full figures transparent gutters and margin including crown tips, shoes and stool feet. Six coherent whole painted characters, no separated body parts."
+    }
+  },
+  "calibration": [
+    {
+      "style": "classic",
+      "bounds": [
+        27.000113925916054,
+        28.061389303607996,
+        355.24383078003166,
+        414.2930561368136
+      ],
+      "scale": 1,
+      "offset": [
+        0,
+        -6.293056136813618
+      ]
+    },
+    {
+      "style": "sway",
+      "bounds": [
+        21.148118973897795,
+        24.86939205705255,
+        362.6918243553275,
+        410.0370598080731
+      ],
+      "scale": 1,
+      "offset": [
+        0,
+        -2.0370598080730815
+      ]
+    },
+    {
+      "style": "nod",
+      "bounds": [
+        22.74411759717549,
+        25.9333911392377,
+        358.43582802658705,
+        408.97306072588793
+      ],
+      "scale": 1,
+      "offset": [
+        0,
+        -0.9730607258879331
+      ]
+    },
+    {
+      "style": "sit",
+      "bounds": [
+        28.682505399568015,
+        0.2246220302375832,
+        389.805615550756,
+        424.414686825054
+      ],
+      "scale": 0.9429735234215886,
+      "offset": [
+        0,
+        7.788187372708755
+      ]
+    }
+  ]
+}

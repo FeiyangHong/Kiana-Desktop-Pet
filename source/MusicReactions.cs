@@ -16,7 +16,7 @@ namespace KianaPet {
   public static string Action(Config c,string id,bool chorus){string value=SongActionSetting(Preference(c,id),chorus);if(value=="inherit")value=GlobalAction(c,chorus);return value=="same"?Action(c,id,false):value;}
   public static string RuleText(Config c,string id){return "平时播放："+Label(Action(c,id,false))+"；进入副歌："+Label(Action(c,id,true))+"。没有副歌时间时使用平时动作。";}
   public static string ChooseAction(Config c,string id,bool chorus,double elapsed=0){string action=Action(c,id,chorus);if(action=="mixed")action=(Math.Max(0,elapsed)%60)<45?"quiet":"gentle";return action=="off"?null:"music-"+action;}
-  public static void Validate(Config c){c.MusicSeatedStyle=MusicSeatedFrames.NormalizeStyle(c.MusicSeatedStyle);if(!Modes.Contains(c.MusicReactionMode))c.MusicReactionMode="quiet";c.MusicNormalAction=GlobalAction(c,false);c.MusicChorusAction=GlobalAction(c,true);c.MusicSongPreferences=(c.MusicSongPreferences??new SongMusicPreference[0]).Where(p=>p!=null&&SongId(p.Id)).GroupBy(p=>p.Id).Select(g=>g.Last()).Reverse().Take(100).Reverse().ToArray();foreach(var p in c.MusicSongPreferences){if(!Modes.Contains(p.Mode))p.Mode="inherit";p.NormalAction=SongActionSetting(p,false);p.ChorusAction=SongActionSetting(p,true);p.Title=(p.Title??"").Substring(0,Math.Min(120,(p.Title??"").Length));if(!Finite(p.Start)||p.Start<0||p.Start>86400)p.Start=-1;if(!ValidRange(p.Start,p.End,0))p.End=-1;}}
+  public static void Validate(Config c){c.MusicEntryDelaySeconds=Math.Max(0,Math.Min(30,c.MusicEntryDelaySeconds));c.MusicPlaybackGraceSeconds=Math.Max(0,Math.Min(15,c.MusicPlaybackGraceSeconds));c.MusicSeatedStyle=MusicSeatedFrames.NormalizeStyle(c.MusicSeatedStyle);if(!Modes.Contains(c.MusicReactionMode))c.MusicReactionMode="quiet";c.MusicNormalAction=GlobalAction(c,false);c.MusicChorusAction=GlobalAction(c,true);c.MusicSongPreferences=(c.MusicSongPreferences??new SongMusicPreference[0]).Where(p=>p!=null&&SongId(p.Id)).GroupBy(p=>p.Id).Select(g=>g.Last()).Reverse().Take(100).Reverse().ToArray();foreach(var p in c.MusicSongPreferences){if(!Modes.Contains(p.Mode))p.Mode="inherit";p.NormalAction=SongActionSetting(p,false);p.ChorusAction=SongActionSetting(p,true);p.Title=(p.Title??"").Substring(0,Math.Min(120,(p.Title??"").Length));if(!Finite(p.Start)||p.Start<0||p.Start>86400)p.Start=-1;if(!ValidRange(p.Start,p.End,0))p.End=-1;}}
   public static double Position(MusicState state,DateTime now){return Math.Max(0,state.Position)+(state.Playing?Math.Min(1.2,Math.Max(0,(now-state.At).TotalSeconds)):0);}
   public static bool InChorus(double position,ChorusRange[] ranges,double duration){return (ranges??new ChorusRange[0]).Any(r=>r!=null&&ValidRange(r.Start,r.End,duration)&&position>=Math.Max(0,r.Start-1)&&position<r.End);}
   public static ChorusRange[] Ranges(Config c,MusicState state,ChorusRange[] remote){var p=Preference(c,state.Id);return p!=null&&ValidRange(p.Start,p.End,state.Duration)?new[]{new ChorusRange{Start=p.Start,End=p.End}}:remote??new ChorusRange[0];}
@@ -32,14 +32,26 @@ namespace KianaPet {
  }
  // Timing follows the player's position, so seeking and repeat playback need no separate clock.
  public sealed class MusicReactionPlanner {
-  string identity="";double started,lastPlaying;bool active;
+  string identity="",lastAction;double started,lastPlaying=double.NegativeInfinity,enteredAt;bool active,entered;
+  void Reset(double now){active=entered=false;started=now;lastAction=null;lastPlaying=double.NegativeInfinity;}
   public string Choose(MusicState state,Config config,ChorusRange[] ranges,double now,DateTime utc,bool allowed){
-   string key=MusicLibrary.Identity(state);if(key!=identity){identity=key;started=now;active=false;lastPlaying=double.NegativeInfinity;}
-   if(!state.Connected||utc-state.At>TimeSpan.FromSeconds(6)){active=false;started=now;return null;}
-   if(state.Playing){if(!active){active=true;started=now;}lastPlaying=now;}else if(now-lastPlaying>3){active=false;started=now;return null;}
-   if(!allowed||!config.MusicEnabled||config.ReduceMotion)return null;
-   if(!active||now-started<8)return null;var resolved=MusicReactions.Ranges(config,state,ranges);bool chorus=state.Playing&&MusicReactions.InChorus(MusicReactions.Position(state,utc),resolved,state.Duration);
-   return !state.Playing?(MusicReactions.Action(config,state.Id,false)=="off"?null:"music-quiet"):MusicReactions.ChooseAction(config,state.Id,chorus,now-started-8);
+   if(!config.MusicEnabled||config.ReduceMotion){Reset(now);return null;}
+   double grace=Math.Max(0,Math.Min(15,config.MusicPlaybackGraceSeconds)),age=Math.Max(0,(utc-state.At).TotalSeconds);
+   bool fresh=state.Connected&&age<=6,playing=fresh&&state.Playing;
+   string key=MusicLibrary.Identity(state);
+   if(fresh&&identity!=key){if(identity.Length>0&&!config.MusicContinueAcrossTracks)Reset(now);identity=key;}
+   if(active&&now-lastPlaying>Math.Max(grace,.001)&&!playing)Reset(now);
+   // Grace bridges short pauses, empty metadata and reconnects. Expiry is tied to
+   // the last fresh playing sample, so repeatedly reading stale data cannot extend it.
+   if(!playing){if(!entered){Reset(now);return null;}if(!allowed||!active)return null;return lastAction;}
+   if(!active){active=true;started=now;}
+   lastPlaying=Math.Max(lastPlaying,now-age);
+   if(!allowed)return null;
+   var resolved=MusicReactions.Ranges(config,state,ranges);bool chorus=MusicReactions.InChorus(MusicReactions.Position(state,utc),resolved,state.Duration);
+   if(!entered&&now-started<Math.Max(0,Math.Min(30,config.MusicEntryDelaySeconds))&&!(config.MusicChorusImmediate&&chorus))return null;
+   string action=MusicReactions.ChooseAction(config,state.Id,chorus,entered?now-enteredAt:0);
+   if(action!=null&&!entered){entered=true;enteredAt=now;}
+   lastAction=action;return action;
   }
  }
 }

@@ -79,6 +79,7 @@ namespace KianaPet {
    string linked=Settings.LinkChatGPT&&Link.Current.Connected&&!Link.Current.Stale&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10)?Link.Current.State:"idle";
 
    string musicAction=ChooseMusicReaction(now,!sleeping&&!pressed&&!dragging&&!quietActive&&interaction==null&&linked=="idle"&&(toolbarMenu==null||!toolbarMenu.IsOpen)&&!NoticePreviewOpen);
+   if(musicAction!=null){walkUntil=0;nextWalk=Math.Max(nextWalk,now+2);}
    bool canWalk=musicAction==null&&Settings.Walking&&!Settings.ReduceMotion&&clock.Elapsed.TotalSeconds>=interactionHoldUntil&&noticeCenter==null&&storageWindow==null&&!Settings.LockPetPosition&&!quietActive&&!sleeping&&!pressed&&!hover&&!ToolbarActive&&settingsWindow==null&&interaction==null&&linked=="idle";
    Native.Rect rect=Bounds();var area=Forms.Screen.FromHandle(handle).WorkingArea;if(ToolbarActive)interactionHoldUntil=now+1.8;if(CursorBlocksWalk(rect,DpiScale)){canWalk=false;walkUntil=0;nextWalk=Math.Max(nextWalk,now+2);}
    if(!Settings.LockPetPosition&&!pressed&&!ToolbarActive&&Settings.Gravity&&rect.Bottom<area.Bottom-3){velocity=Math.Min(750,velocity+1000*dt);MoveTo(rect.Left,Settings.ReduceMotion?area.Bottom-rect.Height:Math.Min(area.Bottom-rect.Height,rect.Top+velocity*dt));}else velocity=0;
