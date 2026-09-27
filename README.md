@@ -16,7 +16,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.6-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.7-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -85,6 +85,10 @@ ChatGPT 图标读取本机已安装应用的浅色 / 深色图标，不依赖固
 **音乐栏右键 → 这首歌的音乐动作** 可以分别覆盖两个阶段，也能标记副歌起点／终点。连续稳定播放约8秒后开始；暂停超过3秒、拖动、ChatGPT任务、睡眠及免打扰会中断或让出动作。应援时耳机保留。普通三套使用原动作。
 
 副歌数据属于非官方接入，部分歌曲没有数据或只提供一段；自动查询可关闭，手动标记仍可用。只查询歌曲ID，不录音或分析音量。动作使用绘制循环，尚不按真实BPM同步。
+
+在 **设置 → 音乐 → 已获取的副歌时间** 查看当前歌曲各段副歌的起止时间、接口来源和获取时间。手动标记单独显示并优先使用；关闭自动查询后仍能查看已有缓存，同时标明未启用。切歌会更新为新歌曲的数据，没有区间时显示查询状态。
+
+源码仓库中的 [圆凳与过渡修订试稿](docs/art-preview/0.8.7/index.html) 可离线查看三套动态对比；这些是待审阅素材，不随安装包应用，未覆盖已安装动画。
 
 可在设置中独立预览，或打开 [三套音乐动作动态对照](docs/demo/music-motion.html) 查看深浅背景、逐帧和过渡效果。两阶段设置与单曲偏好随通用偏好导出／导入迁移。
 
