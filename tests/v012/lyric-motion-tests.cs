@@ -10,7 +10,16 @@ class LyricMotionTests {
    music.Refresh(playing,longLine,null,false);await Task.Delay(100);Check(offset.X>=-2,"歌词换行后从开头重新播放");
    playing.Playing=false;music.Refresh(playing,longLine,null,false);await Task.Delay(80);Check(Math.Abs(offset.X)<1&&text.TextTrimming==TextTrimming.CharacterEllipsis,"暂停时停止滚动并省略超出部分");
    playing.Playing=true;MotionSettings.Reduced=true;music.Refresh(playing,longLine,null,false);await Task.Delay(80);Check(Math.Abs(offset.X)<1&&text.TextTrimming==TextTrimming.CharacterEllipsis,"减少动态效果时保持静态省略");
-   MotionSettings.Reduced=false;music.Close();passed=true;
+   MotionSettings.Reduced=false;
+   var configured=new Config{MusicLyricScroll="once",MusicLyricSpeed=120,MusicLyricStartHold=0,MusicLyricEndHold=2500};configured.Validate();var restored=PreferenceTransfer.Import(PreferenceTransfer.Export(configured,false));Check(restored.MusicLyricScroll=="once"&&restored.MusicLyricEndHold==2500,"滚动偏好可迁移");
+   var invalid=new Config{MusicLyricScroll="bad",MusicLyricSpeed=0,MusicLyricStartHold=-1,MusicLyricEndHold=99999};invalid.Validate();Check(invalid.MusicLyricScroll=="bounce"&&invalid.MusicLyricSpeed==15&&invalid.MusicLyricStartHold==0&&invalid.MusicLyricEndHold==10000,"异常滚动设置有界且兼容旧配置");
+   var lines=MusicLibrary.ParseLrc("[00:01.00]相同一句\n[00:03.00]相同一句\n[00:08.00]最后一句");var sample=new MusicState{Id="123",Position=2,Duration=12,At=DateTime.UtcNow};var first=MusicLibrary.CueAt(lines,sample,"");sample.Position=4;var second=MusicLibrary.CueAt(lines,sample,"");Check(first.Text==second.Text&&first.Key!=second.Key&&first.End==3&&second.End==8,"相同文本的不同歌词行具有独立时间身份");sample.Position=9;Check(MusicLibrary.CueAt(lines,sample,"").End==12,"末句可使用歌曲结束时间");sample.Duration=0;Check(!MusicLibrary.CueAt(lines,sample,"").Timed,"缺少末句结束时间时回退普通滚动");
+   pet.Settings.MusicLyricScroll="once";pet.Settings.MusicLyricSpeed=120;pet.Settings.MusicLyricStartHold=0;playing.Playing=true;string medium="这是一段用于测试单向停留的长歌词，抵达末尾后就留在那里。";music.Refresh(playing,medium,null,false);await Task.Delay(2400);double held=offset.X;Check(held<-10,"单向模式抵达歌词末尾");await Task.Delay(1600);Check(Math.Abs(offset.X-held)<1,"单向到底后不会折返或自动回头");
+   pet.Settings.MusicLyricScroll="progress";var cue=new LyricCue{Key="song:line1",Start=0,End=10,Position=8,SampleAt=DateTime.UtcNow};music.Refresh(playing,medium,null,false,cue);await Task.Delay(80);double late=offset.X;cue=new LyricCue{Key="song:line1",Start=0,End=10,Position=2,SampleAt=DateTime.UtcNow};music.Refresh(playing,medium,null,false,cue);await Task.Delay(80);Check(offset.X>late+20,"同一句回拖进度后歌词同步回到较早位置");
+   cue=new LyricCue{Key="song:line2",Start=10,End=20,Position=10,SampleAt=DateTime.UtcNow};music.Refresh(playing,medium,null,false,cue);Check(offset.X>-2,"连续相同文本的新一句也从开头开始");
+   pet.Settings.MusicLyricScroll="static";music.Refresh(playing,medium,null,false,cue);await Task.Delay(80);Check(Math.Abs(offset.X)<1&&text.TextTrimming==TextTrimming.CharacterEllipsis,"静态模式停止动画并保留全文提示");
+   pet.Settings.MusicLyricScroll="bounce";pet.Settings.MusicLyricEndHold=2500;var plan=LyricMotionRules.Animation(-120,pet.Settings);Check(plan.KeyFrames[3].KeyTime.TimeSpan-plan.KeyFrames[2].KeyTime.TimeSpan==TimeSpan.FromMilliseconds(2500),"折返前停留时间使用独立设置");
+   music.Close();passed=true;
   }catch(Exception e){Store.Atomic("lyric-motion-error.json",new{error=e.ToString()});}finally{Store.Atomic("lyric-motion-tests.json",new{passed,checks});if(music!=null&&music.IsVisible)music.Close();foreach(var w in app.Windows.Cast<Window>().Where(w=>w!=pet).ToArray())w.Close();pet.Close();}};app.Run(pet);return passed?0:1;
  }
 }

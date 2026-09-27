@@ -36,6 +36,8 @@ namespace KianaPet {
   public int BackupKeepCount=3;
   public string[] MutedNoticeSources=new string[0];
   public bool MusicEnabled=true,MusicLyrics=false;
+  public string MusicLyricScroll="bounce";
+  public int MusicLyricSpeed=45,MusicLyricStartHold=700,MusicLyricEndHold=700;
   public bool ToolbarPinned=false,ToolbarFollowMusic=false,YieldToMenus=true;
   public int MusicScalePercent=100,MusicWidth=238;
   public bool MusicHoverOnly=true,MusicHasPosition=false;
@@ -47,6 +49,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   LyricMotionRules.Validate(this);
    MusicReactions.Validate(this);
    SettingsCategoryOrder=KianaPet.SettingsCategoryOrder.Normalize(SettingsCategoryOrder);
    if(!NoticeSourceIcons.Styles.Contains(NoticeSourceStyle))NoticeSourceStyle="icon-name";

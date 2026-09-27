@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -14,10 +14,10 @@ namespace KianaPet {
   async void PollMusic(object sender,EventArgs e){if(musicPolling||quitting)return;musicPolling=true;try{await Music.Poll(Settings.MusicEnabled);if(quitting)return;musicLibrary.Update(Music.Current,Settings.MusicEnabled&&Settings.MusicLyrics);RefreshMusicChorus();UpdateMusic();}finally{musicPolling=false;if(!quitting){musicFailures=Music.Current.Connected?0:musicFailures+1;double normal=!Settings.MusicEnabled||sessionLocked||!IsVisible?4:.85;musicTimer.Interval=TimeSpan.FromSeconds(Settings.ResourceSaving?PolishRules.RetrySeconds(musicFailures,normal):.85);}}}
   readonly MusicSurfaceAppearance toolbarMusicAppearance=new MusicSurfaceAppearance();
   void UpdateMusic(){bool fresh=Music.Current.Connected&&DateTime.UtcNow-Music.Current.At<=TimeSpan.FromSeconds(6);toolbarMusicAppearance.Apply(hoverBar,MusicCoverForAppearance,Settings,Settings.ToolbarFollowMusic&&Settings.MusicEnabled&&fresh);if(!Settings.MusicEnabled||!IsVisible||manualHidden||fullscreenHidden||pressed||dragging||!Music.Current.Connected||(!Settings.MusicPausedCard&&!Music.Current.Playing)||DateTime.UtcNow-Music.Current.At>TimeSpan.FromSeconds(6)){musicUntil=0;if(musicWindow!=null)musicWindow.HideSoft(true);return;}
-   if(menuLayerYielding){if(musicWindow!=null){musicWindow.Refresh(Music.Current,musicLibrary.Line(Music.Current),MusicCoverForAppearance,musicBusy);ApplyMenuLayers();}return;}
+   if(menuLayerYielding){if(musicWindow!=null){musicWindow.Refresh(Music.Current,musicLibrary.Line(Music.Current),MusicCoverForAppearance,musicBusy,musicLibrary.Cue(Music.Current));ApplyMenuLayers();}return;}
    bool show=MusicPlacement.HoverVisible(Settings.MusicHoverOnly,hover||hoverBar.IsMouseOver||MusicHovered,musicWindow!=null&&musicWindow.IsDragging,clock.Elapsed.TotalSeconds,ref musicUntil);
    if(!show){if(musicWindow!=null)musicWindow.HideSoft(false);return;}
-   if(musicWindow==null)musicWindow=new MusicWindow(this);var state=Music.Current;musicWindow.Refresh(state,musicLibrary.Line(state),musicLibrary.CoverFor(state),musicBusy);musicWindow.ShowSoft();musicWindow.Follow(Bounds());
+   if(musicWindow==null)musicWindow=new MusicWindow(this);var state=Music.Current;musicWindow.Refresh(state,musicLibrary.Line(state),musicLibrary.CoverFor(state),musicBusy,musicLibrary.Cue(state));musicWindow.ShowSoft();musicWindow.Follow(Bounds());
   }
   public void FocusMusicControls(){if(!Settings.MusicEnabled||!Music.Current.Connected){Say("请先连接网易云音乐并开启音乐栏。",4);return;}musicUntil=clock.Elapsed.TotalSeconds+5;UpdateMusic();if(musicWindow!=null&&musicWindow.IsVisible)musicWindow.FocusControls();}
   public void SetMusicPosition(string position){Settings.MusicPosition=position;if(position=="free"&&!Settings.MusicHasPosition&&musicWindow!=null)musicWindow.SavePosition();ApplySettings();}

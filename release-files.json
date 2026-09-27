@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.8.3",
+  "version": "0.8.4",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -49,6 +49,9 @@
     "assets/time-runner-kiana-round-transition.png",
     "assets/time-runner-kiana-round.png",
     "assets/time-runner-kiana.png",
+    "docs/animation-preview-and-lyrics.md",
+    "docs/demo/animation-gallery.png",
+    "docs/demo/lyric-scroll-settings.png",
     "docs/demo/effect-preview.png",
     "docs/demo/music-actions.png",
     "docs/demo/music-frames-kiana-fiery-wishing-star-round.png",
