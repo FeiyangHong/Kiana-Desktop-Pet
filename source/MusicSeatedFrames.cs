@@ -17,13 +17,16 @@ namespace KianaPet {
    if(!MusicReactions.Finite(elapsed))return 0;
    return Sequence[(int)(Math.Max(0,elapsed)%CycleMs/CycleMs*Sequence.Length)%Sequence.Length];
   }
-  public static BitmapSource[] Load(string skin) {
-   if(cachedSkin==skin&&cached!=null)return cached;
+  public static string NormalizeStyle(string style){return style=="sway"?"sway":"classic";}
+  public static string StyleLabel(string style){return NormalizeStyle(style)=="sway"?"头部轻晃":"原版坐姿";}
+  public static BitmapSource[] Load(string skin,string style="classic") {
+   style=NormalizeStyle(style);string cacheKey=skin+":"+style;string suffix=style=="sway"?"-sway":"";
+   if(cachedSkin==cacheKey&&cached!=null)return cached;
    if(!MusicSprites.Supported(skin))return null;
-   var list=Store.Json.Deserialize<MusicSpriteCalibration[]>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-seated-calibration.json")));
+   var list=Store.Json.Deserialize<MusicSpriteCalibration[]>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-seated"+suffix+"-calibration.json")));
    var c=Array.Find(list,r=>r.Skin==skin);
    if(c==null||c.Frames==null||c.Frames.Length!=FrameCount||!MusicReactions.Finite(c.ReferenceHeadHeight)||c.ReferenceHeadHeight<120||c.ReferenceHeadHeight>300||!MusicReactions.Finite(c.ReferenceCenter)||!MusicReactions.Finite(c.ReferenceFoot))throw new InvalidDataException("坐姿完整帧校准无效");
-   var atlas=new BitmapImage();atlas.BeginInit();atlas.CacheOption=BitmapCacheOption.OnLoad;atlas.UriSource=new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets",skin+"-music-seated.png"));atlas.EndInit();atlas.Freeze();
+   var atlas=new BitmapImage();atlas.BeginInit();atlas.CacheOption=BitmapCacheOption.OnLoad;atlas.UriSource=new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets",skin+"-music-seated"+suffix+".png"));atlas.EndInit();atlas.Freeze();
    if(atlas.PixelWidth<768||atlas.PixelWidth>4096||atlas.PixelHeight>4096)throw new InvalidDataException("坐姿完整图集尺寸无效");
    var frames=new BitmapSource[FrameCount];
    for(int i=0;i<FrameCount;i++) {
@@ -36,7 +39,7 @@ namespace KianaPet {
     using(var dc=visual.RenderOpen())dc.DrawImage(raw,new Rect(c.ReferenceCenter-f.Center*scale,c.ReferenceFoot-f.Foot*scale,f.Width*scale,f.Height*scale));
     var frame=new RenderTargetBitmap(768,832,192,192,PixelFormats.Pbgra32);frame.Render(visual);frame.Freeze();frames[i]=frame;
    }
-   cachedSkin=skin;cached=frames;return frames;
+   cachedSkin=cacheKey;cached=frames;return frames;
   }
  }
 }

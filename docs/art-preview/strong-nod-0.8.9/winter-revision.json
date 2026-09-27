@@ -1,0 +1,16 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Create a precise animation revision of the attached approved seated Winter Wish Kiana sheet. Exactly 12 full characters arranged 3 columns × 4 rows, transparent background. Copy the matching original legs, hip, shoes and stool in each cell unchanged. Only the head, neck, shoulders and chest gently rock and nod side to side, with the pelvis anchored. Keep original camera and facial direction; no turning the face left/right.\n\nThe four ROWS are four successive phases of ONE HALF-SWING, NOT four separate repeated loops:\nROW 1 (all three drawings): noticeably lean head and shoulders toward image LEFT. The eyes' connecting line slopes UP from left to right ( / ). Chin dips gently. \nROW 2: a SMALLER LEFT lean, lifting toward upright. Eye line nearly horizontal.\nROW 3: a SMALL RIGHT lean, beginning to dip. Eye line nearly horizontal the other way.\nROW 4: noticeably lean toward image RIGHT. Eye line slopes DOWN from left to right ( \\ ). Chin dips gently.\nEvery next drawing changes just a little. The LAST row must be OPPOSITE the FIRST row, never return to the first pose in this sheet. Head roll about 12 degrees at the two extremes, upper torso about 6 degrees. Both eyes visible, same front-facing identity. No yaw. Preserve full original character proportions and frame placement. Don't twist hips or change chair direction.\n\nMatch approved style exactly: clean pale silver-white hair with soft lavender-gray shading, delicate violet-gray outlines, luminous OPEN violet-to-cyan eyes with little star highlights, gentle smile, white-blue winter outfit and headphones. Do not recolor darker/bluer, do not thicken outlines. No seam where head joins neck. A complete coherent painted character per frame, not separated body parts. Full crowns and hair within each cell, transparent gutters, no cast shadows or halos. Preserve all 12 distinct lower body poses.",
+  "reference": "../head-sway-0.8.8/winter-after.png",
+  "chosen": "exec-4b50ba17-0605-417c-b9ab-6f850ef5c2a4.png",
+  "rejected": [
+    {
+      "source": "exec-71df7e25-3193-4cc9-b0e4-edd61a3b356a.png",
+      "reason": "两侧点头区别不足"
+    },
+    {
+      "source": "exec-c1ce5c6a-3d23-4e5b-8d38-841210367fac.png",
+      "reason": "第三行至第四行的摆动方向跳变"
+    }
+  ]
+}

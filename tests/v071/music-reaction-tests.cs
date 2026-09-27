@@ -5,6 +5,14 @@ class MusicReactionTests {
  static BitmapImage Read(string path){var b=new BitmapImage();b.BeginInit();b.CacheOption=BitmapCacheOption.OnLoad;b.UriSource=new Uri(path);b.EndInit();b.Freeze();return b;}
  static void ContactSheet(){string[] skins={"kiana-winter-wish-round","kiana-fiery-wishing-star-round","time-runner-kiana-round"};var visual=new DrawingVisual();using(var dc=visual.RenderOpen()){dc.DrawRectangle(Brushes.White,null,new Rect(0,0,768,624));for(int row=0;row<3;row++){var atlas=Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets",skins[row]+".png"));dc.DrawImage(new CroppedBitmap(atlas,new Int32Rect(0,0,192,208)),new Rect(0,row*208,192,208));var frames=MusicSprites.Load(skins[row]);for(int col=1;col<4;col++)dc.DrawImage(frames[(col-1)*6],new Rect(col*192,row*208,192,208));}}var output=new RenderTargetBitmap(1536,1248,192,192,PixelFormats.Pbgra32);output.Render(visual);Save(output,"music-actions-comparison");}
  static void SeatedFrameTests(){
+   var styleConfig=new Config();Check(styleConfig.MusicSeatedStyle=="classic","existing seated style remains default");styleConfig.MusicSeatedStyle="invalid";styleConfig.Validate();Check(styleConfig.MusicSeatedStyle=="classic","unknown seated style safely falls back");styleConfig.MusicSeatedStyle="sway";Check(PreferenceTransfer.Import(PreferenceTransfer.Export(styleConfig,false)).MusicSeatedStyle=="sway","seated style migrates with common preferences");
+   foreach(string skin in new[]{"kiana-winter-wish-round","kiana-fiery-wishing-star-round","time-runner-kiana-round"}){
+    var classic=MusicSeatedFrames.Load(skin);var sway=MusicSeatedFrames.Load(skin,"sway");Check(sway.Length==12&&!ReferenceEquals(classic,sway),"distinct accepted sway frames: "+skin);foreach(var frame in sway)VerifyFrameEdges(frame);
+    int styleKey;Check(ReferenceEquals(MusicSprites.Playback(skin,"music-quiet",MusicReactions.SitTransitionMs+1200,false,false,out styleKey,"sway"),sway[11])&&styleKey==2011,"selected sway is used live with distinct redraw key");
+    var choice=AnimationGallery.Catalog.Single(a=>a.Id=="music-quiet");var pose=new AnimationPreviewSource(skin,"sway").Frame(choice,1200);Check(pose.SourceLabel.Contains("头部轻晃"),"gallery identifies selected seated variant");
+    Check(!ReferenceEquals(MusicSeatedFrames.Load(skin),MusicSeatedFrames.Load(skin,"sway")),"switching back cannot reuse wrong style cache");
+    var sheet=new DrawingVisual();using(var dc=sheet.RenderOpen())for(int i=0;i<12;i++)dc.DrawImage(sway[i],new Rect(i%4*192,i/4*208,192,208));var packed=new RenderTargetBitmap(1536,1248,192,192,PixelFormats.Pbgra32);packed.Render(sheet);Save(packed,"music-seated-sway-"+skin);
+   }
    Check(MusicSeatedFrames.FrameIndex(double.NaN)==0&&MusicSeatedFrames.FrameIndex(-1)==0,"invalid time is stable");
    Check(MusicSeatedFrames.FrameIndex(1200)==11&&MusicSeatedFrames.FrameIndex(2400)==0,"opposite extremum and closed cycle");
    for(int i=0;i<22;i++)Check(Math.Abs(MusicSeatedFrames.Sequence[i]-MusicSeatedFrames.Sequence[(i+1)%22])==1,"only adjacent painted frames, including loop seam");
@@ -41,6 +49,7 @@ class MusicReactionTests {
   state.Connected=false;Check(ChorusDisplay.Describe(config,state,ranges,"",null).Contains("连接并播放"),"断开时不显示为当前歌曲的有效副歌");
  }
  static void ChorusUiTests(PetWindow pet,SettingsWindow w){
+  var seatedChoice=(ComboBox)Field(w,"musicSeatedStyle");seatedChoice.SelectedIndex=1;Check(pet.Settings.MusicSeatedStyle=="sway"&&Store.Load().MusicSeatedStyle=="sway","real settings choice persists accepted sway");Set(pet,"state","music-quiet");Set(pet,"drawnMusicState","music-quiet");Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==2411,"switching style immediately redraws live seated pose");seatedChoice.SelectedIndex=0;Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==1411,"switching back immediately redraws original pose");
   var state=pet.Music.Current;string id=state.Id;bool enabled=pet.Settings.MusicChorusEnabled;state.Id="123";pet.Settings.MusicChorusEnabled=true;
   var cache=(Dictionary<string,ChorusCacheEntry>)Field(Field(pet,"chorusLibrary"),"cache");cache["123"]=new ChorusCacheEntry{Id="123",At=DateTime.UtcNow,Ranges=new[]{new ChorusRange{Start=30,End=60},new ChorusRange{Start=90,End=110}}};
   w.UpdateStatus();var text=(TextBlock)Field(w,"musicChorusTimes");Check(text.Text.Contains("第 2 段  01:30–01:50"),"真实设置页显示接口获取的多个区间");pet.Settings.MusicChorusEnabled=false;w.UpdateStatus();Check(text.Text.Contains("未启用"),"真实设置页关闭查询立即更新来源说明");
