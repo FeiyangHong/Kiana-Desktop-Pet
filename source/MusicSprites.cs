@@ -7,7 +7,7 @@ namespace KianaPet {
   public static bool Supported(string skin){return skin=="kiana-winter-wish-round"||skin=="kiana-fiery-wishing-star-round"||skin=="time-runner-kiana-round";}
   public static BitmapSource Playback(string skin,string state,double elapsed,bool reduced,bool rising,out int key,string seatedStyle="classic"){
    if(state=="music-quiet"&&(reduced||elapsed>=MusicReactions.SitTransitionMs)){
-    int index=reduced?0:MusicSeatedFrames.FrameIndex(elapsed-MusicReactions.SitTransitionMs);key=(MusicSeatedFrames.NormalizeStyle(seatedStyle)=="sway"?2000:1000)+index;return MusicSeatedFrames.Load(skin,seatedStyle)[index];
+    int index=reduced?0:MusicSeatedFrames.FrameIndex(elapsed-MusicReactions.SitTransitionMs);key=(MusicSeatedFrames.NormalizeStyle(seatedStyle)=="nod"?3000:MusicSeatedFrames.NormalizeStyle(seatedStyle)=="sway"?2000:1000)+index;return MusicSeatedFrames.Load(skin,seatedStyle)[index];
    }
    key=MusicReactions.PlaybackFrame(state,elapsed,reduced,rising);var frames=Load(skin);return frames==null?null:frames[key];
   }

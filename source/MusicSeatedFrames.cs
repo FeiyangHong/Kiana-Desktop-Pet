@@ -17,10 +17,10 @@ namespace KianaPet {
    if(!MusicReactions.Finite(elapsed))return 0;
    return Sequence[(int)(Math.Max(0,elapsed)%CycleMs/CycleMs*Sequence.Length)%Sequence.Length];
   }
-  public static string NormalizeStyle(string style){return style=="sway"?"sway":"classic";}
-  public static string StyleLabel(string style){return NormalizeStyle(style)=="sway"?"头部轻晃":"原版坐姿";}
+  public static string NormalizeStyle(string style){return style=="sway"||style=="nod"?style:"classic";}
+  public static string StyleLabel(string style){return NormalizeStyle(style)=="nod"?"侧向点头":NormalizeStyle(style)=="sway"?"头部轻晃":"原版坐姿";}
   public static BitmapSource[] Load(string skin,string style="classic") {
-   style=NormalizeStyle(style);string cacheKey=skin+":"+style;string suffix=style=="sway"?"-sway":"";
+   style=NormalizeStyle(style);string cacheKey=skin+":"+style;string suffix=style=="classic"?"":"-"+style;
    if(cachedSkin==cacheKey&&cached!=null)return cached;
    if(!MusicSprites.Supported(skin))return null;
    var list=Store.Json.Deserialize<MusicSpriteCalibration[]>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-seated"+suffix+"-calibration.json")));

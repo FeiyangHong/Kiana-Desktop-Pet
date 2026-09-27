@@ -13,6 +13,11 @@ class MusicReactionTests {
     Check(!ReferenceEquals(MusicSeatedFrames.Load(skin),MusicSeatedFrames.Load(skin,"sway")),"switching back cannot reuse wrong style cache");
     var sheet=new DrawingVisual();using(var dc=sheet.RenderOpen())for(int i=0;i<12;i++)dc.DrawImage(sway[i],new Rect(i%4*192,i/4*208,192,208));var packed=new RenderTargetBitmap(1536,1248,192,192,PixelFormats.Pbgra32);packed.Render(sheet);Save(packed,"music-seated-sway-"+skin);
    }
+   styleConfig.MusicSeatedStyle="nod";Check(PreferenceTransfer.Import(PreferenceTransfer.Export(styleConfig,false)).MusicSeatedStyle=="nod","accepted side nod survives preference validation and transfer");
+   foreach(string skin in new[]{"kiana-winter-wish-round","kiana-fiery-wishing-star-round","time-runner-kiana-round"}){
+    var nod=MusicSeatedFrames.Load(skin,"nod");Check(nod.Length==12,"twelve accepted nod frames: "+skin);foreach(var f in nod)VerifyFrameEdges(f);int key;Check(ReferenceEquals(MusicSprites.Playback(skin,"music-quiet",1920,false,false,out key,"nod"),nod[11])&&key==3011,"side nod live source and key differ from other styles");
+    var sheet=new DrawingVisual();using(var dc=sheet.RenderOpen())for(int i=0;i<12;i++)dc.DrawImage(nod[i],new Rect(i%4*192,i/4*208,192,208));var packed=new RenderTargetBitmap(1536,1248,192,192,PixelFormats.Pbgra32);packed.Render(sheet);Save(packed,"music-seated-nod-"+skin);
+   }
    Check(MusicSeatedFrames.FrameIndex(double.NaN)==0&&MusicSeatedFrames.FrameIndex(-1)==0,"invalid time is stable");
    Check(MusicSeatedFrames.FrameIndex(1200)==11&&MusicSeatedFrames.FrameIndex(2400)==0,"opposite extremum and closed cycle");
    for(int i=0;i<22;i++)Check(Math.Abs(MusicSeatedFrames.Sequence[i]-MusicSeatedFrames.Sequence[(i+1)%22])==1,"only adjacent painted frames, including loop seam");
@@ -49,7 +54,7 @@ class MusicReactionTests {
   state.Connected=false;Check(ChorusDisplay.Describe(config,state,ranges,"",null).Contains("连接并播放"),"断开时不显示为当前歌曲的有效副歌");
  }
  static void ChorusUiTests(PetWindow pet,SettingsWindow w){
-  var seatedChoice=(ComboBox)Field(w,"musicSeatedStyle");seatedChoice.SelectedIndex=1;Check(pet.Settings.MusicSeatedStyle=="sway"&&Store.Load().MusicSeatedStyle=="sway","real settings choice persists accepted sway");Set(pet,"state","music-quiet");Set(pet,"drawnMusicState","music-quiet");Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==2411,"switching style immediately redraws live seated pose");seatedChoice.SelectedIndex=0;Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==1411,"switching back immediately redraws original pose");
+  var seatedChoice=(ComboBox)Field(w,"musicSeatedStyle");seatedChoice.SelectedIndex=1;Check(pet.Settings.MusicSeatedStyle=="sway"&&Store.Load().MusicSeatedStyle=="sway","real settings choice persists accepted sway");Set(pet,"state","music-quiet");Set(pet,"drawnMusicState","music-quiet");Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==2411,"switching style immediately redraws live seated pose");seatedChoice.SelectedIndex=2;Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==3411&&Store.Load().MusicSeatedStyle=="nod","third settings option saves and redraws side nod");seatedChoice.SelectedIndex=0;Call(pet,"DrawAnimation",5520d);Check((int)Field(pet,"lastFrame")==1411,"switching back immediately redraws original pose");
   var state=pet.Music.Current;string id=state.Id;bool enabled=pet.Settings.MusicChorusEnabled;state.Id="123";pet.Settings.MusicChorusEnabled=true;
   var cache=(Dictionary<string,ChorusCacheEntry>)Field(Field(pet,"chorusLibrary"),"cache");cache["123"]=new ChorusCacheEntry{Id="123",At=DateTime.UtcNow,Ranges=new[]{new ChorusRange{Start=30,End=60},new ChorusRange{Start=90,End=110}}};
   w.UpdateStatus();var text=(TextBlock)Field(w,"musicChorusTimes");Check(text.Text.Contains("第 2 段  01:30–01:50"),"真实设置页显示接口获取的多个区间");pet.Settings.MusicChorusEnabled=false;w.UpdateStatus();Check(text.Text.Contains("未启用"),"真实设置页关闭查询立即更新来源说明");
