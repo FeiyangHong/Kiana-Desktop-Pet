@@ -49,7 +49,9 @@ namespace KianaPet {
   void SetToolbarVisible(bool show,bool immediate){
    if(immediate){if(!toolbarShown&&hoverBar.Visibility==Visibility.Hidden)return;toolbarShown=false;toolbarTransition++;hoverBar.BeginAnimation(OpacityProperty,null);toolbarScale.BeginAnimation(ScaleTransform.ScaleXProperty,null);toolbarScale.BeginAnimation(ScaleTransform.ScaleYProperty,null);toolbarSlide.BeginAnimation(TranslateTransform.YProperty,null);hoverBar.Opacity=0;toolbarScale.ScaleX=toolbarScale.ScaleY=.92;toolbarSlide.Y=-4;hoverBar.IsHitTestVisible=false;hoverBar.Visibility=Visibility.Hidden;return;}
    if(show==toolbarShown)return;toolbarShown=show;int transition=++toolbarTransition;
-   int revealDelay=0;if(show){if(musicWindow!=null&&!Settings.MusicHoverOnly){musicWindow.Follow(Bounds());if(musicWindow.DockMoving&&MotionSettings.Enabled)revealDelay=180;}hoverBar.Visibility=Visibility.Visible;hoverBar.IsHitTestVisible=true;}
+   // Resolve simultaneous music-card reveal before the first visible toolbar frame.
+   // Fade in the final palette, rather than fading between unrelated hidden colors.
+   int revealDelay=0;if(show){UpdateMusicCard();UpdateToolbarThemeCore(clock.Elapsed.TotalSeconds,true);if(musicWindow!=null&&!Settings.MusicHoverOnly){musicWindow.Follow(Bounds());if(musicWindow.DockMoving&&MotionSettings.Enabled)revealDelay=180;}hoverBar.Visibility=Visibility.Visible;hoverBar.IsHitTestVisible=true;}
    int duration=show?PetVisuals.ShowMs:PetVisuals.HideMs;DoubleAnimation fade=Motion(show?1:0,duration);if(revealDelay>0){hoverBar.BeginAnimation(OpacityProperty,null);hoverBar.Opacity=0;fade.BeginTime=TimeSpan.FromMilliseconds(revealDelay);}
    if(!show)fade.Completed+=delegate{if(transition==toolbarTransition&&!toolbarShown){hoverBar.Visibility=Visibility.Hidden;hoverBar.IsHitTestVisible=false;}};
    hoverBar.BeginAnimation(OpacityProperty,fade);toolbarScale.BeginAnimation(ScaleTransform.ScaleXProperty,Motion(show?1:.96,duration));toolbarScale.BeginAnimation(ScaleTransform.ScaleYProperty,Motion(show?1:.96,duration));toolbarSlide.BeginAnimation(TranslateTransform.YProperty,Motion(show?0:-3,duration));
