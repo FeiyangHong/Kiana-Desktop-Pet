@@ -114,13 +114,6 @@
     "licenses/time-runner-kiana/LICENSE",
     "licenses/time-runner-kiana/README.md",
     "shortcuts.ps1",
-    "source/HoverToolbar.cs",
-    "source/PetToolbarTheme.cs",
-    "source/SettingsSections.cs",
-    "source/SettingsToolbarTheme.cs",
-    "source/ToolbarBackdrop.cs",
-    "source/ToolbarIcons.cs",
-    "source/ToolbarTheme.cs",
     "update-worker.ps1",
     "启动独立桌宠.cmd",
     "安装独立桌宠.cmd"
