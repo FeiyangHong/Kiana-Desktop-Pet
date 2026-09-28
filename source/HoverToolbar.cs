@@ -27,7 +27,7 @@ namespace KianaPet {
    notificationBadge.Background=new SolidColorBrush(Color.FromRgb(65,123,238));notificationBadge.CornerRadius=new CornerRadius(7);notificationBadge.MinWidth=13;notificationBadge.Height=13;notificationBadge.Padding=new Thickness(2,0,2,0);notificationBadge.HorizontalAlignment=HorizontalAlignment.Right;notificationBadge.VerticalAlignment=VerticalAlignment.Top;notificationBadge.Margin=new Thickness(0,-3,-4,0);notificationBadge.IsHitTestVisible=false;notificationBadge.Visibility=Visibility.Hidden;
    notificationNumber.FontSize=9;notificationNumber.Foreground=Brushes.White;notificationNumber.TextAlignment=TextAlignment.Center;notificationBadge.Child=notificationNumber;badgeContainer.Children.Add(notificationBadge);notificationButton.Content=badgeContainer;buttons.Children.Add(notificationButton);ToolTipService.SetIsEnabled(notificationButton,false);SetupNoticePreview();
    root.MouseEnter+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};root.MouseLeave+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};
-   hoverBar.MouseEnter+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};
+   hoverBar.MouseEnter+=delegate{toolbarUntil=clock.Elapsed.TotalSeconds+.65;};hoverBar.IsVisibleChanged+=delegate{if(!hoverBar.IsVisible)toolbarGlass.Hide();};
   }
   Button ToolbarButton(string geometry,string tip,Action action){
    Image icon=ToolbarIcons.Create(geometry);

@@ -8,6 +8,12 @@
 
 ![音乐卡片](docs/demo/music.png)
 
+## 工具栏样式与简化设置（0.8.12）
+
+**设置 → 工具栏样式** 新增纯色、双色、三色、棱镜、极光、光晕、丝绸渐变与系统毛玻璃，共 9 种材质（含原有简洁）和 12 组配色预设。支持手动三色、音乐封面、当前服装、附近背景色；可调色彩强度、底板透明度、渐变方向、慢速流动与图标颜色。默认保留当前简洁样式及音乐跟随开关。
+
+音乐页顶部提供「打开 / 连接网易云音乐」和状态，ChatGPT 页顶部提供「打开 ChatGPT」「检查并修复联动」和状态。低频设置折叠收纳；搜索会展开匹配项，清空后恢复原展开状态。说明与系统毛玻璃限制见 [工具栏样式](docs/toolbar-styles.md)。
+
 ## 安装方法
 
 适用 Windows 10/11 x64，需 .NET Framework 4.8。已安装 Git 的电脑可在 PowerShell 中运行：
@@ -16,7 +22,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.11-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.12-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。

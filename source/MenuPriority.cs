@@ -1,4 +1,4 @@
-﻿using System;using System.Collections.Generic;using System.Linq;using System.Runtime.InteropServices;using System.Text;using System.Windows;using System.Windows.Threading;using Forms=System.Windows.Forms;
+using System;using System.Collections.Generic;using System.Linq;using System.Runtime.InteropServices;using System.Text;using System.Windows;using System.Windows.Threading;using Forms=System.Windows.Forms;
 namespace KianaPet {
  public sealed class MenuWindowInfo {public IntPtr Handle;public string ClassName;public Native.Rect Bounds;public long Style,ExStyle;public uint Dpi;}
  public static class MenuPriorityRules {
@@ -106,7 +106,7 @@ namespace KianaPet {
     if(fallbackMenu!=IntPtr.Zero&&(below==IntPtr.Zero||Native.IsAbove(below,fallbackMenu)))below=fallbackMenu;
     if(menuLayerYielding&&below==IntPtr.Zero)return;
     var handles=new List<IntPtr>{handle};if(musicWindow!=null)handles.Add(new System.Windows.Interop.WindowInteropHelper(musicWindow).Handle);
-    Native.SetPetLayer(handles.ToArray(),menuLayerYielding?below:IntPtr.Zero,force);
+    if(toolbarGlass.Handle!=IntPtr.Zero)handles.Add(toolbarGlass.Handle);Native.SetPetLayer(handles.ToArray(),menuLayerYielding?below:IntPtr.Zero,force);if(toolbarGlass.Available&&Native.IsPresented(toolbarGlass.Handle))Native.SetWindowPos(toolbarGlass.Handle,handle,0,0,0,0,0x1|0x2|0x10|0x200);
    }finally{menuLayerApplying=false;}
   }
   void UpdateMenuPriority(bool active){if(quitting)return;bool yield=Settings.YieldToMenus&&active;if(menuLayerYielding==yield){ApplyMenuLayers();return;}menuLayerYielding=yield;

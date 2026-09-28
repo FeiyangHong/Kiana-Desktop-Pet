@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -10,6 +10,9 @@ namespace KianaPet {
  }
  public sealed class Config {
   public int Schema=1;
+  public string ToolbarStyle="legacy",ToolbarColorSource="preset",ToolbarColor1="#A4E1FF",ToolbarColor2="#C7CAFF",ToolbarColor3="#F4FAFF",ToolbarIconColor="#29272D",ToolbarLineColor="#C3C4DA";
+  public int ToolbarPreset=0,ToolbarTint=55,ToolbarOpacity=85,ToolbarDirection=2,ToolbarFlowSeconds=18,ToolbarGlassFog=30;
+  public bool ToolbarFlow=false,ToolbarAutoContrast=true;
   public Dictionary<string,double> AnimationSpeeds=new Dictionary<string,double>();
   public string[] SettingsCategoryOrder=new string[0];
   public string Skin="kiana-fiery-wishing-star-round";
@@ -53,7 +56,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
-   AnimationTiming.Validate(this);
+   ToolbarTheme.Validate(this);AnimationTiming.Validate(this);
    LyricMotionRules.Validate(this);
    MusicReactions.Validate(this);
    SettingsCategoryOrder=KianaPet.SettingsCategoryOrder.Normalize(SettingsCategoryOrder);
