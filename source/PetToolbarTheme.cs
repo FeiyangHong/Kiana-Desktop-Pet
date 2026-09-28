@@ -2,12 +2,17 @@ using System;using System.Linq;using System.Windows;using System.Windows.Control
 namespace KianaPet {
  public sealed partial class PetWindow {
   readonly ToolbarGlass toolbarGlass=new ToolbarGlass();Color[] toolbarBackdrop;double nextBackdrop;string toolbarThemeKey="";System.Windows.Media.Imaging.BitmapSource toolbarCover;Color? toolbarInk;Color[] toolbarColors;
+  // Use the card's presentation target so fades switch once, not on every opacity tick.
+  public bool ToolbarFollowingMusic {get{return Settings.ToolbarFollowMusic&&Settings.MusicEnabled&&musicWindow!=null&&musicWindow.PresentationActive&&Music.Current.Connected&&DateTime.UtcNow-Music.Current.At<=TimeSpan.FromSeconds(6);}}
+  bool toolbarWasFollowing;
   public Color[] ToolbarBackgroundColors{get{return toolbarBackdrop;}}
   public string ToolbarMaterialStatus{get{return Settings.ToolbarStyle!="glass"?"":toolbarGlass.Available?"系统毛玻璃已启用；雾度控制底板遮盖，模糊半径由 Windows 管理。":"毛玻璃在工具栏显示时启用；系统不支持时使用半透明柔光底板。";}}
   void UpdateToolbarTheme(double now){
+   bool following=ToolbarFollowingMusic;
+   if(following!=toolbarWasFollowing){toolbarWasFollowing=following;toolbarThemeKey="";toolbarMusicAppearance.Invalidate();}
    bool shown=ToolbarVisible&&IsVisible&&!manualHidden&&!fullscreenHidden&&!sessionLocked&&!pressed&&!dragging;
-   if(Settings.ToolbarColorSource=="background"&&Settings.ToolbarStyle!="legacy"&&shown&&!menuLayerYielding&&now>=nextBackdrop){nextBackdrop=now+1;var read=ToolbarBackgroundSample.Read(Bounds());if(read!=null){if(toolbarBackdrop==null)toolbarBackdrop=read;else for(int i=0;i<3;i++)toolbarBackdrop[i]=PetPalette.Mix(toolbarBackdrop[i],read[i],.3);}}
-   if(Settings.ToolbarStyle=="legacy"){toolbarGlass.Hide();toolbarThemeKey="";hoverBar.BorderThickness=new Thickness(0);bool fresh=Music.Current.Connected&&DateTime.UtcNow-Music.Current.At<=TimeSpan.FromSeconds(6);if(toolbarInk.HasValue){toolbarInk=null;appliedDark=null;ApplyAppearance();toolbarMusicAppearance.Invalidate();}toolbarMusicAppearance.Apply(hoverBar,MusicCoverForAppearance,Settings,Settings.ToolbarFollowMusic&&Settings.MusicEnabled&&fresh);return;}
+   if(!following&&Settings.ToolbarColorSource=="background"&&Settings.ToolbarStyle!="legacy"&&shown&&!menuLayerYielding&&now>=nextBackdrop){nextBackdrop=now+1;var read=ToolbarBackgroundSample.Read(Bounds());if(read!=null){if(toolbarBackdrop==null)toolbarBackdrop=read;else for(int i=0;i<3;i++)toolbarBackdrop[i]=PetPalette.Mix(toolbarBackdrop[i],read[i],.3);}}
+   if(following||Settings.ToolbarStyle=="legacy"){toolbarGlass.Hide();toolbarThemeKey="";hoverBar.BorderThickness=new Thickness(0);if(toolbarInk.HasValue){toolbarInk=null;appliedDark=null;ApplyAppearance();toolbarMusicAppearance.Invalidate();}toolbarMusicAppearance.Apply(hoverBar,MusicCoverForAppearance,Settings,following);return;}
    var art=Settings.MusicEnabled&&Music.Current.Connected?MusicCoverForAppearance:null;string key=Settings.ToolbarStyle+"|"+Settings.ToolbarColorSource+"|"+Settings.ToolbarPreset+"|"+Settings.ToolbarTint+"|"+Settings.ToolbarOpacity+"|"+Settings.ToolbarColor1+Settings.ToolbarColor2+Settings.ToolbarColor3+Settings.ToolbarIconColor+Settings.ToolbarLineColor+Settings.ToolbarAutoContrast+Settings.ToolbarDirection+PetPalette.Dark;
    if(Settings.ToolbarColorSource=="background"&&toolbarBackdrop!=null)key+=string.Join("",toolbarBackdrop.Select(c=>c.ToString()));
    if(key!=toolbarThemeKey||!ReferenceEquals(art,toolbarCover)){

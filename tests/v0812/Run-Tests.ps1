@@ -11,7 +11,7 @@ foreach($reference in @('System.dll','System.Core.dll','System.Drawing.dll','Sys
 $arguments+=(Join-Path $PSScriptRoot 'toolbar-theme-tests.cs')
 & (Join-Path $framework 'csc.exe') $arguments
 if($LASTEXITCODE -ne 0){throw 'Theme test compilation failed'}
-$process=Start-Process -FilePath (Join-Path $runtime 'ToolbarThemeTests.exe') -ArgumentList ('"'+$state+'"') -WindowStyle Hidden -PassThru
+$process=Start-Process -FilePath (Join-Path $runtime 'ToolbarThemeTests.exe') -ArgumentList ('"'+$state+'" "'+$repo+'"') -WindowStyle Hidden -PassThru
 if(-not $process.WaitForExit(45000)){throw ('Theme tests timed out: '+$state)}
 if($process.ExitCode -ne 0){throw ('Theme tests failed: '+$state)}
 Write-Output ('PASS toolbar-theme-tests; reports: '+$state)

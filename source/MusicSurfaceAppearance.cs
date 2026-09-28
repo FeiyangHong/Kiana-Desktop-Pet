@@ -13,11 +13,11 @@ namespace KianaPet {
    var solid=surface.Background as SolidColorBrush;var gradient=surface.Background as LinearGradientBrush;
    if(mode=="solid"){
     Color target=PetPalette.MusicSurface(accent,PetPalette.Dark,tint,config.MusicTintStrength);
-    if(solid==null||solid.IsFrozen){Color from=gradient!=null?PetPalette.Mix(gradient.GradientStops[0].Color,gradient.GradientStops[1].Color,.5):target;solid=PetPalette.Brush(from);surface.Background=solid;}
+    if(solid==null||solid.IsFrozen||solid.Opacity!=1){Color from=gradient!=null?PetPalette.Mix(gradient.GradientStops[0].Color,gradient.GradientStops[1].Color,.5):solid!=null?solid.Color:target;solid=PetPalette.Brush(from);surface.Background=solid;}
     AnimateColor(solid,SolidColorBrush.ColorProperty,target);
    }else{
     var colors=MusicGradient.Stops(coverColors,art!=null,PetPalette.Dark,tint,config.MusicTintStrength,mode);
-    if(gradient==null||gradient.IsFrozen){Color from=solid!=null?solid.Color:colors[0];gradient=MusicGradient.Brush(new[]{from,from});surface.Background=gradient;}
+    if(gradient==null||gradient.IsFrozen||gradient.GradientStops.Count!=2||gradient.Opacity!=1){Color from=solid!=null?solid.Color:gradient!=null&&gradient.GradientStops.Count>0?gradient.GradientStops[0].Color:colors[0];gradient=MusicGradient.Brush(new[]{from,from});surface.Background=gradient;}
     AnimateColor(gradient.GradientStops[0],GradientStop.ColorProperty,colors[0]);AnimateColor(gradient.GradientStops[1],GradientStop.ColorProperty,colors[1]);
    }return true;
   }

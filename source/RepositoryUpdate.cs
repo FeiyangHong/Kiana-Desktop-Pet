@@ -15,14 +15,14 @@ namespace KianaPet {
   }
  }
  public sealed partial class SettingsWindow {
-  TextBlock repositoryLocation;Button repositoryPull,repositoryBuild;
+  TextBlock repositoryLocation,repositorySummary;Button repositoryPull,repositoryBuild;
   void BuildRepositorySettings(Panel page){
-   TitleText(page,"仓库更新");repositoryLocation=new TextBlock{TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,8,0,8)};page.Children.Add(repositoryLocation);
-   repositoryPull=Button("拉取 GitHub 更新并应用",delegate{RunRepositoryUpdate(true);},true);repositoryBuild=Button("构建并运行本机修改",delegate{RunRepositoryUpdate(false);},false);page.Children.Add(repositoryPull);page.Children.Add(repositoryBuild);
-   page.Children.Add(Button("选择本机仓库目录…",delegate{using(var picker=new System.Windows.Forms.FolderBrowserDialog{Description="选择 Kiana-Desktop-Pet Git 仓库",SelectedPath=RepositoryUpdate.Find(Store.Root)??"",ShowNewFolderButton=false}){if(picker.ShowDialog()!=System.Windows.Forms.DialogResult.OK)return;try{RepositoryUpdate.Bind(picker.SelectedPath,Store.Root);RefreshRepositorySettings();}catch(Exception e){MessageBox.Show(this,e.Message,"仓库目录无效");}}},false));
-   Note(page,"拉取更新：仅快进拉取，有未提交修改或历史分叉时停止。构建本机修改：不拉取，直接构建当前源码。两者都会先构建和校验，再保存偏好、备份并重启桌宠；不会提交或推送代码。进度窗口会保留结果，重复运行会被拦截。仓库位置仅保存在本机。");RefreshRepositorySettings();
+   TitleText(page,"仓库更新");repositoryLocation=new TextBlock{TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,8,0,8)};
+   repositoryPull=Button("拉取 GitHub 更新并应用",delegate{RunRepositoryUpdate(true);},true);repositoryBuild=Button("构建并运行本机修改",delegate{RunRepositoryUpdate(false);},false);var actions=new WrapPanel();actions.Children.Add(repositoryPull);actions.Children.Add(repositoryBuild);page.Children.Add(actions);repositorySummary=new TextBlock{TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,8,0,8)};page.Children.Add(repositorySummary);var detail=Fold(page,"仓库目录与更新说明",false);detail.Children.Add(repositoryLocation);
+   detail.Children.Add(Button("选择本机仓库目录…",delegate{using(var picker=new System.Windows.Forms.FolderBrowserDialog{Description="选择 Kiana-Desktop-Pet Git 仓库",SelectedPath=RepositoryUpdate.Find(Store.Root)??"",ShowNewFolderButton=false}){if(picker.ShowDialog()!=System.Windows.Forms.DialogResult.OK)return;try{RepositoryUpdate.Bind(picker.SelectedPath,Store.Root);RefreshRepositorySettings();}catch(Exception e){MessageBox.Show(this,e.Message,"仓库目录无效");}}},false));
+   Note(detail,"拉取更新：仅快进拉取，有未提交修改或历史分叉时停止。构建本机修改：不拉取，直接构建当前源码。两者都会先构建和校验，再保存偏好、备份并重启桌宠；不会提交或推送代码。进度窗口会保留结果，重复运行会被拦截。仓库位置仅保存在本机。");RefreshRepositorySettings();
   }
-  void RefreshRepositorySettings(){string root=RepositoryUpdate.Find(Store.Root);repositoryLocation.Text=(root==null?"尚未选择本机 Git 仓库。":"源码仓库："+root)+"\n运行目录："+Store.Root;repositoryPull.IsEnabled=repositoryBuild.IsEnabled=root!=null;}
+  void RefreshRepositorySettings(){string root=RepositoryUpdate.Find(Store.Root);repositorySummary.Text=root==null?"尚未绑定仓库，请展开“仓库目录与更新说明”选择本机目录。":"获取另一台电脑的改动用“拉取更新”；应用本机源码改动用“构建并运行”。";repositoryLocation.Text=(root==null?"尚未选择本机 Git 仓库。":"源码仓库："+root)+"\n运行目录："+Store.Root;repositoryPull.IsEnabled=repositoryBuild.IsEnabled=root!=null;}
   void RunRepositoryUpdate(bool pull){try{string root=RepositoryUpdate.Find(Store.Root);RepositoryUpdate.Bind(root,Store.Root);Process.Start(RepositoryUpdate.Command(root,Store.Root,pull));}catch(Exception e){MessageBox.Show(this,e.Message,"更新未开始");}}
  }
 }
