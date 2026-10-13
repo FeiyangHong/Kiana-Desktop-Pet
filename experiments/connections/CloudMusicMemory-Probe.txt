@@ -1,0 +1,48 @@
+网易云只读内存进度探针（独立实验）
+
+不参与桌宠编译、安装或运行；不修改原有页面联动、系统媒体连接及用户偏好。
+只使用 Python 标准库；需要 Windows、64 位 Python 和已经运行的网易云。
+探针不会启动播放器，不会自动附着新进程，不会发送播放/暂停/切歌/定位指令。
+
+运行：
+  python .\experiments\connections\CloudMusicMemory-Probe.py --pid <网易云主进程编号> --expected-exe "D:\CloudMusic\CloudMusic\cloudmusic.exe" --profile .\experiments\connections\CloudMusicMemory-3.1.41-candidate.json --seconds 60 --output-prefix .\.local\connection-probes\memory-example
+
+--pid 必须显式指定；--expected-exe 必须匹配该进程的完整路径。
+--profile 必须与实际 cloudmusic.dll 的 SHA-256、文件大小、镜像大小、PE 时间戳完全一致。
+同一个网易云版本号也可能有不同二进制，不可忽略指纹或只改版本号绕过校验。
+输出前缀不可覆盖已有结果。默认不发起网络请求、不查询账号或 Cookie。
+
+读取范围：
+  进程权限只有 PROCESS_QUERY_INFORMATION | PROCESS_VM_READ（0x410）。
+  先校验进程、模块路径和精确文件指纹，再核对已加载镜像的 PE 时间戳。
+  只读配置中位于模块可写数据段的三个候选 RVA，以及固定、有限级数的歌曲 ID 指针链。
+  不扫描整个进程，不转储内存，不写入、不注入、不附加调试器、不调整权限。
+  单次读取不超过 256 字节，采样总量有限；连续三次无有效值则退出，不自行扩大范围。
+  歌曲标识只输出解析后的数字 ID；不保存原始字节、堆地址或无关字符串。
+  采样前后重读歌曲 ID、时长与位置，变化中的混合样本会拒绝。
+  用 SQLite 只读连接按精确歌曲 ID 查询本地历史记录，核对时长；查询结束即关闭连接。
+  日志只写到指定的实验结果目录；当前进程退出时停止，不重启或重新附着播放器。
+
+离线测试（只用模拟内存，不连接播放器）：
+  python .\experiments\connections\Test-CloudMusicMemory-Probe.py
+
+候选来源：
+  https://github.com/hanbinhsh/NetEase_Cloud_Music_Local_API/blob/4efc61a733ad9939f21bd5c7211abb4b78078fe3/offset_cache.json
+  参考候选的文件和镜像大小与本机一致，但源项目文件时间不同，因此未直接视为同一构建。
+  探针实现独立使用 Windows ReadProcessMemory；未执行或安装第三方项目及 pymem。
+
+2026-10-14 本机初步验证：
+  网易云 3.1.41.205529，以原主进程继续运行。
+  候选读到 206.85 秒，总时长 246.52 秒，歌曲 ID 2123750257。
+  歌曲 ID 与系统媒体的当前歌曲、只读数据库的歌曲/时长一致。
+  用户确认网易云显示 03:26，与内存秒数的整秒显示一致。
+  60 秒被动采样 120/120 次有效，时长交叉核对 120/120 次一致；总计读取约 25 KiB。
+  同期 60 次系统媒体采样均显示暂停、同一首歌，系统进度仍无效。
+  暂停场景的稳定性已验证；详细采样报告保存在本机 .local/connection-probes/。
+
+验证边界：
+  当前暂停。未为测试操作播放、拖动、切歌或重启。
+  播放时每秒递增、主动暂停/恢复、拖动跳转、切歌、单曲循环、最小化及重启后的基址重定位
+  仍需独立实测；本轮结果不能宣称已完整适配同步歌词或副歌切换。
+  有真实进度后，歌词仍需对应歌曲的时间轴，副歌动作仍需副歌区间数据。
+  原有 0.8.15 正式系统媒体连接仍未启用内存读取，也没有自动切换连接模式。

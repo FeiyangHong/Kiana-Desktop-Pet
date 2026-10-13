@@ -1,4 +1,8 @@
-独立连接方式验证工具（实验，尚未接管桌宠）
+独立连接方式验证工具
+
+说明：Hooks 与系统媒体已在 0.8.15 作为可选方式接入；下方一、二节保留接入前的实验记录。
+正式连接方式请参考 docs/optional-connections.md，不要用旧候选覆盖正式 Hooks 配置。
+新增只读内存进度实验见 CloudMusicMemory-Probe.txt；该探针尚未接入任何正式联动。
 
 本目录不参与 source/build.ps1 编译，也没有加入 release-files.json。
 现有 ChatGPT / 网易云 CDP 联动、运行程序、偏好及 notify 命令保持原样。

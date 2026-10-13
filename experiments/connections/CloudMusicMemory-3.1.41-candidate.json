@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "module": "cloudmusic.dll",
+  "status": "Candidate layout; paused position/ID/duration verified on 2026-10-14. Moving playback, seeking and track changes are not yet verified. Never selected by production.",
+  "fingerprint": {
+    "sha256": "7f667f876caf94bc3dac3b0070d3e495117005fafdcf18b6aaa51eb004edac8c",
+    "fileSize": 37747192,
+    "imageSize": 41054208,
+    "peTimestamp": 1789741933
+  },
+  "positionRva": 35288280,
+  "durationRva": 35735416,
+  "songRootRva": 35732080,
+  "songOffsets": [16, 0, 16, 104, 0],
+  "candidateSource": "https://github.com/hanbinhsh/NetEase_Cloud_Music_Local_API/blob/4efc61a733ad9939f21bd5c7211abb4b78078fe3/offset_cache.json",
+  "sourceFingerprintIsNotAnExactMatch": true
+}
