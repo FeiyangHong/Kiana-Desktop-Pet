@@ -8,19 +8,19 @@ namespace KianaPet {
  public static class CompanionLauncher {
   public static bool Running(string name){var list=Process.GetProcessesByName(name);try{return list.Length>0;}finally{foreach(var p in list)p.Dispose();}}
   public static ProcessStartInfo ChatGPT(bool interactive){string path=Path.Combine(CompanionPaths.SmoothRoot(),"app","scripts","launch.cmd");if(!File.Exists(path))throw new FileNotFoundException("请安装完整迁移包中的 ChatGPT 联动组件。",path);return new ProcessStartInfo{FileName=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),"cmd.exe"),Arguments="/d /k \"\""+path+"\"\"",UseShellExecute=true,WindowStyle=interactive?ProcessWindowStyle.Normal:ProcessWindowStyle.Hidden};}
-  public static void StartChatGPT(bool interactive){Process.Start(ChatGPT(interactive));}
-  public static void StartMusicQuietly(){string path=MusicBridge.FindApp();if(string.IsNullOrEmpty(path))throw new FileNotFoundException("没有找到网易云音乐客户端。" );Process.Start(new ProcessStartInfo{FileName=path,Arguments="--remote-debugging-port="+MusicBridge.Port+" --remote-debugging-address=127.0.0.1",WorkingDirectory=Path.GetDirectoryName(path),UseShellExecute=true});}
+  public static void StartChatGPT(bool interactive,bool ordinary=false){if(ordinary){if(!Running("ChatGPT"))Process.Start(new ProcessStartInfo{FileName="explorer.exe",Arguments=@"shell:AppsFolder\OpenAI.Codex_2p2nqsd0c76g0!App",UseShellExecute=true});return;}Process.Start(ChatGPT(interactive));}
+  public static void StartMusicQuietly(bool ordinary=false){string path=MusicBridge.FindApp();if(string.IsNullOrEmpty(path))throw new FileNotFoundException("没有找到网易云音乐客户端。" );Process.Start(new ProcessStartInfo{FileName=path,Arguments=ordinary?"":"--remote-debugging-port="+MusicBridge.Port+" --remote-debugging-address=127.0.0.1",WorkingDirectory=Path.GetDirectoryName(path),UseShellExecute=true});}
  }
  public sealed partial class PetWindow {
   bool startupHandled;public string StartupStatus{get;private set;}
-  public void LaunchChatGPT(){try{CompanionLauncher.StartChatGPT(true);}catch(Exception e){System.Windows.MessageBox.Show(e.Message,"打开 ChatGPT");}}
+  public void LaunchChatGPT(){try{CompanionLauncher.StartChatGPT(true,Settings.GPTConnectionMode!="cdp");}catch(Exception e){System.Windows.MessageBox.Show(e.Message,"打开 ChatGPT");}}
   async void StartCompanionApps(){if(startupHandled||preview)return;startupHandled=true;StartupStatus="启动选项已检查";await Task.Delay(700);if(quitting)return;
-   try{bool running=CompanionLauncher.Running("ChatGPT");if(StartupRules.ShouldLaunch(Settings.LaunchChatGPTOnStart,running,preview)){CompanionLauncher.StartChatGPT(false);StartupStatus="正在启动 ChatGPT";}}catch(Exception e){StartupStatus="ChatGPT 未启动："+e.Message;Store.Log(StartupStatus);}
-   try{bool running=CompanionLauncher.Running("cloudmusic");if(StartupRules.ShouldLaunch(Settings.LaunchMusicOnStart,running,preview)){CompanionLauncher.StartMusicQuietly();StartupStatus+=" · 正在启动网易云音乐";}}catch(Exception e){StartupStatus+=" · 音乐未启动："+e.Message;Store.Log(e.Message);}
+   try{bool running=CompanionLauncher.Running("ChatGPT");if(StartupRules.ShouldLaunch(Settings.LaunchChatGPTOnStart,running,preview)){CompanionLauncher.StartChatGPT(false,Settings.GPTConnectionMode!="cdp");StartupStatus="正在启动 ChatGPT";}}catch(Exception e){StartupStatus="ChatGPT 未启动："+e.Message;Store.Log(StartupStatus);}
+   try{bool running=CompanionLauncher.Running("cloudmusic");if(StartupRules.ShouldLaunch(Settings.LaunchMusicOnStart,running,preview)){CompanionLauncher.StartMusicQuietly(Settings.MusicConnectionMode!="cdp");StartupStatus+=" · 正在启动网易云音乐";}}catch(Exception e){StartupStatus+=" · 音乐未启动："+e.Message;Store.Log(e.Message);}
   }
   public async void RepairChatGPT(){if(busyPoll||quitting)return;busyPoll=true;try{
-   Link.StaleGraceSeconds=Settings.NotificationGraceSeconds;Link.RequestReconnect();await Link.Poll(Settings.LinkChatGPT,Settings.BackgroundMini);
-   string action=StartupRules.RepairAction(Link.Current.Code);
+   Link.StaleGraceSeconds=Settings.NotificationGraceSeconds;Link.RequestReconnect();await Link.Poll(Settings.LinkChatGPT,Settings.BackgroundMini,Settings.GPTConnectionMode);
+   if(Settings.GPTConnectionMode!="cdp"){ObserveBridgeNotifications();Say(Link.Current.Connected?"当前连接方式已同步。":"请检查本机 Hooks 的注册与信任；无需重启 GPT。",4);return;}string action=StartupRules.RepairAction(Link.Current.Code);
    if(action=="launcher")LaunchChatGPT();else if(action=="disabled")Say("请先开启 ChatGPT 联动。",4);
    ObserveBridgeNotifications();
   }finally{busyPoll=false;linkFailures=0;poll.Interval=TimeSpan.FromSeconds(2);if(settingsWindow!=null)settingsWindow.UpdateStatus();}}

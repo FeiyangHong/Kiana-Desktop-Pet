@@ -4,8 +4,8 @@ namespace KianaPet {
  public sealed class PackageManifest {public int schema;public string product,version;public PackageEntry[] files;}
  public sealed class PreparedUpdate {public string Folder,Version,Notes;public PackageManifest Manifest;}
  public static class Maintenance {
-  public const string Version="0.8.14";
-  public static bool RuntimeFile(string path){return Regex.IsMatch(path,@"^(assets/|licenses/|docs/demo/|docs/(?:music-animations|toolbar-styles)\.md$|docs/music-generation-\d+\.\d+\.\d+\.json$|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)");}
+  public const string Version="0.8.15";
+  public static bool RuntimeFile(string path){return Regex.IsMatch(path,@"^(assets/|licenses/|docs/demo/|docs/(?:music-animations|toolbar-styles|optional-connections)\.md$|docs/music-generation-\d+\.\d+\.\d+\.json$|KianaHookReceiver\.exe(?:\.config)?$|KianaDesktopPet\.exe(?:\.config)?$|README\.md$|CHANGELOG\.md$|ASSET_NOTICE\.md$|LICENSE$|update-worker\.ps1$)");}
   public static string SafePath(string root,string relative){if(string.IsNullOrWhiteSpace(relative)||relative.Contains(":")||relative.Contains("\\")||relative.StartsWith("/")||relative.Split('/').Any(p=>p==".."||p=="."||p.Length==0)||relative.Split('/').Any(p=>p.EndsWith(".")||p.EndsWith(" ")))throw new Exception("安装包包含无效路径。");string prefix=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;string target=Path.GetFullPath(Path.Combine(root,relative));if(!target.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))throw new Exception("文件超出安装范围。");return target;}
   public static string Hash(Stream stream){using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
   public static string Hash(string file){using(var s=File.OpenRead(file))return Hash(s);}
@@ -23,4 +23,3 @@ namespace KianaPet {
   public static void Launch(PreparedUpdate prepared,string preferenceSource){if(!Installed())throw new Exception("请先使用安装器安装桌宠，再从已安装版本更新。");VerifyRuntime(prepared.Folder);string job=Path.Combine(Store.Root,"update-jobs",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(job);string worker=Path.Combine(job,"update-worker.ps1");File.Copy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"update-worker.ps1"),worker);string config=Path.Combine(job,"job.json");Write(config,new{Root=Path.GetFullPath(Store.Root),Stage=prepared.Folder,ParentId=Process.GetCurrentProcess().Id,Version=prepared.Version,PreferenceSource=preferenceSource});Process.Start(new ProcessStartInfo{FileName=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),@"WindowsPowerShell\v1.0\powershell.exe"),Arguments="-NoLogo -NoProfile -ExecutionPolicy Bypass -File \""+worker+"\" -JobFile \""+config+"\"",UseShellExecute=false,CreateNoWindow=true,WindowStyle=ProcessWindowStyle.Hidden});}
  }
 }
-

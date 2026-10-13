@@ -9,7 +9,7 @@ namespace KianaPet {
  }
  public sealed partial class PetWindow {
   readonly NotificationTransitions notificationTransitions=new NotificationTransitions();
-  void ObserveBridgeNotifications(){if(!Settings.LinkChatGPT)return;foreach(var row in notificationTransitions.Update(Link.Current))noticeBatcher.Add(new TaskNotice{Source="ChatGPT",TaskId=row.Id,Title=string.IsNullOrWhiteSpace(row.Title)?"任务状态更新":row.Title,Status=row.State=="review"?"succeeded":row.State},DateTime.UtcNow,Settings.NoticeBatchSeconds);}
+  void ObserveBridgeNotifications(){if(!Settings.LinkChatGPT)return;foreach(var row in notificationTransitions.Update(Link.Current))noticeBatcher.Add(new TaskNotice{Source="ChatGPT",TaskId=row.Id,Title=string.IsNullOrWhiteSpace(row.Title)?"任务状态更新":row.Title,Status=row.State=="review"&&Link.Current.ConnectionSource!="hooks"?"succeeded":row.State},DateTime.UtcNow,Settings.NoticeBatchSeconds);}
   void ShowNoticeSummary(string summary){if(Settings.NoticeQuiet)return;if(summary.Length>100)summary=summary.Substring(0,97)+"…";Say(summary,Settings.CompletionNoticeSeconds);if(Settings.NoticeSound&&!quietActive&&!sessionLocked&&!manualHidden&&!fullscreenHidden&&!menuLayerYielding)SystemSounds.Asterisk.Play();}
   public bool NotificationsAvailable{get{return Settings.LinkChatGPT&&(Link.Current.Stale?Link.Current.LastSuccessAt.HasValue&&DateTime.UtcNow-Link.Current.LastSuccessAt.Value<TimeSpan.FromSeconds(Settings.NotificationGraceSeconds):Link.Current.Connected&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10));}}
   public async void OpenChatGPTTask(string id){if(!Link.Current.Connected||Link.Current.Stale){Say("连接恢复后再打开任务。",4);return;}try{await Link.OpenMainNotification(id);}catch{Say("任务暂时无法打开，请重新检测连接。",4);}}

@@ -63,8 +63,8 @@ namespace KianaPet {
    bool show=Settings.HoverToolbar&&IsVisible&&!manualHidden&&!fullscreenHidden&&!pressed&&!dragging&&(NoticePreviewOpen||Settings.ToolbarPinned||keyboardToolbarMode||(toolbarMenu!=null&&toolbarMenu.IsOpen)||hover||hoverBar.IsMouseOver||now<toolbarUntil||(Settings.MusicHoverOnly&&MusicInteractionActive));
    SetToolbarVisible(show,!Settings.HoverToolbar||!IsVisible||manualHidden||fullscreenHidden||pressed||dragging);
    bool live=Settings.LinkChatGPT&&Link.Current.Connected&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10);
-   voiceButton.IsEnabled=!toolbarBusy&&live&&Link.Current.CanVoice;chatButton.IsEnabled=!toolbarBusy;
-   voiceButton.ToolTip=live&&Link.Current.CanVoice?"开始 ChatGPT 语音聊天（使用 ChatGPT 的麦克风权限）":"请通过平滑启动器打开 ChatGPT 并显示 Mini；语音需在 ChatGPT 内可用";
+   voiceButton.IsEnabled=!toolbarBusy&&live&&Link.Current.CanVoice;chatButton.IsEnabled=!toolbarBusy&&Link.Current.ConnectionSource!="hooks";chatButton.ToolTip=Link.Current.ConnectionSource=="hooks"?"Hooks 只同步本地任务状态；聊天请在 GPT 中操作":"打开 ChatGPT 聊天";if(Link.Current.ConnectionSource=="hooks")voiceButton.ToolTip="Hooks 不提供语音入口；请在 GPT 中操作";
+   voiceButton.ToolTip=Link.Current.ConnectionSource=="hooks"?"Hooks 不提供语音入口；请在 GPT 中操作":live&&Link.Current.CanVoice?"开始 ChatGPT 语音聊天（使用 ChatGPT 的麦克风权限）":"请通过平滑启动器打开 ChatGPT 并显示 Mini；语音需在 ChatGPT 内可用";
    bool nativeNotifications=NotificationsAvailable&&Link.Current.CanNotifications&&Link.Current.NotificationCount>0;int localCount=LocalNoticeCount;bool hasNotifications=nativeNotifications||localCount>0;
    notificationButton.Visibility=hasNotifications||NoticePreviewOpen?Visibility.Visible:Visibility.Collapsed;notificationSeparator.Visibility=notificationButton.Visibility;
    if(hasNotifications){Color color=Color.FromRgb(128,130,135);if(System.Text.RegularExpressions.Regex.IsMatch(Link.Current.NotificationColor??"","^#[0-9a-fA-F]{6}$"))color=(Color)ColorConverter.ConvertFromString(Link.Current.NotificationColor);
@@ -79,7 +79,7 @@ namespace KianaPet {
   async void RunToolbarAction(string action){
    if(toolbarBusy)return;
    if(!Settings.LinkChatGPT||!Link.Current.Connected){Say("请在设置中连接 ChatGPT Mini。",5);OpenSettings();return;}
-   toolbarBusy=true;try{bool opened=await Link.InvokeToolbar(action);if(opened&&action=="notifications")await Link.Poll(Settings.LinkChatGPT,Settings.BackgroundMini);if(!opened){Say("ChatGPT 暂未提供这个入口，请在原 Mini 中操作。",5);if(action!="notifications")OpenSettings();}}
+   toolbarBusy=true;try{bool opened=await Link.InvokeToolbar(action);if(opened&&action=="notifications")await Link.Poll(Settings.LinkChatGPT,Settings.BackgroundMini,Settings.GPTConnectionMode);if(!opened){Say("ChatGPT 暂未提供这个入口，请在原 Mini 中操作。",5);if(action!="notifications")OpenSettings();}}
    catch(Exception e){Store.Log("Toolbar: "+e.Message);Say("联动暂不可用，请检查 ChatGPT Mini。",5);OpenSettings();}finally{toolbarBusy=false;}
   }
   void OpenMainNotificationMenu(){

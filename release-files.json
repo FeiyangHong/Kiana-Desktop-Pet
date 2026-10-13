@@ -1,11 +1,13 @@
 {
   "schema": 1,
-  "version": "0.8.14",
+  "version": "0.8.15",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
     "ChatGPT平滑联动组件.zip",
     "KianaDesktopPet.exe",
+    "KianaHookReceiver.exe",
+    "KianaHookReceiver.exe.config",
     "KianaDesktopPet.exe.config",
     "LICENSE",
     "README.md",
@@ -58,6 +60,7 @@
     "assets/time-runner-kiana-round.png",
     "assets/time-runner-kiana.png",
     "docs/animation-preview-and-lyrics.md",
+    "docs/optional-connections.md",
     "docs/art-preview/winter-idle-0.8.11/classic-after-display.png",
     "docs/art-preview/winter-idle-0.8.11/classic-before-display.png",
     "docs/art-preview/winter-idle-0.8.11/comparison.png",

@@ -3,7 +3,7 @@ namespace KianaPet {
  public static class NoticePreviewRows {
   public static NoticeRow[] Read(PetWindow pet){
    var rows=new List<NoticeRow>();var bridge=pet.Link.Current;
-   if(pet.NotificationsAvailable)foreach(var n in bridge.Notices)rows.Add(new NoticeRow{Key="gpt:"+n.Id,Source="ChatGPT",Id=n.Id,Title=string.IsNullOrWhiteSpace(n.Title)?"ChatGPT 任务":n.Title,State=n.State=="review"?"succeeded":n.State,UpdatedAt=n.UpdatedAt,Unread=true,ChatGPT=true,Stale=bridge.Stale,CanOpen=bridge.Connected&&!bridge.Stale});
+   if(pet.NotificationsAvailable)foreach(var n in bridge.Notices)rows.Add(new NoticeRow{Key="gpt:"+n.Id,Source="ChatGPT",Id=n.Id,Title=string.IsNullOrWhiteSpace(n.Title)?"ChatGPT 任务":n.Title,State=n.State=="review"&&bridge.ConnectionSource!="hooks"?"succeeded":n.State,UpdatedAt=n.UpdatedAt,Unread=true,ChatGPT=true,Stale=bridge.Stale,CanOpen=bridge.Connected&&!bridge.Stale&&bridge.CanOpenTasks});
    foreach(var n in pet.VisibleNotices.Where(n=>n.Unread||n.Status=="running"||n.Status=="failed"||n.Status=="waiting"))rows.Add(new NoticeRow{Key="local:"+n.Source.Length+":"+n.Source+n.TaskId,Source=n.Source,Id=n.TaskId,Title=n.Title,State=n.Status,UpdatedAt=n.UpdatedAt,Unread=n.Unread,CanOpen=pet.TaskNotices.CanOpen(n),Local=n});
    return rows.GroupBy(n=>n.Key).Select(g=>g.First()).OrderBy(n=>n.Group).ThenByDescending(n=>n.UpdatedAt).ThenBy(n=>n.Key,StringComparer.Ordinal).ToArray();
   }

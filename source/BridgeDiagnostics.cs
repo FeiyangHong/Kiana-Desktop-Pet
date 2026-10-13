@@ -1,7 +1,7 @@
 ﻿using System;using System.Net.Http;
 namespace KianaPet {
  public static class BridgeDiagnostics {
-  public static string ChannelName(string code){switch(code){case "ready":return "正常";case "closed":return "已关闭";case "preparing":return "正在准备";case "unsynced":return "未同步通知";case "no-response":return "未响应";case "unavailable":return "暂不可用";default:return "待检测";}}
+  public static string ChannelName(string code){switch(code){case "unused":return "此方式不使用";case "ready":return "正常";case "closed":return "已关闭";case "preparing":return "正在准备";case "unsynced":return "未同步通知";case "no-response":return "未响应";case "unavailable":return "暂不可用";default:return "待检测";}}
   public static void Set(BridgeState state,string code,string label,string hint){state.Code=code;state.Label=label;state.Hint=hint;}
   public static void Failure(BridgeState state,Exception error){
    state.Connected=state.CanChat=state.CanVoice=state.CanNotifications=false;state.NotificationCount=0;state.NotificationText=state.NotificationColor="";state.State="idle";string message=error.Message??"";state.MiniStatus=message.StartsWith("Mini 后台")?"closed":message=="Mini 状态查询超时"?"no-response":"unavailable";

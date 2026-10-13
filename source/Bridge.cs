@@ -10,11 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 namespace KianaPet {
- public sealed class BridgeState {public bool Stale,MainReady;public string MiniStatus="unknown",MainStatus="unknown";public string NotificationSource="mini";[ScriptIgnore]public BridgeNotice[] Notices=new BridgeNotice[0];public string Code="connecting",Hint="正在检测连接。";public DateTime? LastSuccessAt,LastChatAt,LastVoiceAt,LastNotificationsAt;public bool AppOpen; public bool Connected;public string State="idle";public string Label="等待连接";public bool CanChat,CanVoice,CanNotifications;public int NotificationCount;public string NotificationText="",NotificationColor="";public DateTime At=DateTime.UtcNow;}
+ public sealed class BridgeState {public bool Stale,MainReady;public string ConnectionSource="cdp";public bool CanOpenTasks=true;public string MiniStatus="unknown",MainStatus="unknown";public string NotificationSource="mini";[ScriptIgnore]public BridgeNotice[] Notices=new BridgeNotice[0];public string Code="connecting",Hint="正在检测连接。";public DateTime? LastSuccessAt,LastChatAt,LastVoiceAt,LastNotificationsAt;public bool AppOpen; public bool Connected;public string State="idle";public string Label="等待连接";public bool CanChat,CanVoice,CanNotifications;public int NotificationCount;public string NotificationText="",NotificationColor="";public DateTime At=DateTime.UtcNow;}
  public sealed partial class Bridge:IDisposable {
   readonly CancellationTokenSource shutdown=new CancellationTokenSource();
   readonly HttpClient http=new HttpClient(new HttpClientHandler{UseProxy=false,AllowAutoRedirect=false}){Timeout=TimeSpan.FromSeconds(2)};
   public volatile BridgeState Current=new BridgeState();
+  HookConnection hookConnection;
   string lastError="";DateTime? lastSuccessAt,noStateSince;
   public void RequestReconnect(){lastOpenAttempt=DateTime.MinValue;noStateSince=null;}
   bool backgroundMini,leaseActive;DateTime lastOpenAttempt=DateTime.MinValue;
@@ -26,9 +27,11 @@ namespace KianaPet {
   static string Str(object o,string k){return Convert.ToString(Get(o,k));}
   static object Parse(string s){return new JavaScriptSerializer{MaxJsonLength=1024*1024}.DeserializeObject(s);}
   async Task<object> Json(string url,CancellationToken cancel){using(HttpResponseMessage r=await http.GetAsync(url,cancel).ConfigureAwait(false)){r.EnsureSuccessStatusCode();if(r.Content.Headers.ContentLength>1024*1024)throw new Exception("Response too large");return Parse(await r.Content.ReadAsStringAsync().ConfigureAwait(false));}}
-  public async Task Poll(bool enabled,bool background=false){if(shutdown.IsCancellationRequested)return;BridgeState next=new BridgeState{LastSuccessAt=lastSuccessAt};try{
+  public async Task Poll(bool enabled,bool background=false,string mode="cdp"){if(shutdown.IsCancellationRequested)return;
+   if(enabled&&mode=="hooks"){if(hookConnection==null)hookConnection=new HookConnection();var hookState=await Task.Run(()=>hookConnection.Read(DateTime.UtcNow,CompanionLauncher.Running("ChatGPT"))).ConfigureAwait(false);PublishState(hookState);return;}
+   BridgeState next=new BridgeState{LastSuccessAt=lastSuccessAt};try{
    backgroundMini=enabled&&background;
-   next.AppOpen=System.Diagnostics.Process.GetProcessesByName("ChatGPT").Length>0;
+   next.AppOpen=CompanionLauncher.Running("ChatGPT");
    if(!enabled){if(leaseActive){try{await Evaluate(RestoreMini+"'restored'").ConfigureAwait(false);}catch{}leaseActive=false;}BridgeDiagnostics.Set(next,"disabled","联动已关闭","开启读取 ChatGPT Mini 状态后自动连接。");PublishState(next);return;}
    if(!next.AppOpen){noStateSince=null;BridgeDiagnostics.Set(next,"app-closed","ChatGPT 未运行 · 独立陪伴","需要联动时，使用平滑启动器打开 ChatGPT。");PublishState(next);return;}
    string presentation=backgroundMini?BackgroundScript():leaseActive?RestoreMini:"";
@@ -42,6 +45,7 @@ namespace KianaPet {
     if(next.NotificationSource=="main"){next.Connected=true;next.Code="fallback";if(next.MiniStatus=="preparing")next.MiniStatus="unsynced";lastSuccessAt=DateTime.UtcNow;next.LastSuccessAt=lastSuccessAt;}}
    catch(Exception){next.MainStatus="unavailable";/* Keep genuine Mini results. */}
   }
+  if(enabled&&mode=="auto"&&!next.Connected&&next.AppOpen){if(hookConnection==null)hookConnection=new HookConnection();var hookState=await Task.Run(()=>hookConnection.Read(DateTime.UtcNow,true)).ConfigureAwait(false);if(hookState.Connected)next=hookState;}
   PublishState(next);
   }
   // Only toolbar metadata and pet states are read. Actions run exclusively after an explicit toolbar click.
@@ -57,7 +61,7 @@ if(notifications){const candidates=[...notifications.querySelectorAll('span'),no
  if(!count&&nativeMini&&activities.length){count=activities.length;countText=count>99?'99+':String(count);}
  return JSON.stringify({states:states,chat:!!usable(chat)||!!document.querySelector(""[data-avatar-overlay-native-surface-id=\""composer\""] [contenteditable=true], [data-avatar-overlay-native-surface-id=\""composer\""] textarea""),voice:!!usable(voice)||(!!window.__kianaBackgroundMiniV1&&Array.from(document.querySelectorAll(""[data-avatar-overlay-native-surface-id=\""voice-controls\""] button"")).some(usable)),notifications:(!!usable(notifications)||nativeMini)&&count>0,count:count,countText:countText,badgeColor:badgeColor});})()";
    public static string ActionExpression(string action){if(action!="chat"&&action!="voice"&&action!="notifications")throw new ArgumentException("Unknown toolbar action");return @"(()=>{const buttons=Array.from(document.querySelectorAll('button'));const usable=e=>e&&!e.disabled&&e.getAttribute('aria-disabled')!=='true';const chat=buttons.find(e=>['开始新聊天','Start new chat','New chat'].includes(e.getAttribute('aria-label')));const voice=buttons.find(e=>['开始语音聊天','Start voice chat'].includes(e.getAttribute('aria-label')));const notifications=buttons.find(e=>e.closest('[data-avatar-overlay-native-surface-id=""mascot-badge""]')||e.getAttribute('data-testid')==='avatar-overlay-notification-badge');const actionName="""+action+@""";const selected="+action+@";if(actionName===""notifications""&&document.querySelector('[data-avatar-overlay-activity-stack-item]')){window.__kianaBackgroundMiniV1?.reveal();if(usable(selected)&&['显示活动','Show activity'].includes(selected.getAttribute('aria-label')))selected?.click();return ""opened"";}if(!usable(selected)){const editor=document.querySelector(""[data-avatar-overlay-native-surface-id=\""composer\""] [contenteditable=true], [data-avatar-overlay-native-surface-id=\""composer\""] textarea"");if(actionName===""chat""&&editor&&window.__kianaBackgroundMiniV1){window.__kianaBackgroundMiniV1.reveal();editor.focus();return ""opened"";}if(actionName===""voice""&&window.__kianaBackgroundMiniV1&&Array.from(document.querySelectorAll(""[data-avatar-overlay-native-surface-id=\""voice-controls\""] button"")).some(usable)){window.__kianaBackgroundMiniV1.reveal();return ""opened"";}return ""unavailable"";}selected.click();return ""opened"";})()";}
-  public async Task<bool> InvokeToolbar(string action){string command=ActionExpression(action);if(backgroundMini)command=BackgroundScript()+command.Replace("selected.click();","window.__kianaBackgroundMiniV1?.reveal();selected.click();");string result=await Evaluate(command,backgroundMini,true).ConfigureAwait(false);return result=="opened";}
+  public async Task<bool> InvokeToolbar(string action){if(Current.ConnectionSource=="hooks")return false;string command=ActionExpression(action);if(backgroundMini)command=BackgroundScript()+command.Replace("selected.click();","window.__kianaBackgroundMiniV1?.reveal();selected.click();");string result=await Evaluate(command,backgroundMini,true).ConfigureAwait(false);return result=="opened";}
   async Task<string> Evaluate(string expression,bool ensureMini=false,bool userGesture=false,bool mainOnly=false){await access.WaitAsync(shutdown.Token).ConfigureAwait(false);try{return await EvaluateCore(expression,ensureMini,userGesture,mainOnly).ConfigureAwait(false);}finally{access.Release();}}
   static bool MiniTarget(object target){return Str(target,"type")=="page"&&Str(target,"url").StartsWith("app://",StringComparison.Ordinal)&&Uri.UnescapeDataString(Str(target,"url")).Contains("/avatar-overlay");}
   async Task<string> EvaluateCore(string expression,bool ensureMini,bool userGesture,bool mainOnly){

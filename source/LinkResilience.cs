@@ -10,7 +10,7 @@ namespace KianaPet {
  }
  public sealed partial class Bridge {
   BridgeState lastGood;public int StaleGraceSeconds=30;
-  void PublishState(BridgeState next){next.At=DateTime.UtcNow;TrackCapabilities(next);if(next.Connected&&!next.Stale)lastGood=next;else if(next.Code=="disabled"||next.Code=="app-closed"||next.Code=="endpoint-rejected"){lastGood=null;}
+  void PublishState(BridgeState next){if(Current.ConnectionSource!=next.ConnectionSource){lastGood=null;lastChatAt=lastVoiceAt=lastNotificationsAt=null;}next.At=DateTime.UtcNow;TrackCapabilities(next);if(next.Connected&&!next.Stale)lastGood=next;else if(next.Code=="disabled"||next.Code=="app-closed"||next.Code=="endpoint-rejected"){lastGood=null;}
    Current=LinkResilience.KeepLast(next,lastGood,DateTime.UtcNow,StaleGraceSeconds);
   }
  }

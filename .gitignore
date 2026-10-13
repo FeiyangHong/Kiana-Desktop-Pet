@@ -1,5 +1,7 @@
 # Build outputs
 /KianaDesktopPet.exe
+/KianaHookReceiver.exe
+/KianaHookReceiver.exe.config
 /package-manifest.json
 /dist/
 /*.zip

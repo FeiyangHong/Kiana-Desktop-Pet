@@ -6,12 +6,13 @@ namespace KianaPet {
  public static class LinkHealth {
   public static LinkHealthSnapshot Read(BridgeState s,bool enabled,DateTime now){
    bool fresh=enabled&&s.AppOpen&&s.Connected&&!s.Stale&&now-s.At<TimeSpan.FromSeconds(10);
-   bool notifications=fresh&&(s.MainReady||s.MiniStatus=="ready");
+   bool notifications=fresh&&(s.MainReady||s.MiniStatus=="ready"||s.ConnectionSource=="hooks");
    string unavailable=!enabled?"联动已关闭":!s.AppOpen?"应用未启动":s.Stale?"重连中":!fresh?"状态待确认":"入口暂不可用";
    var h=new LinkHealthSnapshot{Chat=fresh&&s.CanChat,Voice=fresh&&s.CanVoice,Notifications=notifications};
    h.ChatText=h.Chat?"入口可用":unavailable;h.VoiceText=h.Voice?"入口可用（实际通话仍需麦克风权限）":unavailable;
    h.NotificationText=notifications?(s.NotificationSource=="main"?"备用来源可用 · 主窗口已加载任务":"原生来源可用"):(s.Stale?"仅保留上次状态，尚未同步":unavailable);
    h.Degraded=enabled&&s.AppOpen&&s.Code!="connecting"&&(!h.Chat||!h.Voice||!h.Notifications||s.NotificationSource=="main");
+   if(s.ConnectionSource=="hooks"){h.ChatText=h.VoiceText="Hooks 不提供此入口";h.NotificationText=notifications?"本地 Hooks 状态可用（只表示回合结束）":unavailable;h.Degraded=enabled&&s.AppOpen&&!fresh&&s.Code!="hooks-waiting";}
    h.Summary="聊天："+h.ChatText+"\n语音："+h.VoiceText+"\n通知："+h.NotificationText+"\n最近有效同步："+Time(s.LastSuccessAt)+"\n聊天入口最后确认："+Time(s.LastChatAt)+"\n语音入口最后确认："+Time(s.LastVoiceAt)+"\n通知最后同步："+Time(s.LastNotificationsAt);
    return h;
   }
@@ -30,7 +31,7 @@ namespace KianaPet {
  }
  public sealed partial class Bridge {
   DateTime? lastChatAt,lastVoiceAt,lastNotificationsAt;
-  void TrackCapabilities(BridgeState next){if(next.Connected&&!next.Stale){if(next.CanChat)lastChatAt=next.At;if(next.CanVoice)lastVoiceAt=next.At;if(next.MainReady||next.MiniStatus=="ready")lastNotificationsAt=next.At;}
+  void TrackCapabilities(BridgeState next){if(next.Connected&&!next.Stale){if(next.CanChat)lastChatAt=next.At;if(next.CanVoice)lastVoiceAt=next.At;if(next.MainReady||next.MiniStatus=="ready"||next.ConnectionSource=="hooks")lastNotificationsAt=next.At;}
    next.LastChatAt=lastChatAt;next.LastVoiceAt=lastVoiceAt;next.LastNotificationsAt=lastNotificationsAt;
   }
  }

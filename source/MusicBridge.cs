@@ -13,6 +13,8 @@ namespace KianaPet {
  public sealed class MusicState {
   public bool Connected,Playing,CanToggle,CanPrevious,CanNext;
   public string Title="",Artist="",Id="",Cover="",Label="等待网易云音乐连接";
+  public string ConnectionSource="cdp",MetadataSource="播放器页面",Album="";
+  public bool HasPosition=true,HasDuration=true;public System.Windows.Media.Imaging.BitmapSource NativeCover;
   public double Position,Duration;public DateTime At=DateTime.UtcNow;
  }
  public sealed class MusicBridge:IDisposable {
@@ -20,6 +22,8 @@ namespace KianaPet {
   public volatile MusicState Current=new MusicState();
   readonly HttpClient http=new HttpClient(new HttpClientHandler{UseProxy=false,AllowAutoRedirect=false}){Timeout=TimeSpan.FromSeconds(2)};
   readonly CancellationTokenSource shutdown=new CancellationTokenSource();
+  readonly NativeMusicConnection native=new NativeMusicConnection();
+  public string NativeError{get{return native.LastError;}}
   public static object Get(object o,string k){var d=o as Dictionary<string,object>;return d!=null&&d.ContainsKey(k)?d[k]:null;}
   public static string Str(object o,string k){return Convert.ToString(Get(o,k));}
   static object Parse(string text){return new JavaScriptSerializer{MaxJsonLength=1024*1024}.DeserializeObject(text);}
@@ -30,12 +34,13 @@ namespace KianaPet {
     }}
    }return "";
   }
-  public async Task Poll(bool enabled){var next=new MusicState();if(!enabled){next.Label="音乐栏已关闭";Current=next;return;}try{
+  public async Task Poll(bool enabled,string mode="cdp"){var next=new MusicState();if(!enabled){next.Label="音乐栏已关闭";Current=next;return;}if(mode=="system"){Current=await native.Read().ConfigureAwait(false);return;}try{
    var d=Parse(await Evaluate(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-read.js")),false).ConfigureAwait(false));
    next.Connected=Convert.ToBoolean(Get(d,"connected"));next.Title=Str(d,"title");next.Artist=Str(d,"artist");next.Id=Str(d,"id");next.Cover=Str(d,"cover");next.Playing=Convert.ToBoolean(Get(d,"playing"));next.CanToggle=Convert.ToBoolean(Get(d,"toggle"));next.CanPrevious=Convert.ToBoolean(Get(d,"previous"));next.CanNext=Convert.ToBoolean(Get(d,"next"));next.Position=Convert.ToDouble(Get(d,"position"));next.Duration=Convert.ToDouble(Get(d,"duration"));next.At=DateTime.UtcNow;
    next.Label=next.Connected?"网易云音乐已连接 · "+(next.Playing?"正在播放":"已暂停"):"已连接客户端 · 请先选择歌曲";
-  }catch(Exception){next.Label="请使用“网易云音乐 桌宠联动”入口打开客户端";}Current=next;}
+  }catch(Exception){next.Label="请使用“网易云音乐 桌宠联动”入口打开客户端";}if(mode=="auto"&&!next.Connected)next=await native.Read().ConfigureAwait(false);Current=next;}
   public async Task<bool> Command(string action){if(action!="toggle"&&action!="previous"&&action!="next")return false;if(!Current.Connected||DateTime.UtcNow-Current.At>TimeSpan.FromSeconds(5))return false;
+   if(Current.ConnectionSource=="system")return await native.Command(action,Current).ConfigureAwait(false);
    string code=File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-action.js"));try{return await Evaluate("("+code+")("+new JavaScriptSerializer().Serialize(action)+")",true).ConfigureAwait(false)=="clicked";}catch{return false;}
   }
   async Task<string> Evaluate(string expression,bool action){

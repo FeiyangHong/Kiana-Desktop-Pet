@@ -25,6 +25,6 @@ namespace KianaPet {
   public void UnregisterAction(string source,string actionId){lock(gate)actions.Remove(Key(source,actionId));}
   public bool CanOpen(TaskNotice notice){lock(gate)return !string.IsNullOrEmpty(notice.ActionId)&&actions.ContainsKey(Key(notice.Source,notice.ActionId));}
   public bool Open(TaskNotice notice){Action<TaskNotice> action;TaskNotice target;lock(gate){target=items.FirstOrDefault(i=>i.Source==notice.Source&&i.TaskId==notice.TaskId);if(target==null||string.IsNullOrEmpty(target.ActionId)||!actions.TryGetValue(Key(target.Source,target.ActionId),out action))return false;target=Copy(target);}action(target);lock(gate){var current=items.FirstOrDefault(i=>i.Source==target.Source&&i.TaskId==target.TaskId);if(current!=null&&current.UpdatedAt==target.UpdatedAt&&current.Status==target.Status&&current.Title==target.Title)current.Unread=false;}return true;}
-  public static string StateName(string status){return status=="running"?"进行中":status=="succeeded"?"已完成":status=="failed"?"失败":"等待处理";}
+  public static string StateName(string status){return status=="unknown"?"状态待确认":status=="review"?"回合已结束":status=="running"?"进行中":status=="succeeded"?"已完成":status=="failed"?"失败":"等待处理";}
  }
 }

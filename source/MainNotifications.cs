@@ -22,7 +22,7 @@ namespace KianaPet {
    next.Label="备用状态 · "+Name(next.State);next.Hint=next.MiniStatus=="ready"?"Mini 已连接；当前活动未出现在 Mini 通知中，暂用主窗口已加载的任务状态。":"Mini 没有同步到通知，当前使用主窗口已加载的任务状态；聊天和语音入口仍单独检测。";
   }
   public static string OpenMainNotificationExpression(string id){if(id==null||!Regex.IsMatch(id,"^[a-zA-Z0-9_-]{1,160}$"))throw new ArgumentException("Invalid notification task");return "(async()=>{if(!window.electronBridge?.sendMessageFromView)return 'unavailable';await window.electronBridge.sendMessageFromView({type:'open-in-main-window',path:'/local/"+id+"'});return 'opened';})()";}
-  public Task<bool> OpenMainNotification(string id){return InvokeMainNotification(OpenMainNotificationExpression(id));}
+  public Task<bool> OpenMainNotification(string id){return Current.CanOpenTasks?InvokeMainNotification(OpenMainNotificationExpression(id)):Task.FromResult(false);}
   async Task<bool> InvokeMainNotification(string expression){return await Evaluate(expression,false,true,true).ConfigureAwait(false)=="opened";}
  }
 }

@@ -20,6 +20,7 @@ namespace KianaPet {
   public bool RecoverHotkeyEnabled=false;
   public uint RecoverHotkeyModifiers=PetHotkey.Control|PetHotkey.Alt,RecoverHotkeyKey=0x50;
   public bool BackgroundMini=true;
+  public string GPTConnectionMode="cdp",MusicConnectionMode="cdp";
   public bool NoticePreviewHover=true,NoticePreviewFollowMusic=false;
   public int NoticePreviewWidth=420,NoticePreviewCount=1;
   public string NoticeSourceStyle="icon-name";
@@ -56,6 +57,8 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   if(!new[]{"cdp","hooks","auto"}.Contains(GPTConnectionMode))GPTConnectionMode="cdp";
+   if(!new[]{"cdp","system","auto"}.Contains(MusicConnectionMode))MusicConnectionMode="cdp";
    ToolbarTheme.Validate(this);AnimationTiming.Validate(this);
    LyricMotionRules.Validate(this);
    MusicReactions.Validate(this);

@@ -47,7 +47,7 @@ namespace KianaPet {
    if(!active){active=true;started=now;}
    lastPlaying=Math.Max(lastPlaying,now-age);
    if(!allowed)return null;
-   var resolved=MusicReactions.Ranges(config,state,ranges);bool chorus=MusicReactions.InChorus(MusicReactions.Position(state,utc),resolved,state.Duration);
+   var resolved=MusicReactions.Ranges(config,state,ranges);bool chorus=state.HasPosition&&MusicReactions.InChorus(MusicReactions.Position(state,utc),resolved,state.Duration);
    if(!entered&&now-started<Math.Max(0,Math.Min(30,config.MusicEntryDelaySeconds))&&!(config.MusicChorusImmediate&&chorus))return null;
    string action=MusicReactions.ChooseAction(config,state.Id,chorus,entered?now-enteredAt:0);
    if(action!=null&&!entered){entered=true;enteredAt=now;}
