@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.8.15",
+  "version": "0.8.16",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -73,6 +73,7 @@
     "docs/art-preview/winter-idle-0.8.11/sway-after-display.png",
     "docs/art-preview/winter-idle-0.8.11/sway-before-display.png",
     "docs/demo/animation-gallery.png",
+    "docs/demo/appearance-live-preview.png",
     "docs/demo/chatgpt-settings-compact.png",
     "docs/demo/effect-preview.png",
     "docs/demo/lyric-scroll-settings.png",
@@ -90,6 +91,7 @@
     "docs/demo/music-seated-time-runner-kiana-round.png",
     "docs/demo/music-settings-compact.png",
     "docs/demo/music.png",
+    "docs/demo/settings-common-quick-connect.png",
     "docs/demo/notification-banner.png",
     "docs/demo/notification-source-styles.png",
     "docs/demo/task-list.png",

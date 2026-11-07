@@ -2,6 +2,14 @@
 
 ## 效果演示
 
+### 常用快捷连接与外观预览（0.8.16）
+
+打开设置默认进入“常用”，顶部可直接打开 / 连接网易云音乐和 ChatGPT，并查看当前状态。“外观与互动”顶部可切换衣装、播放动作预览，点击“应用这套衣装”才保存；也可进入完整动作图鉴查看日常、任务与音乐动作。
+
+![常用页快捷连接](docs/demo/settings-common-quick-connect.png)
+
+![外观与动作预览](docs/demo/appearance-live-preview.png)
+
 ![桌宠通知效果预览](docs/demo/effect-preview.png)
 
 ![任务通知列表](docs/demo/task-list.png)
@@ -22,7 +30,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.8.15-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.8.16-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
