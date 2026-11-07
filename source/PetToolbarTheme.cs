@@ -9,6 +9,9 @@ namespace KianaPet {
   public string ToolbarMaterialStatus{get{return Settings.ToolbarStyle!="glass"?"":toolbarGlass.Available?"系统毛玻璃已启用；雾度控制底板遮盖，模糊半径由 Windows 管理。":"毛玻璃在工具栏显示时启用；系统不支持时使用半透明柔光底板。";}}
   void UpdateToolbarTheme(double now){UpdateToolbarThemeCore(now,false);}
   void UpdateToolbarThemeCore(double now,bool immediate){
+   // The music target turns off before its fade ends. Keep the last applied
+   // music palette until the outgoing toolbar is hidden, even if polling runs first.
+   if(!immediate&&ToolbarVisible&&toolbarWasFollowing&&(!toolbarShown||!ShouldShowToolbar(clock.Elapsed.TotalSeconds)))return;
    if(immediate){toolbarThemeKey="";toolbarMusicAppearance.Invalidate();}
    bool following=ToolbarFollowingMusic;
    if(following!=toolbarWasFollowing){toolbarWasFollowing=following;toolbarThemeKey="";toolbarMusicAppearance.Invalidate();}

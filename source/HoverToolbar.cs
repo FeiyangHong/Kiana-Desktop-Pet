@@ -53,14 +53,15 @@ namespace KianaPet {
    // Fade in the final palette, rather than fading between unrelated hidden colors.
    int revealDelay=0;if(show){UpdateMusicCard();UpdateToolbarThemeCore(clock.Elapsed.TotalSeconds,true);if(musicWindow!=null&&!Settings.MusicHoverOnly){musicWindow.Follow(Bounds());if(musicWindow.DockMoving&&MotionSettings.Enabled)revealDelay=180;}hoverBar.Visibility=Visibility.Visible;hoverBar.IsHitTestVisible=true;}
    int duration=show?PetVisuals.ShowMs:PetVisuals.HideMs;DoubleAnimation fade=Motion(show?1:0,duration);if(revealDelay>0){hoverBar.BeginAnimation(OpacityProperty,null);hoverBar.Opacity=0;fade.BeginTime=TimeSpan.FromMilliseconds(revealDelay);}
-   if(!show)fade.Completed+=delegate{if(transition==toolbarTransition&&!toolbarShown){hoverBar.Visibility=Visibility.Hidden;hoverBar.IsHitTestVisible=false;}};
+   if(!show)fade.Completed+=delegate{if(transition==toolbarTransition&&!toolbarShown){hoverBar.Visibility=Visibility.Hidden;hoverBar.IsHitTestVisible=false;UpdateToolbarThemeCore(clock.Elapsed.TotalSeconds,true);}};
    hoverBar.BeginAnimation(OpacityProperty,fade);toolbarScale.BeginAnimation(ScaleTransform.ScaleXProperty,Motion(show?1:.96,duration));toolbarScale.BeginAnimation(ScaleTransform.ScaleYProperty,Motion(show?1:.96,duration));toolbarSlide.BeginAnimation(TranslateTransform.YProperty,Motion(show?0:-3,duration));
   }
+  bool ShouldShowToolbar(double now){return Settings.HoverToolbar&&IsVisible&&!manualHidden&&!fullscreenHidden&&!pressed&&!dragging&&(NoticePreviewOpen||Settings.ToolbarPinned||keyboardToolbarMode||(toolbarMenu!=null&&toolbarMenu.IsOpen)||hover||hoverBar.IsMouseOver||now<toolbarUntil||(Settings.MusicHoverOnly&&MusicInteractionActive));}
   void UpdateToolbar(double now){
    if(!CanShowNoticePreview)CloseNoticePreview();
    if(menuLayerYielding&&IsVisible&&!manualHidden&&!fullscreenHidden)return;
    if(hover||hoverBar.IsMouseOver)toolbarUntil=now+.65;
-   bool show=Settings.HoverToolbar&&IsVisible&&!manualHidden&&!fullscreenHidden&&!pressed&&!dragging&&(NoticePreviewOpen||Settings.ToolbarPinned||keyboardToolbarMode||(toolbarMenu!=null&&toolbarMenu.IsOpen)||hover||hoverBar.IsMouseOver||now<toolbarUntil||(Settings.MusicHoverOnly&&MusicInteractionActive));
+   bool show=ShouldShowToolbar(now);
    SetToolbarVisible(show,!Settings.HoverToolbar||!IsVisible||manualHidden||fullscreenHidden||pressed||dragging);
    bool live=Settings.LinkChatGPT&&Link.Current.Connected&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10);
    voiceButton.IsEnabled=!toolbarBusy&&live&&Link.Current.CanVoice;chatButton.IsEnabled=!toolbarBusy&&Link.Current.ConnectionSource!="hooks";chatButton.ToolTip=Link.Current.ConnectionSource=="hooks"?"Hooks 只同步本地任务状态；聊天请在 GPT 中操作":"打开 ChatGPT 聊天";if(Link.Current.ConnectionSource=="hooks")voiceButton.ToolTip="Hooks 不提供语音入口；请在 GPT 中操作";
