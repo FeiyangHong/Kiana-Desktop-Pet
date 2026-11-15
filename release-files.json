@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.9.8",
+  "version": "0.9.9",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -132,6 +132,7 @@
     "docs/demo/skin-swap.gif",
     "docs/demo/skin-swap-feedback.png",
     "docs/demo/skin-showcase.gif",
-    "docs/demo/random-skin-menu.png"
+    "docs/demo/random-skin-menu.png",
+    "docs/demo/outfit-action-preview.png"
   ]
 }

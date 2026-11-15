@@ -14,7 +14,7 @@ namespace KianaPet {
   readonly Image cover=new Image();readonly Button previous,toggle,next,lyrics;readonly Grid lyricRow=new Grid();readonly Canvas lyricCanvas=new Canvas();readonly TranslateTransform lyricOffset=new TranslateTransform();
   bool lyricPlaying;LyricCue lyricCue;readonly LyricMotionPresenter lyricPresenter;
   Grid outer;Border surface,shadowSurface;bool pointerPressed,shown;int transition;Native.Point dragStart;Native.Rect dragBounds;UIElement dragSurface;
-  public bool IsDragging{get;private set;}public bool KeyboardMode{get;private set;}
+  public bool PointerInteractionActive{get{return pointerPressed||IsMouseCaptureWithin;}}public bool IsDragging{get;private set;}public bool KeyboardMode{get;private set;}
   public void FocusControls(){KeyboardMode=true;Native.SetMenuActivation(new WindowInteropHelper(this).Handle,true);Activate();Native.FocusPetForMenu(new WindowInteropHelper(this).Handle);toggle.Focus();}
   public MusicWindow(PetWindow owner){pet=owner;lyricPresenter=new LyricMotionPresenter(lyricRow,lyric,lyricOffset);Closed+=delegate{lyricPresenter.Stop();};InitializeDocking();Owner=owner;Title="琪亚娜 · 音乐";Width=238;Height=88;WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;Background=Brushes.Transparent;ShowInTaskbar=false;ShowActivated=false;Topmost=true;FontFamily=new FontFamily("Microsoft YaHei UI");UseLayoutRounding=true;SnapsToDevicePixels=true;
    TextOptions.SetTextFormattingMode(this,TextFormattingMode.Display);TextOptions.SetTextRenderingMode(this,TextRenderingMode.ClearType);
