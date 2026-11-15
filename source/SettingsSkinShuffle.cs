@@ -12,7 +12,7 @@ namespace KianaPet {
    int index=appearance.Children.IndexOf(appearance.Children.OfType<TextBlock>().Single(t=>t.Text=="今天穿哪一套？"));appearance.Children.Insert(index,skinShuffleSection);
    skinShuffleStatus=CompanionControls.Text("",13);skinShuffleStatus.Foreground=ink;body.Children.Add(skinShuffleStatus);
    var requestActions=new WrapPanel();skinShuffleNow=Button("立即随机换装",delegate{pet.RequestSkinShuffle();UpdateSkinShuffleStatus();},true);skinShuffleCancel=Button("取消本次请求",delegate{pet.CancelSkinShuffleRequest();UpdateSkinShuffleStatus();},false);requestActions.Children.Add(skinShuffleNow);requestActions.Children.Add(skinShuffleCancel);body.Children.Add(requestActions);
-   Note(body,"立即按钮只排队一次，不更改自动开关或今天固定。点击后请关闭设置，等待安全的动作衔接点；连续点击不会累积多次换装。手动选衣装、修改随机设置或点击今天固定会取消待执行请求。");
+   Note(body,"立即按钮只排队一次，不更改自动开关或今天固定。设置打开时也可执行，仍等待安全的动作衔接点；GPT 已结束但待查看时会保留原动作并在循环衔接点换装；连续点击不会累积多次换装。手动选衣装、修改随机设置或点击今天固定会取消待执行请求。");
    skinShuffleTimed=Check(body,"按陪伴时间随机更换皮肤",pet.Settings.SkinShuffleEnabled,v=>{if(syncingSkinShuffle)return;pet.Settings.SkinShuffleEnabled=v;pet.UpdateSkinShuffleSettings();UpdateSkinShuffleStatus();});
    skinShuffleMinutes=NumberRow(body,"间隔（分钟，1–1440）",pet.Settings.SkinShuffleMinutes);displayedShuffleMinutes=pet.Settings.SkinShuffleMinutes;
    body.Children.Add(Button("保存随机间隔",delegate{int value;if(!int.TryParse(skinShuffleMinutes.Text,out value)||value<1||value>1440){MessageBox.Show(this,"请输入 1–1440 分钟。","间隔尚未保存");return;}pet.Settings.SkinShuffleMinutes=value;displayedShuffleMinutes=value;pet.UpdateSkinShuffleSettings();UpdateSkinShuffleStatus();},false));

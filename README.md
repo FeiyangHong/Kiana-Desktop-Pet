@@ -6,7 +6,7 @@
 
 **设置 → 外观与互动 → 随机换装** 可调整间隔与参与皮肤。默认每约两小时在三套 Q 版之间随机，等安全的动作循环衔接点再换；手动选择后重新计时，也可今天固定一套。启动随机可单独开启。自动更换保留位置、音乐状态与原有联动，说明见 [随机换装规则](docs/companion-features.md#随机换装)。
 
-0.9.2 增加 **立即随机换装**：跳过倒计时排队一次，点击后关闭设置，仍等待安全的动作衔接点；可查看等待原因或取消请求，不修改自动模式和当天固定设置。
+**立即随机换装** 跳过倒计时排队一次。0.9.3 起可保持设置窗口打开，仍等待安全的动作衔接点；GPT 已结束但待查看时不再一直阻挡，会在待查看动作循环衔接点更换，保留原任务状态与未读。页面分别显示实际等待原因，支持取消请求，不修改自动模式和当天固定设置。
 
 ![随机换装设置，可自定义间隔与候选](docs/demo/random-skin-settings.png)
 
@@ -46,7 +46,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.2-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.3-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。

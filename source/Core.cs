@@ -105,9 +105,14 @@ namespace KianaPet {
   public static readonly string[] States={"idle","running-right","running-left","waving","jumping","failed","waiting","running","review"};
   public static readonly int[] Counts={6,8,8,4,5,8,6,6,6};
   public static int Row(string state){int n=Array.IndexOf(States,state);return n<0?0:n;}
-  public static int Frame(string state,double elapsed){if(state=="sleep")return 2;int row=Row(state);int[] durations;
+  static int[] FrameDurations(string state){int row=Row(state);int[] durations;
    if(row==0)durations=new[]{1680,660,660,840,840,1920};
    else {int normal=(row==1||row==2||row==7)?120:(row==6||row==8?150:140);int last=(row==1||row==2||row==7)?220:row==5?240:row==6?260:280;durations=Enumerable.Repeat(normal,Counts[row]).ToArray();durations[durations.Length-1]=last;}
+   return durations;
+  }
+  public static int CycleMs(string state){return FrameDurations(state).Sum();}
+  public static int FirstFrameMs(string state){return FrameDurations(state)[0];}
+  public static int Frame(string state,double elapsed){if(state=="sleep")return 2;var durations=FrameDurations(state);
    double t=elapsed%durations.Sum();for(int i=0;i<durations.Length;i++){if(t<durations[i])return i;t-=durations[i];}return 0;
   }
   public static double Clamp(double value,double min,double max){return Math.Max(min,Math.Min(Math.Max(min,max),value));}
