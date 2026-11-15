@@ -14,6 +14,7 @@ namespace KianaPet {
   public int SkinShuffleMinutes=60;
   public string[] SkinShufflePool=SkinShuffleRules.Defaults.ToArray();
   public string[] SkinShuffleActions=SkinChangeActions.Allowed.ToArray();
+  public string SkinShuffleMusicMode="seated";
   public string SharedPreferenceFile="",PerformanceProfile="legacy",FocusReminder="bubble";
   public bool AutoScenesEnabled=false,AutoScenesPaused=false,ExternalNoticesEnabled=false,BatterySaving=false,FocusQuiet=true;
   public int FocusMinutes=25,BreakMinutes=5;

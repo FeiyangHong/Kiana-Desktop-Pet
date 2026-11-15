@@ -2,7 +2,7 @@ using System;using System.Linq;using System.Collections.Generic;using System.Win
 namespace KianaPet {
  public sealed partial class SettingsWindow {
   TextBlock skinShuffleStatus;TextBox skinShuffleMinutes;Expander skinShuffleSection;
-  CheckBox skinShuffleTimed,skinShuffleStartup,skinShuffleJitter;
+  CheckBox skinShuffleTimed,skinShuffleStartup,skinShuffleJitter;ComboBox skinMusicMode;
   Button skinShuffleNow,skinShuffleCancel,skinActionPreviewButton;OutfitActionPreview skinActionPreview;
   readonly Dictionary<string,CheckBox> skinShuffleChoices=new Dictionary<string,CheckBox>();
   readonly Dictionary<string,CheckBox> skinActionChoices=new Dictionary<string,CheckBox>();
@@ -15,12 +15,13 @@ namespace KianaPet {
    var quick=new StackPanel();appearance.Children.Insert(0,quick);TitleText(quick,"随机换装");
    skinShuffleStatus=CompanionControls.Text("",13);skinShuffleStatus.Foreground=ink;quick.Children.Add(skinShuffleStatus);
    var requestActions=new WrapPanel();skinShuffleNow=Button("立即随机换装",delegate{pet.RequestSkinShuffle();UpdateSkinShuffleStatus();},true);skinShuffleCancel=Button("取消本次请求",delegate{pet.CancelSkinShuffleRequest();UpdateSkinShuffleStatus();},false);requestActions.Children.Add(skinShuffleNow);requestActions.Children.Add(skinShuffleCancel);quick.Children.Add(requestActions);
-   Note(body,"立即按钮只排队一次，不更改自动开关或今天固定。设置打开时也可执行，平稳待机、已结束待查看或坐姿中立即开始过渡，不再等待整轮动画；真实任务、拖动、副歌、坐下过渡等仍会暂缓；连续点击不会累积多次换装。手动选衣装、修改随机设置或点击今天固定会取消待执行请求。");
+   Note(body,"立即按钮只排队一次，不更改自动开关或今天固定。设置打开时也可执行，平稳待机、已结束待查看或坐姿中立即开始过渡，不再等待整轮动画；拖动、副歌、坐下过渡等仍会暂缓；任务的处理中、等待、失败或待查看姿态可直接同相位换肤，不插入展示动作；连续点击不会累积多次换装。手动选衣装、修改随机设置或点击今天固定会取消待执行请求。");
    TitleText(body,"换装后的动作（手动与随机共用，可多选）");var actionChoices=new WrapPanel();
    foreach(string action in SkinChangeActions.Allowed){string id=action;var box=new CheckBox{Content=SkinChangeActions.Label(id),Foreground=ink,Width=150,Margin=new Thickness(0,6,8,6),IsChecked=pet.Settings.SkinShuffleActions.Contains(id)};skinActionChoices[id]=box;RoutedEventHandler update=delegate{if(syncingSkinShuffle)return;pet.Settings.SkinShuffleActions=SkinChangeActions.Allowed.Where(a=>skinActionChoices.ContainsKey(a)&&skinActionChoices[a].IsChecked==true).ToArray();pet.CancelSkinShuffleRequest();pet.StopOutfitAction();pet.Save();UpdateSkinShuffleStatus();};box.Checked+=update;box.Unchecked+=update;actionChoices.Children.Add(box);}body.Children.Add(actionChoices);
+   Note(body,"听歌时如何换装");skinMusicMode=new ComboBox{ItemsSource=new[]{"保持当前坐姿换装（不播放站姿动作）","旧皮肤先起身 → 换装并展示动作 → 新皮肤坐下"},SelectedIndex=pet.Settings.SkinShuffleMusicMode=="stand-first"?1:0,Padding=new Thickness(8),Margin=new Thickness(0,4,0,10)};body.Children.Add(skinMusicMode);skinMusicMode.SelectionChanged+=delegate{if(syncingSkinShuffle||skinMusicMode.SelectedIndex<0)return;pet.StopOutfitAction();pet.Settings.SkinShuffleMusicMode=skinMusicMode.SelectedIndex==1?"stand-first":"seated";pet.Save();};
    skinActionPreviewButton=Button("预览勾选动作（不换皮肤）",delegate{if(!pet.Settings.SkinShuffleActions.Any())return;if(skinActionPreview!=null)skinActionPreview.Close();var window=new OutfitActionPreview(pet.Settings,pet.CurrentAction=="music-quiet"){Owner=this};skinActionPreview=window;window.Closed+=delegate{if(skinActionPreview==window)skinActionPreview=null;};window.Show();},false);body.Children.Add(skinActionPreviewButton);
-   Note(body,"预览窗口可自动轮播勾选动作，并模拟听歌坐姿衔接；不更换皮肤，不改变随机计时或当前联动。");
-   Note(body,"默认勾选招手、开心回应、整理头发、摸头和伸懒腰；多选后随机播放一个，尽量不连续重复。全部取消只保留随机气泡。听歌坐姿使用已有的起身 → 所选动作 → 坐下过渡，随后回到当前听歌相位；播放进度与副歌判断继续运行，任务、副歌动作或拖动可立即打断。手动与随机换装共用此动作池及听歌坐姿衔接。减少动态效果时不播放动作。普通版沿用动作预览中的已有回退姿态。");
+   Note(body,"预览窗口可自动轮播勾选动作，并切换两种听歌换装方式；不更换皮肤，不改变随机计时或当前联动。");
+   Note(body,"默认勾选招手、开心回应、整理头发、摸头和伸懒腰；多选后随机播放一个，尽量不连续重复。全部取消只保留随机气泡。听歌默认保持当前坐姿与相位；也可选择旧皮肤先起身，再换装并播放动作，最后由新皮肤坐下。等待、处理中、失败或待查看阶段仅更换同一状态的皮肤帧，不插入展示动作；播放进度与副歌判断继续运行，任务、副歌动作或拖动可立即打断。手动与随机换装共用此动作池及听歌坐姿衔接。减少动态效果时不播放动作。普通版沿用动作预览中的已有回退姿态。");
    skinShuffleTimed=Check(body,"按陪伴时间随机更换皮肤",pet.Settings.SkinShuffleEnabled,v=>{if(syncingSkinShuffle)return;pet.Settings.SkinShuffleEnabled=v;pet.UpdateSkinShuffleSettings();UpdateSkinShuffleStatus();});
    skinShuffleMinutes=NumberRow(body,"间隔（分钟，1–1440）",pet.Settings.SkinShuffleMinutes);displayedShuffleMinutes=pet.Settings.SkinShuffleMinutes;
    body.Children.Add(Button("保存随机间隔",delegate{int value;if(!int.TryParse(skinShuffleMinutes.Text,out value)||value<1||value>1440){MessageBox.Show(this,"请输入 1–1440 分钟。","间隔尚未保存");return;}pet.Settings.SkinShuffleMinutes=value;displayedShuffleMinutes=value;pet.UpdateSkinShuffleSettings();UpdateSkinShuffleStatus();},false));
@@ -35,7 +36,7 @@ namespace KianaPet {
   }
   void UpdateSkinShuffleStatus(){
    if(skinShuffleStatus==null)return;skinShuffleStatus.Text=pet.SkinShuffleStatus;skinShuffleNow.IsEnabled=pet.CanRequestSkinShuffle;skinShuffleCancel.IsEnabled=pet.SkinShuffleRequested;skinActionPreviewButton.IsEnabled=pet.Settings.SkinShuffleActions.Any();skinShuffleSection.Header="随机换装详细设置 · "+(pet.Settings.SkinShuffleEnabled?"按陪伴时间":pet.Settings.SkinShuffleOnStart?"仅启动时":"已关闭");
-   syncingSkinShuffle=true;try{skinShuffleTimed.IsChecked=pet.Settings.SkinShuffleEnabled;skinShuffleStartup.IsChecked=pet.Settings.SkinShuffleOnStart;skinShuffleJitter.IsChecked=pet.Settings.SkinShuffleJitter;foreach(var choice in skinShuffleChoices)choice.Value.IsChecked=pet.Settings.SkinShufflePool.Contains(choice.Key);foreach(var choice in skinActionChoices)choice.Value.IsChecked=pet.Settings.SkinShuffleActions.Contains(choice.Key);if(displayedShuffleMinutes!=pet.Settings.SkinShuffleMinutes&&!skinShuffleMinutes.IsKeyboardFocusWithin){skinShuffleMinutes.Text=pet.Settings.SkinShuffleMinutes.ToString();displayedShuffleMinutes=pet.Settings.SkinShuffleMinutes;}}finally{syncingSkinShuffle=false;}
+   syncingSkinShuffle=true;try{skinShuffleTimed.IsChecked=pet.Settings.SkinShuffleEnabled;skinShuffleStartup.IsChecked=pet.Settings.SkinShuffleOnStart;skinShuffleJitter.IsChecked=pet.Settings.SkinShuffleJitter;skinMusicMode.SelectedIndex=pet.Settings.SkinShuffleMusicMode=="stand-first"?1:0;foreach(var choice in skinShuffleChoices)choice.Value.IsChecked=pet.Settings.SkinShufflePool.Contains(choice.Key);foreach(var choice in skinActionChoices)choice.Value.IsChecked=pet.Settings.SkinShuffleActions.Contains(choice.Key);if(displayedShuffleMinutes!=pet.Settings.SkinShuffleMinutes&&!skinShuffleMinutes.IsKeyboardFocusWithin){skinShuffleMinutes.Text=pet.Settings.SkinShuffleMinutes.ToString();displayedShuffleMinutes=pet.Settings.SkinShuffleMinutes;}}finally{syncingSkinShuffle=false;}
   }
  }
 }

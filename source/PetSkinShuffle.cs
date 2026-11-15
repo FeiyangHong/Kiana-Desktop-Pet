@@ -53,7 +53,7 @@ namespace KianaPet {
    if(pressed)return "鼠标正在按住桌宠";
    if(quietActive)return "免打扰中";
    if(focusClock.Session.Running&&focusClock.Session.Phase=="focus")return "正在专注计时";
-   string gpt=SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow);if(gpt.Length>0)return gpt;
+   string gpt=SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow);if(gpt.Length>0&&!skinShuffleRequested)return gpt;
    if(interaction!=null)return "互动动作尚未结束";
    if((skinVisualRunning||skinShowcaseRunning)&&!skinShuffleRequested)return "换装过渡或展示动作尚未结束";
    if(menuLayerYielding)return "外部菜单或托盘面板正在使用";
@@ -68,7 +68,8 @@ namespace KianaPet {
    if(MusicHovered&&!skinShuffleRequested)return "音乐栏正在被悬停、拖动或键盘操作";
    if(musicBusy||(musicWindow!=null&&musicWindow.IsVisible&&(musicWindow.PointerInteractionActive||musicWindow.IsDragging||musicWindow.KeyboardMode)))return "正在操作音乐栏";
    bool review=state=="review"&&SkinShuffleSafety.ReviewPoseAllowed(Settings,Link.Current,DateTime.UtcNow);
-   if(state!="idle"&&state!="music-quiet"&&!review)return "等待当前动作结束："+MusicActivity.ActionName(state);
+   bool taskPose=skinShuffleRequested&&SkinChangeActions.TaskPose(state);
+   if(state!="idle"&&state!="music-quiet"&&!review&&!taskPose)return "等待当前动作结束："+MusicActivity.ActionName(state);
    if(state=="music-quiet"&&!MusicSprites.Supported(Settings.Skin))return "等待普通待机";
    if(state=="music-quiet"&&AnimationTiming.MusicElapsed(Settings,state,Math.Max(0,(clock.Elapsed.TotalSeconds-stateAt)*1000),false)<MusicReactions.SitTransitionMs)return "正在坐下，等待当前过渡结束";
    if(state=="music-quiet"&&Music.Current.Connected&&Music.Current.HasPosition&&DateTime.UtcNow-Music.Current.At<=TimeSpan.FromSeconds(6)&&MusicReactions.InChorus(MusicReactions.Position(Music.Current,DateTime.UtcNow),MusicReactions.Ranges(Settings,Music.Current,Settings.MusicChorusEnabled?chorusLibrary.For(Music.Current.Id):new ChorusRange[0]),Music.Current.Duration))return "已知副歌期间暂缓换装";
@@ -96,6 +97,7 @@ namespace KianaPet {
    return ApplyAutomaticSkin(id,now);
   }
   int SkinShuffleFrameInterval(int normal){
+   if(skinShowcaseRunning)return Math.Min(normal,33);
    if(state!="review"||Settings.ReduceMotion||(!skinShuffleRequested&&!skinShuffle.Due(Settings,DateTime.Now))||SkinShuffleBlockReason().Length>0)return normal;
    // Sample the short entry frame even in quiet mode or at high action speeds.
    // This adjustment ends with the request and never changes provider polling.
@@ -104,26 +106,31 @@ namespace KianaPet {
   bool ApplyAutomaticSkin(string id,double now){return ApplySkinChange(id,now,false);}
   bool ApplySkinChange(string id,double now,bool manual){
    if(!Pets.Any(p=>p.Id==id)||id==Settings.Skin)return false;
-   string old=Settings.Skin;var visual=CaptureSkinVisual();StopSkinVisual();
+   if(skinFeedbackBubbleOwned){bubble.Visibility=System.Windows.Visibility.Hidden;skinFeedbackBubbleOwned=false;}
+   string old=Settings.Skin;var visual=CaptureSkinVisual();
+   var continuation=skinShowcaseRunning&&skinShowcaseSeated?skinShowcaseSequence:null;double continuationAt=skinShowcaseAt;bool continuationSwapped=skinShowcaseSwapStarted;
+   StopSkinVisual();
    try{
     Settings.Skin=id;LoadSkinCore(false);
     // Redraw the current phase before composition; do not restart a music
     // session, resize windows, force a greeting or reset polling.
     // The selected existing action and bubble follow the visual handoff.
-    DrawAnimation((now-stateAt)*1000);
+    bool standing=CanStandForOutfit(old);if(!standing)DrawAnimation((now-stateAt)*1000);
     if(manual)ManualSkinShuffleReset();else skinShuffle.Applied(Settings);skinShuffleError="";
     if(!manual&&lastPreferences!=null)lastPreferences.Skin=id;
-    Save();SaveSkinShuffle();PlaySkinVisual(visual,state,true);return true;
+    Save();SaveSkinShuffle();
+    if(standing){BeginMusicOutfitChange(old,continuation,continuationAt,continuationSwapped,visual);}else PlaySkinVisual(visual,state,true);return true;
    }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
   }
-  void ShowSkinShuffleFeedback(){
+  void ShowSkinShuffleFeedback(){ShowOutfitFeedback(true);}
+  void ShowOutfitFeedback(bool playAction){
    // Completion feedback must never take over task/interaction messaging.
    double now=clock.Elapsed.TotalSeconds;
-   if(SkinFeedbackBlocked())return;
-   PlaySkinShowcase();
+   if(SkinFeedbackBlocked()||SkinChangeActions.TaskPose(state))return;
+   if(playAction)PlaySkinShowcase();
    if(!Settings.Bubbles)return;
    if(bubble.Visibility==System.Windows.Visibility.Visible&&now<bubbleUntil)return;
-   Say(skinChangeMessages.Next(),2.8);
+   Say(skinChangeMessages.Next(),2.8);skinFeedbackBubbleOwned=true;
   }
   void ManualSkinShuffleReset(){if(!skinShuffleReady)return;CancelSkinShuffleRequest();skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinShuffleError="";SaveSkinShuffle();}
   public void UpdateSkinShuffleSettings(){CancelSkinShuffleRequest();Settings.Validate();skinShuffle.Configure(Settings);skinShuffleError="";Save();SaveSkinShuffle();}
