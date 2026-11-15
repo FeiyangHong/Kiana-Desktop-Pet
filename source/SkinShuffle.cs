@@ -15,6 +15,7 @@ namespace KianaPet {
   public static readonly string[] Defaults={"kiana-winter-wish-round","kiana-fiery-wishing-star-round","time-runner-kiana-round"};
   public static readonly string[] Allowed=Defaults.Concat(new[]{"kiana-winter-wish","kiana-fiery-wishing-star","time-runner-kiana"}).ToArray();
   public static void Validate(Config c){
+   SkinChangeActions.Validate(c);
    c.SkinShuffleMinutes=Math.Max(1,Math.Min(1440,c.SkinShuffleMinutes));
    c.SkinShufflePool=(c.SkinShufflePool??Defaults).Where(Allowed.Contains).Distinct(StringComparer.Ordinal).Take(6).ToArray();
   }

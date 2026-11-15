@@ -53,6 +53,7 @@ namespace KianaPet {
    if(focusClock.Session.Running&&focusClock.Session.Phase=="focus")return "正在专注计时";
    string gpt=SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow);if(gpt.Length>0)return gpt;
    if(interaction!=null)return "互动动作尚未结束";
+   if(skinVisualRunning||skinShowcaseRunning)return "换装过渡或展示动作尚未结束";
    if(menuLayerYielding)return "外部菜单或托盘面板正在使用";
    if(displayPending)return "显示器布局正在恢复";
    if(NoticePreviewOpen)return "通知速览已展开";
@@ -98,12 +99,12 @@ namespace KianaPet {
   }
   bool ApplyAutomaticSkin(string id,double now){
    if(!Pets.Any(p=>p.Id==id)||id==Settings.Skin)return false;
-   string old=Settings.Skin;var visual=CaptureSkinVisual();
+   string old=Settings.Skin;var visual=CaptureSkinVisual();StopSkinVisual();
    try{
     Settings.Skin=id;LoadSkinCore(false);
     // Redraw the current phase before composition; do not restart a music
-    // session, resize windows, show an idle frame, wave or reset polling.
-    // A cosmetic completion bubble is added only after the visual handoff.
+    // session, resize windows, force a greeting or reset polling.
+    // The selected existing action and bubble follow the visual handoff.
     DrawAnimation((now-stateAt)*1000);
     skinShuffle.Applied(Settings);skinShuffleError="";
     if(lastPreferences!=null)lastPreferences.Skin=id;

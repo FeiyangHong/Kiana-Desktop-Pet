@@ -5,7 +5,7 @@ namespace KianaPet {
   public override string ToString(){return "当前动作："+Action+"\n副歌状态："+Chorus+"\n切换说明："+Reason+"\n生效规则："+Rules+"\n连接能力："+Capabilities;}
  }
  public static class MusicActivity {
-  public static string ActionName(string action){if((action??"").StartsWith("music-"))return MusicReactions.Label(action.Substring(6));var item=AnimationGallery.Catalog.FirstOrDefault(a=>a.Id==action);return item==null?(action=="sleep"?"休息":action=="carry"?"拖动中":"日常待机"):item.Name;}
+  public static string ActionName(string action){if(action=="music-rise"||action=="music-sit")return AnimationGallery.Catalog.First(a=>a.Id==action).Name;if((action??"").StartsWith("music-"))return MusicReactions.Label(action.Substring(6));var item=AnimationGallery.Catalog.FirstOrDefault(a=>a.Id==action);return item==null?(action=="sleep"?"休息":action=="carry"?"拖动中":"日常待机"):item.Name;}
   public static MusicActivityReport Read(Config c,MusicState s,ChorusRange[] remote,string query,string actual,string blocked,double wait,bool retaining,DateTime utc){
    bool fresh=s.Connected&&(utc-s.At).TotalSeconds<=6;var pref=MusicReactions.Preference(c,s.Id);bool manual=pref!=null&&MusicReactions.ValidRange(pref.Start,pref.End,s.Duration);
    var ranges=MusicReactions.Ranges(c,s,c.MusicChorusEnabled?remote:new ChorusRange[0]).Where(r=>r!=null&&MusicReactions.ValidRange(r.Start,r.End,s.Duration)).OrderBy(r=>r.Start).ToArray();
@@ -33,7 +33,8 @@ namespace KianaPet {
  public sealed partial class PetWindow {
   public MusicActivityReport MusicActivityStatus{get{
    string blocked=manualHidden||fullscreenHidden||quietHidden||sessionLocked||!IsVisible?"桌宠当前隐藏或锁屏，暂不更新可见动作。":pressed||dragging?"正在拖动／按住桌宠，手动互动优先。":sleeping?"桌宠正在休息，睡眠动作优先。":quietActive?"免打扰中，自动音乐动作暂停。":interaction!=null?"正在播放手动互动或日常互动，结束后恢复音乐规则。":Settings.LinkChatGPT&&Link.Current.Connected&&!Link.Current.Stale&&DateTime.UtcNow-Link.Current.At<TimeSpan.FromSeconds(10)&&Link.Current.State!="idle"?"GPT 任务状态优先，任务空闲后恢复音乐动作。":NoticePreviewOpen||(toolbarMenu!=null&&toolbarMenu.IsOpen)?"通知预览或菜单正在使用，暂缓音乐动作。":"";
-   return MusicActivity.Read(Settings,Music.Current,chorusLibrary.For(Music.Current.Id),chorusLibrary.StatusFor(Music.Current.Id),state,blocked,musicReactionPlanner.RemainingDelay(clock.Elapsed.TotalSeconds,Settings),musicReactionPlanner.Retaining(Music.Current,clock.Elapsed.TotalSeconds,DateTime.UtcNow,Settings),DateTime.UtcNow);
+   if(skinShowcaseRunning)blocked="正在播放换装展示动作，结束后恢复当前音乐姿态；播放进度与副歌判断继续。";
+   return MusicActivity.Read(Settings,Music.Current,chorusLibrary.For(Music.Current.Id),chorusLibrary.StatusFor(Music.Current.Id),CurrentAction,blocked,musicReactionPlanner.RemainingDelay(clock.Elapsed.TotalSeconds,Settings),musicReactionPlanner.Retaining(Music.Current,clock.Elapsed.TotalSeconds,DateTime.UtcNow,Settings),DateTime.UtcNow);
   }}
   public void ShowMusicActivity(){OpenSettings();settingsWindow.NavigateCategory("音乐","");}
  }

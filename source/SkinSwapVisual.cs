@@ -5,7 +5,7 @@ namespace KianaPet {
   readonly Image skinOldVisual=new Image{IsHitTestVisible=false,Visibility=Visibility.Hidden,Stretch=Stretch.Fill};
   int skinVisualToken;bool skinVisualRunning,skinVisualAutomatic;string skinVisualExpectedState="";
   void BuildSkinVisual(Grid root){
-   BuildSkinShowcase();skinLiveVisual.Children.Add(sprite);skinVisual.Children.Add(skinLiveVisual);skinVisual.Children.Add(skinOldVisual);Grid.SetRow(skinVisual,1);root.Children.Add(skinVisual);
+   skinLiveVisual.Children.Add(sprite);skinVisual.Children.Add(skinLiveVisual);skinVisual.Children.Add(skinOldVisual);Grid.SetRow(skinVisual,1);root.Children.Add(skinVisual);
    RenderOptions.SetBitmapScalingMode(skinOldVisual,BitmapScalingMode.HighQuality);
    skinVisual.IsVisibleChanged+=delegate{if(!skinVisual.IsVisible)StopSkinVisual();};
   }
@@ -38,7 +38,7 @@ namespace KianaPet {
   void SkinVisualActionChanged(string next){if((skinVisualRunning&&next!=skinVisualExpectedState)||(skinShowcaseRunning&&next!=skinShowcaseExpectedState))StopSkinVisual();}
   void MaintainSkinVisual(){
    if(!skinVisualRunning&&!skinShowcaseRunning)return;
-   if(!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible||manualHidden||fullscreenHidden||sessionLocked||pressed||dragging||menuLayerYielding||(skinVisualAutomatic&&SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0)||(skinShowcaseRunning&&SkinFeedbackBlocked()))StopSkinVisual();
+   if((skinVisualRunning&&!Settings.SmoothTransitions)||!MotionSettings.Enabled||!IsVisible||manualHidden||fullscreenHidden||sessionLocked||pressed||dragging||menuLayerYielding||(skinVisualAutomatic&&SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0)||(skinShowcaseRunning&&SkinFeedbackBlocked()))StopSkinVisual();
   }
  }
 }

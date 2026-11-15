@@ -10,23 +10,49 @@ namespace KianaPet {
    last=order[cursor++];return lines[last];
   }
  }
+ public static class SkinChangeActions {
+  public static readonly string[] Allowed={"waving","jumping","groom","pat","stretch"};
+  public static string Label(string id){return AnimationGallery.Catalog.First(a=>a.Id==id).Name;}
+  public static void Validate(Config c){c.SkinShuffleActions=(c.SkinShuffleActions??Allowed).Where(Allowed.Contains).Distinct(StringComparer.Ordinal).ToArray();}
+ }
  public sealed partial class PetWindow {
   readonly SkinChangeMessages skinChangeMessages=new SkinChangeMessages(new Random());
-  readonly RotateTransform skinShowcaseTurn=new RotateTransform();
-  readonly TranslateTransform skinShowcaseLift=new TranslateTransform();
-  bool skinShowcaseRunning;int skinShowcaseToken;string skinShowcaseExpectedState="";
-  void BuildSkinShowcase(){var transforms=new TransformGroup();transforms.Children.Add(skinShowcaseTurn);transforms.Children.Add(skinShowcaseLift);skinLiveVisual.RenderTransform=transforms;skinLiveVisual.RenderTransformOrigin=new Point(.5,.9);}
+  readonly Random skinActionRandom=new Random();
+  string lastSkinAction="",skinShowcaseExpectedState="",skinShowcaseAction="";
+  bool skinShowcaseRunning,skinShowcaseSeated;
+  double skinShowcaseAt,skinShowcaseRiseMs,skinShowcaseActionMs,skinShowcaseSitMs;
+  AnimationPreviewSource skinShowcaseSource;AnimationChoice skinShowcaseChoice;
   string SkinChangeText(){return Settings.Bubbles&&!quietActive&&!sessionLocked?skinChangeMessages.Next():"换好衣服啦！";}
   bool SkinFeedbackBlocked(){return !IsVisible||manualHidden||fullscreenHidden||quietHidden||sessionLocked||quietActive||sleeping||pressed||dragging||interaction!=null||menuLayerYielding||displayPending||NoticePreviewOpen||(toolbarMenu!=null&&toolbarMenu.IsOpen)||noticeCenter!=null||storageWindow!=null||(focusClock.Session.Running&&focusClock.Session.Phase=="focus")||SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0;}
-  static DoubleAnimationUsingKeyFrames ShowcaseFrames(double first,double second,double third){var a=new DoubleAnimationUsingKeyFrames{Duration=TimeSpan.FromMilliseconds(900)};a.KeyFrames.Add(new SplineDoubleKeyFrame(0,KeyTime.FromTimeSpan(TimeSpan.Zero)));a.KeyFrames.Add(new SplineDoubleKeyFrame(first,KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(210)),new KeySpline(.2,0,.3,1)));a.KeyFrames.Add(new SplineDoubleKeyFrame(second,KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(470)),new KeySpline(.3,0,.3,1)));a.KeyFrames.Add(new SplineDoubleKeyFrame(third,KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(690)),new KeySpline(.3,0,.3,1)));a.KeyFrames.Add(new SplineDoubleKeyFrame(0,KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(900)),new KeySpline(.3,0,.3,1)));return a;}
   void PlaySkinShowcase(){
-   StopSkinShowcase();if(!Settings.SmoothTransitions||!MotionSettings.Enabled||SkinFeedbackBlocked())return;
-   skinShowcaseRunning=true;skinShowcaseExpectedState=state;int token=skinShowcaseToken;bool seated=state.StartsWith("music-",StringComparison.Ordinal);double size=Settings.Size/176d;
-   // Animate a separate parent layer: the live sprite's music/alignment
-   // transform and state clock remain owned by their original renderers.
-   var turn=ShowcaseFrames(seated?-3.5:-6,seated?3:5,seated?-1:-2);var lift=ShowcaseFrames(seated?-1.5*size:-6*size,seated?-.5*size:-2*size,0);
-   turn.Completed+=delegate{if(token==skinShowcaseToken)StopSkinShowcase();};skinShowcaseTurn.BeginAnimation(RotateTransform.AngleProperty,turn);skinShowcaseLift.BeginAnimation(TranslateTransform.YProperty,lift);
+   StopSkinShowcase();var choices=Settings.SkinShuffleActions.Where(SkinChangeActions.Allowed.Contains).Distinct().ToArray();
+   if(choices.Length==0||!MotionSettings.Enabled||SkinFeedbackBlocked())return;
+   var withoutLast=choices.Where(a=>a!=lastSkinAction).ToArray();if(withoutLast.Length>0)choices=withoutLast;
+   skinShowcaseAction=choices[skinActionRandom.Next(choices.Length)];lastSkinAction=skinShowcaseAction;
+   skinShowcaseChoice=AnimationGallery.Catalog.First(a=>a.Id==skinShowcaseAction);
+   skinShowcaseSource=new AnimationPreviewSource(Settings.Skin,Settings.MusicSeatedStyle);skinShowcaseExpectedState=state;
+   skinShowcaseSeated=state=="music-quiet"&&MusicSprites.Supported(Settings.Skin);
+   skinShowcaseRiseMs=skinShowcaseSeated?720/AnimationTiming.Speed(Settings,"music-rise"):0;
+   skinShowcaseSitMs=skinShowcaseSeated?720/AnimationTiming.Speed(Settings,"music-sit"):0;
+   skinShowcaseActionMs=skinShowcaseChoice.Duration/AnimationTiming.Speed(Settings,skinShowcaseAction);
+   skinShowcaseAt=clock.Elapsed.TotalSeconds;skinShowcaseRunning=true;DrawSkinShowcase();
   }
-  void StopSkinShowcase(){skinShowcaseToken++;skinShowcaseRunning=false;skinShowcaseExpectedState="";skinShowcaseTurn.BeginAnimation(RotateTransform.AngleProperty,null);skinShowcaseLift.BeginAnimation(TranslateTransform.YProperty,null);skinShowcaseTurn.Angle=0;skinShowcaseLift.Y=0;}
+  string SkinShowcaseVisibleAction(double milliseconds){if(milliseconds>=skinShowcaseRiseMs+skinShowcaseActionMs+skinShowcaseSitMs)return state;return milliseconds<skinShowcaseRiseMs?"music-rise":milliseconds<skinShowcaseRiseMs+skinShowcaseActionMs?skinShowcaseAction:"music-sit";}
+  bool DrawSkinShowcase(){
+   if(!skinShowcaseRunning)return false;
+   double ms=Math.Max(0,(clock.Elapsed.TotalSeconds-skinShowcaseAt)*1000);
+   if(ms>=skinShowcaseRiseMs+skinShowcaseActionMs+skinShowcaseSitMs){StopSkinShowcase();return false;}
+   try{
+    string action=SkinShowcaseVisibleAction(ms);AnimationChoice choice=action==skinShowcaseAction?skinShowcaseChoice:AnimationGallery.Catalog.First(a=>a.Id==action);
+    double elapsed=action=="music-rise"?ms*720/skinShowcaseRiseMs:action=="music-sit"?(ms-skinShowcaseRiseMs-skinShowcaseActionMs)*720/skinShowcaseSitMs:(ms-skinShowcaseRiseMs)*skinShowcaseChoice.Duration/skinShowcaseActionMs;
+    var pose=skinShowcaseSource.Frame(choice,elapsed);if(pose==null){StopSkinShowcase();return false;}
+    sprite.Source=pose.Source;activeAlignment=pose.Alignment;ApplySpriteAlignment();lastFrame=-1;return true;
+   }catch(Exception e){Store.Log("Outfit action: "+e.Message);StopSkinShowcase();return false;}
+  }
+  public void StopOutfitAction(){StopSkinShowcase();}
+  void StopSkinShowcase(){
+   bool restore=skinShowcaseRunning;skinShowcaseRunning=false;skinShowcaseExpectedState="";skinShowcaseAction="";skinShowcaseSource=null;skinShowcaseChoice=null;
+   if(restore){lastFrame=-1;if(!quitting)DrawAnimation((clock.Elapsed.TotalSeconds-stateAt)*1000);}
+  }
  }
 }
