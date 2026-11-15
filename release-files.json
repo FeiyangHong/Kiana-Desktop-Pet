@@ -1,9 +1,12 @@
 {
   "schema": 1,
-  "version": "0.8.17",
+  "version": "0.9.0",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
+    "tools/Send-TaskNotice.ps1",
+    "tools/Invoke-TaskWithNotice.ps1",
+    "docs/companion-features.md",
     "ChatGPT平滑联动组件.zip",
     "KianaDesktopPet.exe",
     "KianaHookReceiver.exe",
@@ -76,6 +79,8 @@
     "docs/demo/appearance-live-preview.png",
     "docs/demo/chatgpt-settings-compact.png",
     "docs/demo/effect-preview.png",
+    "docs/demo/music-activity-status.png",
+    "docs/demo/focus-timer.png",
     "docs/demo/lyric-scroll-settings.png",
     "docs/demo/music-actions.png",
     "docs/demo/music-frames-kiana-fiery-wishing-star-round.png",

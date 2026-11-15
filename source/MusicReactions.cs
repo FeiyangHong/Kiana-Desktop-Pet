@@ -33,6 +33,8 @@ namespace KianaPet {
  // Timing follows the player's position, so seeking and repeat playback need no separate clock.
  public sealed class MusicReactionPlanner {
   string identity="",lastAction;double started,lastPlaying=double.NegativeInfinity,enteredAt;bool active,entered;
+  public double RemainingDelay(double now,Config c){return active&&!entered?Math.Max(0,c.MusicEntryDelaySeconds-(now-started)):0;}
+  public bool Retaining(MusicState s,double now,DateTime utc,Config c){return entered&&active&&(!s.Connected||!s.Playing||(utc-s.At).TotalSeconds>6)&&now-lastPlaying<=c.MusicPlaybackGraceSeconds;}
   void Reset(double now){active=entered=false;started=now;lastAction=null;lastPlaying=double.NegativeInfinity;}
   public string Choose(MusicState state,Config config,ChorusRange[] ranges,double now,DateTime utc,bool allowed){
    if(!config.MusicEnabled||config.ReduceMotion){Reset(now);return null;}

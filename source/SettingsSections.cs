@@ -29,7 +29,7 @@ namespace KianaPet {
    MoveSection(scenes,scenes,"仓库更新",0);var repositoryDetails=scenes.Children.OfType<Expander>().Single(x=>(string)x.Header=="仓库目录与更新说明");scenes.Children.Remove(repositoryDetails);scenes.Children.Insert(3,repositoryDetails);
    // Transfer and local notification controls live with the related task, not in About.
    MoveSection(about,scenes,"双设备偏好与备份",scenes.Children.Count);
-   MoveSection(about,notices,"任务完成通知接口（预留）",notices.Children.Count);
+   MoveSection(about,notices,"外部任务通知",notices.Children.Count);
    var duplicate=scenes.Children.OfType<CheckBox>().Single(x=>(string)x.Content=="普通任务完成静默，仅保留铃铛提示");scenes.Children.Remove(duplicate);
    MoveSection(scenes,notices,"通知节奏",notices.Children.Count);
    FoldSections(scenes,label=>label!="仓库更新");

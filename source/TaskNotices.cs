@@ -1,6 +1,6 @@
 ﻿using System;using System.Collections.Generic;using System.Linq;
 namespace KianaPet {
- // Reserved in-process interface: no ports, file watchers or external integrations.
+ // In-process hub shared by native notices, the optional file inbox and focus reminders.
  public interface ICompanionTaskSink {void Publish(TaskNotice notice);}
  public sealed class TaskNotice {public string Source,TaskId,Title,Status,ActionId;public DateTime UpdatedAt;public bool Unread;}
  public sealed class TaskNoticeHub:ICompanionTaskSink {

@@ -6,6 +6,7 @@ using System.Windows.Threading;
 namespace KianaPet {
  public static class Program {
   [STAThread]public static int Main(string[] args){
+   if(Array.IndexOf(args,"--task-notice")>=0)return ExternalTaskInbox.ReceiveCommand(args,Store.Root);
    if(Array.IndexOf(args,"--hook-event")>=0){int at=Array.IndexOf(args,"--hook-root");return at>=0&&at+1<args.Length?HookJournal.Receive(Path.GetFullPath(args[at+1])):0;}
    if(Array.IndexOf(args,"--music-launch")>=0)return MusicLauncher.Run();
    bool preview=Array.IndexOf(args,"--preview")>=0;string testRoot=null;for(int i=0;i<args.Length-1;i++)if(args[i]=="--state-dir")testRoot=args[i+1];if(testRoot!=null)Store.Root=Path.GetFullPath(testRoot);

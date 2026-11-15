@@ -10,6 +10,10 @@ namespace KianaPet {
  }
  public sealed class Config {
   public int Schema=1;
+  public string SharedPreferenceFile="",PerformanceProfile="legacy",FocusReminder="bubble";
+  public bool AutoScenesEnabled=false,AutoScenesPaused=false,ExternalNoticesEnabled=false,BatterySaving=false,FocusQuiet=true;
+  public int FocusMinutes=25,BreakMinutes=5;
+  public AutoSceneRule[] AutoSceneRules=new AutoSceneRule[0];
   public string ToolbarStyle="legacy",ToolbarColorSource="preset",ToolbarColor1="#A4E1FF",ToolbarColor2="#C7CAFF",ToolbarColor3="#F4FAFF",ToolbarIconColor="#29272D",ToolbarLineColor="#C3C4DA";
   public int ToolbarPreset=0,ToolbarTint=55,ToolbarOpacity=85,ToolbarDirection=2,ToolbarFlowSeconds=18,ToolbarGlassFog=30;
   public bool ToolbarFlow=false,ToolbarAutoContrast=true;
@@ -57,6 +61,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
+   CompanionOptions.Validate(this);
    if(!new[]{"cdp","hooks","auto"}.Contains(GPTConnectionMode))GPTConnectionMode="cdp";
    if(!new[]{"cdp","system","auto"}.Contains(MusicConnectionMode))MusicConnectionMode="cdp";
    ToolbarTheme.Validate(this);AnimationTiming.Validate(this);
