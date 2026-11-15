@@ -103,11 +103,19 @@ namespace KianaPet {
     Settings.Skin=id;LoadSkinCore(false);
     // Redraw the current phase before composition; do not restart a music
     // session, resize windows, show an idle frame, wave or reset polling.
+    // A cosmetic completion bubble is added only after the visual handoff.
     DrawAnimation((now-stateAt)*1000);
     skinShuffle.Applied(Settings);skinShuffleError="";
     if(lastPreferences!=null)lastPreferences.Skin=id;
     Save();SaveSkinShuffle();PlaySkinVisual(visual,state,true);return true;
    }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
+  }
+  void ShowSkinShuffleFeedback(){
+   // Completion feedback must never take over task/interaction messaging.
+   double now=clock.Elapsed.TotalSeconds;
+   if(!Settings.Bubbles||!IsVisible||manualHidden||fullscreenHidden||quietHidden||sessionLocked||quietActive||sleeping||pressed||dragging||interaction!=null||menuLayerYielding||SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0)return;
+   if(bubble.Visibility==System.Windows.Visibility.Visible&&now<bubbleUntil)return;
+   Say("锵锵，换好新衣服啦！",2.8);
   }
   void ManualSkinShuffleReset(){if(!skinShuffleReady)return;CancelSkinShuffleRequest();skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinShuffleError="";SaveSkinShuffle();}
   public void UpdateSkinShuffleSettings(){CancelSkinShuffleRequest();Settings.Validate();skinShuffle.Configure(Settings);skinShuffleError="";Save();SaveSkinShuffle();}

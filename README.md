@@ -2,13 +2,13 @@
 
 ## 效果演示
 
-### 安静随机换装（0.9.4）
+### 随机换装与反馈（0.9.5）
 
 **设置 → 外观与互动 → 随机换装** 可调整间隔与参与皮肤。默认每约两小时在三套 Q 版之间随机，等安全的动作循环衔接点再换；手动选择后重新计时，也可今天固定一套。启动随机可单独开启。自动更换保留位置、音乐状态与原有联动，说明见 [随机换装规则](docs/companion-features.md#随机换装)。
 
 **立即随机换装** 跳过倒计时排队一次。0.9.3 起可保持设置窗口打开，仍等待安全的动作衔接点；GPT 已结束但待查看时不再一直阻挡，会在待查看动作循环衔接点更换，保留原任务状态与未读。页面分别显示实际等待原因，支持取消请求，不修改自动模式和当天固定设置。
 
-换装时约用 0.3 秒柔和淡出、淡入，仅影响人物，保留位置和音乐动作时间轴。手动选衣装与随机换装均支持；关闭“动作与换装使用平滑过渡”或开启“减少动态效果”时直接更换。
+换装时约用 0.3 秒柔和淡出、淡入，仅影响人物，保留位置和音乐动作时间轴。手动选衣装与随机换装均支持；关闭“动作与换装使用平滑过渡”或开启“减少动态效果”时直接更换。随机换装完成后短暂显示“锵锵，换好新衣服啦！”；遵循气泡与免打扰设置，已有任务提示优先。手动换装保留挥手和原有气泡。
 
 ![换装过渡，隔离测试中的坐姿示例](docs/demo/skin-swap.gif)
 
@@ -50,7 +50,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.4-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.5-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。

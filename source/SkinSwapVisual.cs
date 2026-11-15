@@ -21,13 +21,13 @@ namespace KianaPet {
    }var bitmap=new RenderTargetBitmap(Math.Max(1,(int)Math.Ceiling(width*dpi)),Math.Max(1,(int)Math.Ceiling(height*dpi)),96*dpi,96*dpi,PixelFormats.Pbgra32);bitmap.Render(drawing);bitmap.Freeze();return bitmap;}catch(Exception e){Store.Log("Skin visual capture: "+e.Message);return null;}
   }
   void PlaySkinVisual(BitmapSource old,string expectedState,bool automatic){
-   StopSkinVisual();if(old==null||!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible)return;
+   StopSkinVisual();if(old==null||!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible){if(automatic)ShowSkinShuffleFeedback();return;}
    int token=skinVisualToken;skinVisualRunning=true;skinVisualAutomatic=automatic;skinVisualExpectedState=expectedState;
    skinOldVisual.Source=old;skinOldVisual.Visibility=Visibility.Visible;skinOldVisual.Opacity=1;skinLiveVisual.Opacity=0;
    var outgoing=new DoubleAnimation(1,0,TimeSpan.FromMilliseconds(120)){EasingFunction=new CubicEase{EasingMode=EasingMode.EaseIn}};
    outgoing.Completed+=delegate{if(token!=skinVisualToken)return;skinOldVisual.BeginAnimation(OpacityProperty,null);skinOldVisual.Opacity=0;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Source=null;};
    var incoming=new DoubleAnimation(0,1,TimeSpan.FromMilliseconds(180)){BeginTime=TimeSpan.FromMilliseconds(120),EasingFunction=new CubicEase{EasingMode=EasingMode.EaseOut}};
-   incoming.Completed+=delegate{if(token==skinVisualToken)StopSkinVisual();};
+   incoming.Completed+=delegate{if(token!=skinVisualToken)return;StopSkinVisual();if(automatic)ShowSkinShuffleFeedback();};
    skinOldVisual.BeginAnimation(OpacityProperty,outgoing);skinLiveVisual.BeginAnimation(OpacityProperty,incoming);
   }
   void StopSkinVisual(){
