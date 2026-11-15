@@ -29,7 +29,7 @@ namespace KianaPet {
    PauseAutoScenes();next.Validate();if(!Pets.Any(p=>p.Id==next.Skin))throw new Exception("设置中的服装不在当前六套素材中。");
    Save();PreferenceTransfer.Backup();if(!positions){next.X=Settings.X;next.Y=Settings.Y;next.HasPosition=Settings.HasPosition;next.MusicPosition=Settings.MusicPosition;next.MusicX=Settings.MusicX;next.MusicY=Settings.MusicY;next.MusicHasPosition=Settings.MusicHasPosition;}
    string warning="";if(hotkey!=null&&!preview&&!hotkey.Configure(next.RecoverHotkeyEnabled,next.RecoverHotkeyModifiers,next.RecoverHotkeyKey)){warning="新快捷键未启用："+hotkey.Error;hotkey.Configure(false,0,0);next.RecoverHotkeyEnabled=false;}
-   Settings=next;PauseAutoScenes();manualQuiet=false;lastQuietScan=-10;LoadSkin();ResizePet();UpdateLayout();if(next.HasPosition)MoveTo(next.X,next.Y);ClampPosition();ApplySettings();return warning;
+   Settings=next;ManualSkinShuffleReset();PauseAutoScenes();manualQuiet=false;lastQuietScan=-10;LoadSkin();ResizePet();UpdateLayout();if(next.HasPosition)MoveTo(next.X,next.Y);ClampPosition();ApplySettings();return warning;
   }
   void RefreshSettingsWindow(){string category=settingsWindow==null?"常用":settingsWindow.ActiveCategory,query=settingsWindow==null?"":settingsWindow.SearchQuery;if(settingsWindow!=null)settingsWindow.Close();OpenSettings();settingsWindow.NavigateCategory(category,query);}
  }

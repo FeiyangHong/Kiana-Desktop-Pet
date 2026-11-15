@@ -10,6 +10,9 @@ namespace KianaPet {
  }
  public sealed class Config {
   public int Schema=1;
+  public bool SkinShuffleEnabled=true,SkinShuffleOnStart=false,SkinShuffleJitter=true;
+  public int SkinShuffleMinutes=120;
+  public string[] SkinShufflePool=SkinShuffleRules.Defaults.ToArray();
   public string SharedPreferenceFile="",PerformanceProfile="legacy",FocusReminder="bubble";
   public bool AutoScenesEnabled=false,AutoScenesPaused=false,ExternalNoticesEnabled=false,BatterySaving=false,FocusQuiet=true;
   public int FocusMinutes=25,BreakMinutes=5;
@@ -61,7 +64,7 @@ namespace KianaPet {
   public int IdleMinutes=10;
   public double X=-1, Y=-1;
   public void Validate() {
-   CompanionOptions.Validate(this);
+   CompanionOptions.Validate(this);SkinShuffleRules.Validate(this);
    if(!new[]{"cdp","hooks","auto"}.Contains(GPTConnectionMode))GPTConnectionMode="cdp";
    if(!new[]{"cdp","system","auto"}.Contains(MusicConnectionMode))MusicConnectionMode="cdp";
    ToolbarTheme.Validate(this);AnimationTiming.Validate(this);

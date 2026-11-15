@@ -2,6 +2,12 @@
 
 ## 效果演示
 
+### 安静随机换装（0.9.1）
+
+**设置 → 外观与互动 → 随机换装** 可调整间隔与参与皮肤。默认每约两小时在三套 Q 版之间随机，等安全的动作循环衔接点再换；手动选择后重新计时，也可今天固定一套。启动随机可单独开启。自动更换保留位置、音乐状态与原有联动，说明见 [随机换装规则](docs/companion-features.md#随机换装)。
+
+![随机换装设置，可自定义间隔与候选](docs/demo/random-skin-settings.png)
+
 ### 音乐状态与专注陪伴（0.9.0）
 
 音乐页首屏显示当前实际动作、副歌状态、生效规则及没有切换的原因。新增可选共享偏好快照、自动场景、脚本任务通知、性能预设，以及轻量专注计时和休息提醒；入口与使用方法见 [日常陪伴说明](docs/companion-features.md)。原有联动保留，普通启动进度探针仍独立。
@@ -38,7 +44,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.0-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.1-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
@@ -68,7 +74,7 @@ cd Kiana-Desktop-Pet
 
 ## 功能说明
 
-- 音乐联动实时解释、逐项共享偏好、按条件自动切换场景、外部脚本任务通知、性能与电池策略，以及可暂停恢复的专注计时。新增自动功能默认关闭，性能保留原策略；详情见 [日常陪伴说明](docs/companion-features.md)。
+- 音乐联动实时解释、逐项共享偏好、按条件自动切换场景、外部脚本任务通知、性能与电池策略，以及可暂停恢复的专注计时。自动场景、外部任务接收与电池策略默认关闭，性能保留原策略；随机换装默认启用，仅选三套 Q 版。详情见 [日常陪伴说明](docs/companion-features.md)。
 
 - 六套琪亚娜衣装、触摸反馈、自由走动、作息、跨屏拖动和效果预览。
 - 托盘菜单优先显示，宠物、工具栏与音乐栏会让到外部菜单后方，包括 QQ 的 Chromium 托盘菜单。

@@ -3,6 +3,7 @@ namespace KianaPet {
  public sealed partial class SettingsWindow {
   TextBlock musicActivityText,focusStatusText,autoSceneText,externalTaskText,performanceText,sharedText;ListBox autoRuleList;string sharedSeenHash,sharedSeenPath;Button focusPause,focusResume;bool syncingCompanion;
   void BuildCompanionPages(TabControl tabs){
+   BuildSkinShuffleSettings(SettingsPage(tabs,"外观与互动"));
    var music=SettingsPage(tabs,"音乐");var activity=new StackPanel();TitleText(activity,"现在的音乐联动");musicActivityText=CompanionControls.Text("",13);System.Windows.Automation.AutomationProperties.SetName(musicActivityText,"音乐联动实时状态");activity.Children.Add(musicActivityText);((StackPanel)music.Children[0]).Children.Insert(3,new Border{Child=activity,Padding=new Thickness(14,0,14,12),Margin=new Thickness(0,0,0,12),BorderThickness=new Thickness(1),BorderBrush=PetPalette.Brush(PetPalette.Line),CornerRadius=new CornerRadius(12)});
    BuildFocusPage(tabs);BuildSceneAutomation(SettingsPage(tabs,"场景与维护"));BuildSharedPreferences(SettingsPage(tabs,"场景与维护"));BuildPerformance(SettingsPage(tabs,"场景与维护"));BuildExternalTasks(SettingsPage(tabs,"使用说明"));foreach(var liveText in new[]{musicActivityText,focusStatusText,autoSceneText,externalTaskText,performanceText,sharedText})if(liveText!=null)liveText.Foreground=ink;
   }

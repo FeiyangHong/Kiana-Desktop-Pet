@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.9.0",
+  "version": "0.9.1",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -80,6 +80,7 @@
     "docs/demo/chatgpt-settings-compact.png",
     "docs/demo/effect-preview.png",
     "docs/demo/music-activity-status.png",
+    "docs/demo/random-skin-settings.png",
     "docs/demo/focus-timer.png",
     "docs/demo/lyric-scroll-settings.png",
     "docs/demo/music-actions.png",
