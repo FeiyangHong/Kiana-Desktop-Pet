@@ -5,7 +5,7 @@ namespace KianaPet {
   readonly Image skinOldVisual=new Image{IsHitTestVisible=false,Visibility=Visibility.Hidden,Stretch=Stretch.Fill};
   int skinVisualToken;bool skinVisualRunning,skinVisualAutomatic;string skinVisualExpectedState="";
   void BuildSkinVisual(Grid root){
-   skinLiveVisual.Children.Add(sprite);skinVisual.Children.Add(skinLiveVisual);skinVisual.Children.Add(skinOldVisual);Grid.SetRow(skinVisual,1);root.Children.Add(skinVisual);
+   BuildSkinShowcase();skinLiveVisual.Children.Add(sprite);skinVisual.Children.Add(skinLiveVisual);skinVisual.Children.Add(skinOldVisual);Grid.SetRow(skinVisual,1);root.Children.Add(skinVisual);
    RenderOptions.SetBitmapScalingMode(skinOldVisual,BitmapScalingMode.HighQuality);
    skinVisual.IsVisibleChanged+=delegate{if(!skinVisual.IsVisible)StopSkinVisual();};
   }
@@ -31,14 +31,14 @@ namespace KianaPet {
    skinOldVisual.BeginAnimation(OpacityProperty,outgoing);skinLiveVisual.BeginAnimation(OpacityProperty,incoming);
   }
   void StopSkinVisual(){
-   skinVisualToken++;skinVisualRunning=false;skinVisualExpectedState="";
+   StopSkinShowcase();skinVisualToken++;skinVisualRunning=false;skinVisualExpectedState="";
    skinOldVisual.BeginAnimation(OpacityProperty,null);skinLiveVisual.BeginAnimation(OpacityProperty,null);
    skinOldVisual.Source=null;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Opacity=0;skinLiveVisual.Opacity=1;
   }
-  void SkinVisualActionChanged(string next){if(skinVisualRunning&&next!=skinVisualExpectedState)StopSkinVisual();}
+  void SkinVisualActionChanged(string next){if((skinVisualRunning&&next!=skinVisualExpectedState)||(skinShowcaseRunning&&next!=skinShowcaseExpectedState))StopSkinVisual();}
   void MaintainSkinVisual(){
-   if(!skinVisualRunning)return;
-   if(!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible||manualHidden||fullscreenHidden||sessionLocked||pressed||dragging||menuLayerYielding||(skinVisualAutomatic&&SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0))StopSkinVisual();
+   if(!skinVisualRunning&&!skinShowcaseRunning)return;
+   if(!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible||manualHidden||fullscreenHidden||sessionLocked||pressed||dragging||menuLayerYielding||(skinVisualAutomatic&&SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0)||(skinShowcaseRunning&&SkinFeedbackBlocked()))StopSkinVisual();
   }
  }
 }

@@ -113,9 +113,11 @@ namespace KianaPet {
   void ShowSkinShuffleFeedback(){
    // Completion feedback must never take over task/interaction messaging.
    double now=clock.Elapsed.TotalSeconds;
-   if(!Settings.Bubbles||!IsVisible||manualHidden||fullscreenHidden||quietHidden||sessionLocked||quietActive||sleeping||pressed||dragging||interaction!=null||menuLayerYielding||SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0)return;
+   if(SkinFeedbackBlocked())return;
+   PlaySkinShowcase();
+   if(!Settings.Bubbles)return;
    if(bubble.Visibility==System.Windows.Visibility.Visible&&now<bubbleUntil)return;
-   Say("锵锵，换好新衣服啦！",2.8);
+   Say(skinChangeMessages.Next(),2.8);
   }
   void ManualSkinShuffleReset(){if(!skinShuffleReady)return;CancelSkinShuffleRequest();skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinShuffleError="";SaveSkinShuffle();}
   public void UpdateSkinShuffleSettings(){CancelSkinShuffleRequest();Settings.Validate();skinShuffle.Configure(Settings);skinShuffleError="";Save();SaveSkinShuffle();}

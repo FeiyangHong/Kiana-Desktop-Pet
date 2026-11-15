@@ -14,7 +14,7 @@ class SkinFeedbackTests {
   pet.Loaded+=async delegate{try{
    await Task.Delay(1100);((DispatcherTimer)F(pet,"animation")).Stop();foreach(var w in app.Windows.OfType<SettingsWindow>().ToArray())w.Close();Set(pet,"hover",false);Set(pet,"interaction",null);Set(pet,"menuLayerYielding",false);Set(pet,"sleeping",false);Set(pet,"state","idle");Clear(pet);
    double phase=(double)F(pet,"stateAt"),width=pet.Width,height=pet.Height;var polling=((DispatcherTimer)F(pet,"poll")).Interval;
-   Check(Swap(pet)&&Bubble(pet)&&Text(pet)=="锵锵，换好新衣服啦！","direct successful swap has completion feedback");
+   Check(Swap(pet)&&Bubble(pet)&&SkinChangeMessages.Contains(Text(pet)),"direct successful swap has completion feedback");
    Check(F(pet,"interaction")==null&&(double)F(pet,"stateAt")==phase&&pet.Width==width&&pet.Height==height&&((DispatcherTimer)F(pet,"poll")).Interval==polling,"feedback preserves action timeline, bounds and polling");
    pet.Say("任务已完成",5);double taskUntil=(double)F(pet,"bubbleUntil");Swap(pet);Check(Text(pet)=="任务已完成"&&(double)F(pet,"bubbleUntil")==taskUntil,"existing task bubble keeps its text and lifetime");
    Clear(pet);pet.Settings.Bubbles=false;Swap(pet);Check(!Bubble(pet),"bubble preference is respected");pet.Settings.Bubbles=true;
@@ -29,7 +29,7 @@ class SkinFeedbackTests {
     Clear(pet);Swap(pet);pet.Say("新任务需要处理",5);await Task.Delay(370);Check(Text(pet)=="新任务需要处理","task bubble arriving during fade keeps priority");
     Clear(pet);Swap(pet);pet.Settings.LinkChatGPT=true;pet.Link.Current.State="running";pet.Link.Current.At=DateTime.UtcNow;await Task.Delay(370);Check(!Bubble(pet),"new GPT task suppresses pending completion feedback");pet.Settings.LinkChatGPT=false;
    }
-   Clear(pet);pet.SelectSkin(SkinShuffleRules.Defaults.First(id=>id!=pet.Settings.Skin));Check(Text(pet)=="换好衣服啦！"&&Equals(F(pet,"interaction"),"waving"),"manual selection retains the original wave and bubble");await Task.Delay(370);Check(Text(pet)=="换好衣服啦！","manual selection has no duplicate randomization bubble");
+   Clear(pet);pet.SelectSkin(SkinShuffleRules.Defaults.First(id=>id!=pet.Settings.Skin));Check(SkinChangeMessages.Contains(Text(pet))&&Equals(F(pet,"interaction"),"waving"),"manual selection retains the original wave and bubble");string manualText=Text(pet);await Task.Delay(370);Check(Text(pet)==manualText,"manual selection has no duplicate randomization bubble");
    passed=true;
   }catch(Exception e){Store.Atomic("error.json",new{error=e.ToString(),checks});}finally{foreach(var w in app.Windows.Cast<Window>().Where(w=>w!=pet).ToArray())w.Close();pet.Close();}};app.Run(pet);Store.Atomic("result.json",new{passed,checks});return passed?0:1;
  }
