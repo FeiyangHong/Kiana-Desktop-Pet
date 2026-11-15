@@ -9,6 +9,19 @@ namespace KianaPet {
   bool skinShuffleReady;
   double lastSkinCheckpoint;
   string skinShuffleError="";
+  bool skinShuffleRequested;
+  string skinShuffleRequestNote="";
+  public bool SkinShuffleRequested{get{return skinShuffleRequested;}}
+  public bool CanRequestSkinShuffle{get{return skinShuffleReady&&!skinShuffleRequested&&Settings.SkinShufflePool.Any(id=>id!=Settings.Skin);}}
+  public void RequestSkinShuffle(){
+   if(!skinShuffleReady||skinShuffleRequested)return;
+   skinShuffleRequestNote="";
+   if(!Settings.SkinShufflePool.Any(id=>id!=Settings.Skin)){skinShuffleRequestNote=Settings.SkinShufflePool.Length==0?"未选择参与的皮肤，本次请求未排队。":"当前就是唯一候选，本次请求未排队。";return;}
+   // A deliberate one-shot request bypasses the clock and today's automatic
+   // hold, but never bypasses interaction or animation-boundary protections.
+   skinShuffleRequested=true;skinShuffleError="";skinBoundary.Reset();
+  }
+  public void CancelSkinShuffleRequest(){skinShuffleRequested=false;skinShuffleRequestNote="";skinBoundary.Reset();}
   void PrepareSkinShuffle(){
    SkinShuffleSession saved=null;
    try{saved=Store.Json.Deserialize<SkinShuffleSession>(File.ReadAllText(Path.Combine(Store.Root,"skin-shuffle-session.json")));}catch{}
@@ -49,9 +62,13 @@ namespace KianaPet {
    double elapsed=Math.Max(0,(now-stateAt)*1000);
    double timeline=state=="music-quiet"?AnimationTiming.MusicElapsed(Settings,state,elapsed,false)-MusicReactions.SitTransitionMs:AnimationTiming.Elapsed(Settings,state,elapsed);
    bool boundary=skinBoundary.Observe(state,timeline,state=="music-quiet"?MusicSeatedFrames.CycleMs:6600,blocked.Length==0,Settings.ReduceMotion,now);
-   if(preview||!skinShuffle.Due(Settings,DateTime.Now)||!boundary)return;
-   string id=skinShuffle.Next(Settings);if(id==null)return;
-   ApplyAutomaticSkin(id,now);
+   if(!preview)ExecuteSkinShuffle(now,boundary);
+  }
+  bool ExecuteSkinShuffle(double now,bool boundary){
+   if(!skinShuffleReady||!boundary||(!skinShuffleRequested&&!skinShuffle.Due(Settings,DateTime.Now))||SkinShuffleBlockReason().Length>0)return false;
+   bool requested=skinShuffleRequested;string id=skinShuffle.Next(Settings);skinShuffleRequested=false;
+   if(id==null){if(requested)skinShuffleRequestNote="没有可更换的候选，本次请求已结束。";return false;}
+   return ApplyAutomaticSkin(id,now);
   }
   bool ApplyAutomaticSkin(string id,double now){
    if(!Pets.Any(p=>p.Id==id)||id==Settings.Skin)return false;
@@ -66,17 +83,19 @@ namespace KianaPet {
     Save();SaveSkinShuffle();return true;
    }catch(Exception e){Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
   }
-  void ManualSkinShuffleReset(){if(!skinShuffleReady)return;skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinBoundary.Reset();skinShuffleError="";SaveSkinShuffle();}
-  public void UpdateSkinShuffleSettings(){Settings.Validate();skinShuffle.Configure(Settings);skinBoundary.Reset();skinShuffleError="";Save();SaveSkinShuffle();}
-  public void HoldSkinToday(){skinShuffle.HoldToday(DateTime.Now);skinBoundary.Reset();SaveSkinShuffle();}
-  public void ResumeSkinShuffle(){skinShuffle.Release(Settings);skinBoundary.Reset();skinShuffleError="";SaveSkinShuffle();}
+  void ManualSkinShuffleReset(){if(!skinShuffleReady)return;CancelSkinShuffleRequest();skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinShuffleError="";SaveSkinShuffle();}
+  public void UpdateSkinShuffleSettings(){CancelSkinShuffleRequest();Settings.Validate();skinShuffle.Configure(Settings);skinShuffleError="";Save();SaveSkinShuffle();}
+  public void HoldSkinToday(){CancelSkinShuffleRequest();skinShuffleError="";skinShuffle.HoldToday(DateTime.Now);SaveSkinShuffle();}
+  public void ResumeSkinShuffle(){CancelSkinShuffleRequest();skinShuffle.Release(Settings);skinShuffleError="";SaveSkinShuffle();}
   public string SkinShuffleStatus{get{
    if(!skinShuffleReady)return "随机换装准备中";
+   if(skinShuffleRequested){string reason=SkinShuffleBlockReason();return "立即随机换装已排队，"+(reason.Length>0?reason+"；稍后更换。":"等待安全的动作循环衔接点。");}
+   if(skinShuffleRequestNote.Length>0)return skinShuffleRequestNote;
+   if(skinShuffleError.Length>0)return skinShuffleError;
    if(skinShuffle.Held(DateTime.Now))return "今天固定当前衣装；明天恢复完整间隔计时。";
    if(!Settings.SkinShuffleEnabled&&!Settings.SkinShuffleOnStart)return "随机换装已关闭。";
    if(Settings.SkinShufflePool.Length==0)return "未选择参与的皮肤，暂不更换。";
    if(!Settings.SkinShufflePool.Any(id=>id!=Settings.Skin))return "当前就是唯一候选，不会重复换装。";
-   if(skinShuffleError.Length>0)return skinShuffleError;
    if(!Settings.SkinShuffleEnabled)return "仅在启动时随机；下次启动生效。";
    if(skinShuffle.Due(Settings,DateTime.Now)){string reason=SkinShuffleBlockReason();return "已到更换时间，"+(reason.Length>0?reason+"；稍后再换。":"等待动作循环衔接点。");}
    return "距离下次随机约 "+SkinShuffleRules.WaitText(skinShuffle.Session.Remaining)+"（仅累计可见、清醒的陪伴时间）";
