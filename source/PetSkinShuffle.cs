@@ -97,7 +97,8 @@ namespace KianaPet {
    // This adjustment ends with the request and never changes provider polling.
    return Math.Min(normal,Math.Max(16,(int)(Rules.FirstFrameMs(state)/AnimationTiming.Speed(Settings,state)/2)));
   }
-  bool ApplyAutomaticSkin(string id,double now){
+  bool ApplyAutomaticSkin(string id,double now){return ApplySkinChange(id,now,false);}
+  bool ApplySkinChange(string id,double now,bool manual){
    if(!Pets.Any(p=>p.Id==id)||id==Settings.Skin)return false;
    string old=Settings.Skin;var visual=CaptureSkinVisual();StopSkinVisual();
    try{
@@ -106,8 +107,8 @@ namespace KianaPet {
     // session, resize windows, force a greeting or reset polling.
     // The selected existing action and bubble follow the visual handoff.
     DrawAnimation((now-stateAt)*1000);
-    skinShuffle.Applied(Settings);skinShuffleError="";
-    if(lastPreferences!=null)lastPreferences.Skin=id;
+    if(manual)ManualSkinShuffleReset();else skinShuffle.Applied(Settings);skinShuffleError="";
+    if(!manual&&lastPreferences!=null)lastPreferences.Skin=id;
     Save();SaveSkinShuffle();PlaySkinVisual(visual,state,true);return true;
    }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
   }

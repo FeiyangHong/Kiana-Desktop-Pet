@@ -22,7 +22,6 @@ namespace KianaPet {
   bool skinShowcaseRunning,skinShowcaseSeated;
   double skinShowcaseAt,skinShowcaseRiseMs,skinShowcaseActionMs,skinShowcaseSitMs;
   AnimationPreviewSource skinShowcaseSource;AnimationChoice skinShowcaseChoice;
-  string SkinChangeText(){return Settings.Bubbles&&!quietActive&&!sessionLocked?skinChangeMessages.Next():"换好衣服啦！";}
   bool SkinFeedbackBlocked(){return !IsVisible||manualHidden||fullscreenHidden||quietHidden||sessionLocked||quietActive||sleeping||pressed||dragging||interaction!=null||menuLayerYielding||displayPending||NoticePreviewOpen||(toolbarMenu!=null&&toolbarMenu.IsOpen)||noticeCenter!=null||storageWindow!=null||(focusClock.Session.Running&&focusClock.Session.Phase=="focus")||SkinShuffleSafety.GPTBlockReason(Settings,Link.Current,DateTime.UtcNow).Length>0;}
   void PlaySkinShowcase(){
    StopSkinShowcase();var choices=Settings.SkinShuffleActions.Where(SkinChangeActions.Allowed.Contains).Distinct().ToArray();

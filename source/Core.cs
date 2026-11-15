@@ -11,7 +11,7 @@ namespace KianaPet {
  public sealed class Config {
   public int Schema=1;
   public bool SkinShuffleEnabled=true,SkinShuffleOnStart=false,SkinShuffleJitter=true;
-  public int SkinShuffleMinutes=120;
+  public int SkinShuffleMinutes=60;
   public string[] SkinShufflePool=SkinShuffleRules.Defaults.ToArray();
   public string[] SkinShuffleActions=SkinChangeActions.Allowed.ToArray();
   public string SharedPreferenceFile="",PerformanceProfile="legacy",FocusReminder="bubble";

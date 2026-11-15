@@ -6,7 +6,7 @@ using System.Globalization;
 namespace KianaPet {
  public sealed class SkinShuffleSession {
   public double Remaining=-1;
-  public int Minutes=120;
+  public int Minutes=60;
   public bool Enabled=true,Jitter=true,OnStart=false,RoundStarted=false;
   public string[] Pool=new string[0],Bag=new string[0];
   public string HeldDate="",LastSkin="";

@@ -29,7 +29,7 @@ class SkinFeedbackTests {
     Clear(pet);Swap(pet);pet.Say("新任务需要处理",5);await Task.Delay(370);Check(Text(pet)=="新任务需要处理","task bubble arriving during fade keeps priority");
     Clear(pet);Swap(pet);pet.Settings.LinkChatGPT=true;pet.Link.Current.State="running";pet.Link.Current.At=DateTime.UtcNow;await Task.Delay(370);Check(!Bubble(pet),"new GPT task suppresses pending completion feedback");pet.Settings.LinkChatGPT=false;
    }
-   Clear(pet);pet.SelectSkin(SkinShuffleRules.Defaults.First(id=>id!=pet.Settings.Skin));Check(SkinChangeMessages.Contains(Text(pet))&&Equals(F(pet,"interaction"),"waving"),"manual selection retains the original wave and bubble");string manualText=Text(pet);await Task.Delay(370);Check(Text(pet)==manualText,"manual selection has no duplicate randomization bubble");
+   Clear(pet);pet.SelectSkin(SkinShuffleRules.Defaults.First(id=>id!=pet.Settings.Skin));Check(!Bubble(pet)&&F(pet,"interaction")==null,"manual selection waits for the shared handoff without a forced wave");await Task.Delay(370);Check(Bubble(pet)&&SkinChangeMessages.Contains(Text(pet)),"manual selection uses the shared completion bubble");
    passed=true;
   }catch(Exception e){Store.Atomic("error.json",new{error=e.ToString(),checks});}finally{foreach(var w in app.Windows.Cast<Window>().Where(w=>w!=pet).ToArray())w.Close();pet.Close();}};app.Run(pet);Store.Atomic("result.json",new{passed,checks});return passed?0:1;
  }
