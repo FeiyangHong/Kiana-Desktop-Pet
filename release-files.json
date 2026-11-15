@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.9.3",
+  "version": "0.9.4",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -128,6 +128,7 @@
     "update-worker.ps1",
     "启动独立桌宠.cmd",
     "安装独立桌宠.cmd",
-    "docs/demo/maintenance-settings-compact.png"
+    "docs/demo/maintenance-settings-compact.png",
+    "docs/demo/skin-swap.gif"
   ]
 }

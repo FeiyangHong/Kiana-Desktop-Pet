@@ -98,7 +98,7 @@ namespace KianaPet {
   }
   bool ApplyAutomaticSkin(string id,double now){
    if(!Pets.Any(p=>p.Id==id)||id==Settings.Skin)return false;
-   string old=Settings.Skin;
+   string old=Settings.Skin;var visual=CaptureSkinVisual();
    try{
     Settings.Skin=id;LoadSkinCore(false);
     // Redraw the current phase before composition; do not restart a music
@@ -106,8 +106,8 @@ namespace KianaPet {
     DrawAnimation((now-stateAt)*1000);
     skinShuffle.Applied(Settings);skinShuffleError="";
     if(lastPreferences!=null)lastPreferences.Skin=id;
-    Save();SaveSkinShuffle();return true;
-   }catch(Exception e){Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
+    Save();SaveSkinShuffle();PlaySkinVisual(visual,state,true);return true;
+   }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
   }
   void ManualSkinShuffleReset(){if(!skinShuffleReady)return;CancelSkinShuffleRequest();skinShuffle.Configure(Settings);skinShuffle.Manual(Settings);skinShuffleError="";SaveSkinShuffle();}
   public void UpdateSkinShuffleSettings(){CancelSkinShuffleRequest();Settings.Validate();skinShuffle.Configure(Settings);skinShuffleError="";Save();SaveSkinShuffle();}
