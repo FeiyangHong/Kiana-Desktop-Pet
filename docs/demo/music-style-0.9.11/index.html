@@ -1,0 +1,26 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>琪亚娜坐姿与过渡对照</title>
+<style>
+:root{font:16px/1.5 "Microsoft YaHei UI",sans-serif;color:#262338;background:#f6f5fa}main{max-width:1030px;margin:2rem auto;padding:0 1rem}h1{font-size:1.65rem}label{display:inline-grid;gap:.25rem;margin:0 1rem .8rem 0;font-size:.88rem}select,button,input{font:inherit}select,button{padding:.45rem .65rem;border:1px solid #c7c3d5;background:white;border-radius:.45rem;color:#302d40}.row{display:flex;flex-wrap:wrap;gap:.5rem}figure{flex:1;min-width:195px;text-align:center;margin:0;border:1px solid #d8d5e0;border-radius:12px;background:#fff;padding:.7rem}canvas{display:block;max-width:100%;height:auto;margin:auto}figcaption{margin:.5rem;color:inherit}.dark figure{background:#292733;color:white}footer{display:flex;align-items:center;gap:1rem;margin-top:1rem;flex-wrap:wrap}input{width:15rem}</style>
+<main><h1>坐着听歌与过渡动作对照</h1>
+<label>衣装<select id="skin"><option value="kiana-winter-wish-round">冬祈新愿</option><option value="kiana-fiery-wishing-star-round">炽愿吉星</option><option value="time-runner-kiana-round">时砾逐光</option></select></label>
+<label>前期参照<select id="reference"><option>待机</option><option>招手</option><option>等待回应</option><option>伸懒腰</option></select></label>
+<label>对照动作<select id="action"><option>坐着听歌 · 原版</option><option>坐着听歌 · 头部轻晃</option><option>坐着听歌 · 侧向点头</option><option>坐下过渡</option><option>起身过渡</option><option>轻微应援 · 分析</option><option>活力应援 · 分析</option></select></label>
+<label>显示大小<select id="zoom"><option value="192">192 像素</option><option value="280">280 像素</option></select></label>
+<label>底色<select id="bg"><option>浅色</option><option>深色</option></select></label>
+<div class="row"><figure><canvas width="192" height="208"></canvas><figcaption>前期参照</figcaption></figure><figure><canvas width="192" height="208"></canvas><figcaption>修正前</figcaption></figure><figure><canvas width="192" height="208"></canvas><figcaption>当前版本</figcaption></figure></div>
+<footer><button id="play">暂停</button><button id="prev">上一帧</button><button id="next">下一帧</button><label>逐帧查看<input id="step" type="range" min="0" max="11" value="0"></label><output id="status"></output></footer></main>
+<script>
+const el=id=>document.getElementById(id), canvases=[...document.querySelectorAll('canvas')],images={}, rows=[0,1,2,3,3,4,5];
+const quiet=[...Array(12).keys(),10,9,8,7,6,5,4,3,2,1],forward=[0,1,2,3,4,5],reverse=[5,4,3,2,1,0];
+let playing=true,elapsed=0,frame=0,last=performance.now();
+function film(){const a=el('action').selectedIndex;return a<3?quiet:a===4?reverse:forward}
+function times(){const a=el('action').selectedIndex;return a<3?film().map(()=>9600/22):a===5?forward.map(()=>240):a===6?[180,120,180,120,180,120]:forward.map(()=>120)}
+function position(){const t=times(),limit=t.reduce((a,b)=>a+b,0);let remainder=elapsed%limit;for(let i=0;i<t.length;i++){if(remainder<t[i])return i;remainder-=t[i]}return 0}
+function draw(){const id=el('skin').value,a=el('action').selectedIndex;const f=film()[frame];for(let i=0;i<3;i++){const c=canvases[i],ctx=c.getContext('2d');const src=images[id+(i===2?'after':'before')];ctx.clearRect(0,0,192,208);if(src&&src.complete&&src.naturalWidth)ctx.drawImage(src,192*(i?f:el('reference').selectedIndex),208*(i?rows[a]:6),192,208,0,0,192,208);c.style.width=el('zoom').value+'px'}
+el('step').max=film().length-1;el('step').value=frame;el('status').textContent='画稿 '+(f+1)+' / '+(a<3?12:6);el('play').textContent=playing?'暂停':'播放'}
+function changeSkin(){for(const tag of ['before','after']){const id=el('skin').value,key=id+tag;if(!images[key]){const im=new Image();images[key]=im;im.onload=draw;im.onerror=()=>el('status').textContent='图片读取失败';im.src=id+'-'+tag+'.png'}}draw()}
+function jump(i){playing=false;frame=(i+film().length)%film().length;elapsed=times().slice(0,frame).reduce((a,b)=>a+b,0);draw()}
+el('prev').onclick=()=>jump(frame-1);el('next').onclick=()=>jump(frame+1);el('step').oninput=e=>jump(+e.target.value);el('play').onclick=()=>{playing=!playing;last=performance.now();draw()};
+el('skin').onchange=changeSkin;el('action').onchange=()=>{elapsed=0;frame=0;draw()};el('reference').onchange=el('zoom').onchange=draw;el('bg').onchange=()=>document.body.classList.toggle('dark',el('bg').selectedIndex===1);
+function tick(now){if(playing){elapsed+=now-last;let f=position();if(f!==frame){frame=f;draw()}}last=now;requestAnimationFrame(tick)}changeSkin();requestAnimationFrame(tick);
+</script></html>

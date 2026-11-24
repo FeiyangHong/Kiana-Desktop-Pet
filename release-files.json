@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.9.10",
+  "version": "0.9.11",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -134,6 +134,18 @@
     "docs/demo/skin-showcase.gif",
     "docs/demo/random-skin-menu.png",
     "docs/demo/outfit-action-preview.png",
-    "docs/demo/outfit-action-preview-standing.png"
+    "docs/demo/outfit-action-preview-standing.png",
+    "docs/demo/music-style-0.9.11/cheer.png",
+    "docs/demo/music-style-0.9.11/close.png",
+    "docs/demo/music-style-0.9.11/comparison.png",
+    "docs/demo/music-style-0.9.11/index.html",
+    "docs/demo/music-style-0.9.11/kiana-fiery-wishing-star-round-after.png",
+    "docs/demo/music-style-0.9.11/kiana-fiery-wishing-star-round-before.png",
+    "docs/demo/music-style-0.9.11/kiana-winter-wish-round-after.png",
+    "docs/demo/music-style-0.9.11/kiana-winter-wish-round-before.png",
+    "docs/demo/music-style-0.9.11/time-runner-kiana-round-after.png",
+    "docs/demo/music-style-0.9.11/time-runner-kiana-round-before.png",
+    "docs/demo/music-style-0.9.11/画风对照.md",
+    "docs/music-generation-0.9.11.json"
   ]
 }

@@ -1,0 +1,63 @@
+{
+  "version": "0.9.11",
+  "tool": "built-in imagegen",
+  "prompt": "Style-transfer edit for a frame of a desktop companion. Image 1 is the EDIT TARGET. Every pixel position of its silhouette, headphones, stool, shoes, legs, hands, torso, hairstyle and face pose must remain aligned with this image. Image 2 is the definitive idle identity and facial proportions, image 3 is the definitive material and line art. Retouch the existing seated illustration using the graphic language of the earlier frames: clear tapered colored ink around bangs and garments, small angular cel shadow blocks in the hair, localized white glints, clear bright star-point highlights in violet-to-cyan irises, readable inner and outer eyelid, a clean even light peach face, pale silver-white hair with cool lilac stepped shadows. Match THIS outfit's original colors. Use image 1's exact sitting gesture and relaxed slight smile, original props, clothing identity; avoid darkening or glossy airbrushed blush. 1 complete isolated transparent sprite, no background or cast shadow, no halo. Frame and scale exactly as image 1, no alternate pose. Aim for crisp small-size readability.",
+  "inputs": [
+    "per-outfit seated frame 0",
+    "per-outfit original idle",
+    "per-outfit early stretch"
+  ],
+  "registration": "Track the eye axis for each full pose, align early HD eye and fringe artwork, sample illustrated hair planes and per-outfit garment palettes, retain the original alpha, geometry and playback calibration.",
+  "frames": 126,
+  "review": "docs/demo/music-style-0.9.11/index.html",
+  "assets": [
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated-nod.png",
+      "sha256": "396d14895f0e2457aa1cf2890a9c4e2e521517eb3c3914f2d5c249e0e4d2305e"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated-sway.png",
+      "sha256": "120f4fcfd1746318db65cf938c53aa148182a16c5e44d212edbc5d12fa0b8ae1"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated.png",
+      "sha256": "8e810e37903b8a05943a58b6cd604d364fb84f36d8810e032b3f60da743b3d54"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-sit.png",
+      "sha256": "74e8a0db6c0a7fb8bfbbea8dbb6afd90b1f1c44f96830d54c97ca883fb1fa287"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-nod.png",
+      "sha256": "14360b7ba3fe42823d3840b5a800e4fb13097fdcf90f2b828099881a95bec2cf"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-sway.png",
+      "sha256": "7d0a0d4d585439a8148c38689a1c9f7727de030910ae35c0d872656af1a335fd"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated.png",
+      "sha256": "ffa21c13543c501f895d18b6ed31db185ed449dad16f8e9529ada8d53c42bc15"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-sit.png",
+      "sha256": "f9d91d5441a8378eab1c77ceebaac1a65d3473518c733bebedb4d8cb68054765"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-nod.png",
+      "sha256": "8a71dd17679667ac3f123d4a3f95e71373233ed8c22d37208c67cfb2611eadb5"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-sway.png",
+      "sha256": "783fa310f78f953b264c3522227dd0233b0ceafc3e88f9b035329e81dc3d7409"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated.png",
+      "sha256": "2aebb0866588db31eef0a37028da9f073b583856ea570ce76fb27ace9ebf38d4"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-sit.png",
+      "sha256": "16209417c9543dc1745a0615c397bf03209e3156fece616e122d1c5b9565637a"
+    }
+  ]
+}
