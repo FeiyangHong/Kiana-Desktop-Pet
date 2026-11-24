@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>琪亚娜 · 音乐动作画风对照</title>
+<style>
+:root{font:15px/1.5 "Microsoft YaHei UI",sans-serif;color:#292433;background:#f7f6fa;accent-color:#685192}
+main{max-width:1000px;margin:32px auto;padding:0 16px}h1{font-size:25px}header,footer{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+label{display:grid;gap:4px;font-size:13px}select,button{color:inherit;background:white;border:1px solid #c8c3d2;border-radius:7px;font:inherit;padding:5px 9px}
+section{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px;margin:20px 0}
+figure{margin:0;background:white;border:1px solid #d7d3de;border-radius:12px;text-align:center;overflow:hidden}
+.dark figure{background:#2a2933;color:#f7f5fb}canvas{display:block;margin:auto;max-width:100%;height:auto}
+figcaption{padding:6px 8px 12px}footer{align-items:center}input{width:min(230px,60vw)}output{color:#554861}
+</style></head><body><main>
+<h1>音乐动作画风对照</h1>
+<header>
+<label>衣装<select id="skin"><option value="kiana-winter-wish-round">冬祈新愿</option><option value="kiana-fiery-wishing-star-round">炽愿吉星</option><option value="time-runner-kiana-round">时砾逐光</option></select></label>
+<label>前期参照<select id="reference"><option>待机</option><option>招手</option><option>等待回应</option><option>伸懒腰</option><option selected>整理头发</option></select></label>
+<label>音乐动作<select id="action"><option>坐着听歌 · 原版</option><option>坐着听歌 · 头部轻晃</option><option>坐着听歌 · 侧向点头</option><option>坐下过渡</option><option>起身过渡</option><option>轻微应援</option><option>活力应援</option></select></label>
+<label>底色<select id="bg"><option>浅色</option><option>深色</option></select></label>
+<label>预览宽度<select id="zoom"><option value="192">192 像素</option><option value="280">280 像素</option></select></label>
+</header><section>
+<figure><canvas aria-label="早期动作" width="192" height="208"></canvas><figcaption>前期参照</figcaption></figure>
+<figure><canvas aria-label="0.9.11 音乐动作" width="192" height="208"></canvas><figcaption>修正前 · 0.9.11</figcaption></figure>
+<figure><canvas aria-label="0.9.12 音乐动作" width="192" height="208"></canvas><figcaption>修正后 · 0.9.12</figcaption></figure>
+</section><footer>
+<button id="play">暂停</button><button id="prev">上一帧</button><button id="next">下一帧</button>
+<label>音乐动作时间轴<input id="seek" type="range" min="0" max="21" value="0"></label><output id="position"></output>
+</footer></main><script src="reference-times.js"></script><script>
+const el = id => document.getElementById(id);
+const canvases = [...document.querySelectorAll('canvas')];
+const rows = [0,1,2,3,3,4,5];
+const quiet = Array.from({length:12}, (_,i) => i).concat([10,9,8,7,6,5,4,3,2,1]);
+const forward = [0,1,2,3,4,5], cache = new Map();
+let elapsed=0, previous=performance.now(), playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+function musicSequence(action) {
+  const cells = action<3 ? quiet : action===4 ? [...forward].reverse() : forward;
+  const times = action<3 ? cells.map(()=>9600/22) : action===6 ? [180,120,180,120,180,120] : cells.map(()=>action===5?240:120);
+  return cells.map((cell,i)=>[cell,times[i]]);
+}
+function at(sequence,ms) {
+  const duration=sequence.reduce((sum,step)=>sum+step[1],0);
+  let t=ms%duration;
+  for(let i=0;i<sequence.length;i++){if(t<sequence[i][1])return i;t-=sequence[i][1];}
+  return 0;
+}
+function atlas(path){
+  if(!cache.has(path)){
+    const image=new Image();cache.set(path,image);
+    image.onload=draw;image.onerror=()=>{el('position').textContent='图集读取失败，请保留版本对照目录。';};image.src=path;
+  }
+  return cache.get(path);
+}
+function cell(canvas,path,x,y,angle){
+  const ctx=canvas.getContext('2d'),img=atlas(path);
+  ctx.clearRect(0,0,192,208);if(!img.naturalWidth)return;
+  ctx.save();
+  if(angle){const x=192*.46,y=192*1.03;ctx.translate(x,y);ctx.rotate(angle*Math.PI/180);ctx.translate(-x,-y);}
+  ctx.drawImage(img,192*x,208*y,192,208,0,0,192,208);ctx.restore();
+}
+function current(){return musicSequence(el('action').selectedIndex);}
+function draw(){
+  const skin=el('skin').value,ref=el('reference').selectedIndex,action=el('action').selectedIndex;
+  const seq=current(),index=at(seq,elapsed),f=seq[index][0],refSeq=referenceTimes[skin][ref];
+  cell(canvases[0],skin+'-reference.png',refSeq[at(refSeq,elapsed+850)][0],ref,0);
+  const angle=action===5&&skin!=='time-runner-kiana-round'?1.1*Math.sin(elapsed*2*Math.PI/1440):0;
+  cell(canvases[1],'../music-style-0.9.11/'+skin+'-after.png',f,rows[action],angle);
+  cell(canvases[2],skin+'-after.png',f,rows[action],angle);
+  for(const c of canvases)c.style.width=el('zoom').value+'px';
+  el('seek').max=seq.length-1;el('seek').value=index;el('position').textContent='画稿 '+(f+1)+' / '+(action<3?12:6);
+  el('play').textContent=playing?'暂停':'播放';
+}
+function jump(index){const seq=current();playing=false;const i=(index+seq.length)%seq.length;elapsed=seq.slice(0,i).reduce((sum,step)=>sum+step[1],0)+.02;draw();}
+el('prev').onclick=()=>jump(at(current(),elapsed)-1);el('next').onclick=()=>jump(at(current(),elapsed)+1);
+el('seek').oninput=e=>jump(+e.target.value);
+el('play').onclick=()=>{playing=!playing;previous=performance.now();draw();};
+el('skin').onchange=el('reference').onchange=el('zoom').onchange=draw;
+el('bg').onchange=()=>document.body.classList.toggle('dark',el('bg').selectedIndex===1);
+el('action').onchange=()=>{elapsed=0;draw();};
+function tick(now){if(playing && !document.hidden){elapsed+=now-previous;draw();}previous=now;requestAnimationFrame(tick);}
+draw();requestAnimationFrame(tick);
+</script></body></html>

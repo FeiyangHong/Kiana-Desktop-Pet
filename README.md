@@ -2,9 +2,9 @@
 
 ## 效果演示
 
-### 坐着听歌的画风（0.9.11）
+### 三套 Q 版的音乐动作画风（0.9.12）
 
-三套 Q 版的坐姿、坐下和起身已按各自的早期待机原稿修正。可以同步播放旧版与新版，或切换到轻微、活力应援查看分析。[逐帧对照](docs/demo/music-style-0.9.11/index.html) · [画风分析](docs/demo/music-style-0.9.11/画风对照.md)
+坐着听歌、坐下、起身、轻微应援和活力应援已按各自衣装的前期动作校正。可以同时播放整理头发、伸懒腰或招手，与修正前后的音乐动作对照，也可以暂停逐帧切换深浅底色。[动态对照](docs/demo/music-style-0.9.12/index.html) · [画风核对](docs/demo/music-style-0.9.12/画风对照.md)
 
 ### 随机换装与反馈（0.9.10）
 
@@ -58,7 +58,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.11-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.12-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。

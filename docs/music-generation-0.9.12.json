@@ -1,0 +1,250 @@
+{
+  "version": "0.9.12",
+  "tool": "built-in imagegen",
+  "keyInputs": [
+    "same outfit gentle-cheering frame 0",
+    "original HD idle artwork from the approved clarity pass"
+  ],
+  "prompt": "Edit this specific full-body lightstick animation frame. Image 1 is the edit target and image 2 is the exact definitive early identity/style. Clean continuous fine colored outer ink from image 2; remove blurry rim or bloom. Closely match the idle face's crown-to-chin vs cheek width, violet-to-cyan irises with distinct tiny star highlights, bangs highlight and warm pale cheek tone. Preserve target's head turn, original happy mouth, original exact lightstick locations, clothing, headphones, arms and feet. Lightsticks still luminous inside but no spill or rim glow. 1 full isolated sprite, transparent background. Source for transferring paint details onto the original frames.",
+  "frames": 162,
+  "sourceSheets": 18,
+  "sittingVariants": [
+    "classic",
+    "sway",
+    "nod"
+  ],
+  "sharedTransition": "sit forward, rise in reverse",
+  "review": "docs/demo/music-style-0.9.12/index.html",
+  "verification": {
+    "renderSize": [
+      192,
+      208
+    ],
+    "perOutfit": {
+      "kiana-winter-wish-round": {
+        "seated": {
+          "rimMedian": [
+            102.2,
+            82.6
+          ],
+          "minLowerIoU": 0.99927,
+          "maxLowerShiftPx": 0.009
+        },
+        "sway": {
+          "rimMedian": [
+            122.7,
+            88.3
+          ],
+          "minLowerIoU": 0.99939,
+          "maxLowerShiftPx": 0.017
+        },
+        "nod": {
+          "rimMedian": [
+            126.6,
+            84.6
+          ],
+          "minLowerIoU": 0.99952,
+          "maxLowerShiftPx": 0.018
+        },
+        "sit": {
+          "rimMedian": [
+            106.3,
+            79.7
+          ],
+          "minLowerIoU": 0.99924,
+          "maxLowerShiftPx": 0.013
+        },
+        "gentle": {
+          "rimMedian": [
+            81.1,
+            79.3
+          ],
+          "minLowerIoU": 0.99972,
+          "maxLowerShiftPx": 0.019
+        },
+        "lively": {
+          "rimMedian": [
+            85.6,
+            78.6
+          ],
+          "minLowerIoU": 0.99933,
+          "maxLowerShiftPx": 0.015
+        }
+      },
+      "kiana-fiery-wishing-star-round": {
+        "seated": {
+          "rimMedian": [
+            54.2,
+            68.3
+          ],
+          "minLowerIoU": 0.99918,
+          "maxLowerShiftPx": 0.019
+        },
+        "sway": {
+          "rimMedian": [
+            75.4,
+            73.5
+          ],
+          "minLowerIoU": 0.99904,
+          "maxLowerShiftPx": 0.031
+        },
+        "nod": {
+          "rimMedian": [
+            93.2,
+            76.0
+          ],
+          "minLowerIoU": 0.99916,
+          "maxLowerShiftPx": 0.026
+        },
+        "sit": {
+          "rimMedian": [
+            59.2,
+            71.8
+          ],
+          "minLowerIoU": 0.99928,
+          "maxLowerShiftPx": 0.015
+        },
+        "gentle": {
+          "rimMedian": [
+            68.5,
+            73.8
+          ],
+          "minLowerIoU": 0.99938,
+          "maxLowerShiftPx": 0.014
+        },
+        "lively": {
+          "rimMedian": [
+            60.0,
+            72.0
+          ],
+          "minLowerIoU": 0.99946,
+          "maxLowerShiftPx": 0.031
+        }
+      },
+      "time-runner-kiana-round": {
+        "seated": {
+          "rimMedian": [
+            39.0,
+            50.1
+          ],
+          "minLowerIoU": 0.9989,
+          "maxLowerShiftPx": 0.026
+        },
+        "sway": {
+          "rimMedian": [
+            45.1,
+            48.1
+          ],
+          "minLowerIoU": 0.99903,
+          "maxLowerShiftPx": 0.04
+        },
+        "nod": {
+          "rimMedian": [
+            34.5,
+            46.9
+          ],
+          "minLowerIoU": 0.99914,
+          "maxLowerShiftPx": 0.023
+        },
+        "sit": {
+          "rimMedian": [
+            41.0,
+            50.7
+          ],
+          "minLowerIoU": 0.9996,
+          "maxLowerShiftPx": 0.01
+        },
+        "gentle": {
+          "rimMedian": [
+            58.0,
+            55.3
+          ],
+          "minLowerIoU": 0.99553,
+          "maxLowerShiftPx": 0.08
+        },
+        "lively": {
+          "rimMedian": [
+            41.7,
+            52.5
+          ],
+          "minLowerIoU": 0.99797,
+          "maxLowerShiftPx": 0.038
+        }
+      }
+    }
+  },
+  "assets": [
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-gentle.png",
+      "sha256": "5b0d0aee7e0b3ca292a700fc9bd0fe2e3b11548f4b8b7da2e75f6730cfffb27d"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-lively.png",
+      "sha256": "a2f6ed746ab19dc3f51c4c8e5931e88ac5ac134c3bee56763060938a72a620c2"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated-nod.png",
+      "sha256": "22fc2e91a364d86100229b753cf9c010852b82925bd7841a20d6d32a1e9893ad"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated-sway.png",
+      "sha256": "50aaf952f6044c507502ad09eb31e8bddd3f50f1e8d3c148d061c1a9e7e3c806"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-seated.png",
+      "sha256": "89d6851c8d8ee34f943d3a91e9734c9b4826a29efd619749a0746e3df818b117"
+    },
+    {
+      "path": "assets/kiana-fiery-wishing-star-round-music-sit.png",
+      "sha256": "98396bbbd29c29c7545082285073888a109bc2c99750b7f6486ae5b066190f8e"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-gentle.png",
+      "sha256": "845151a19ca6add439e04920ed78b81ad59a237f655a24db00670bd1d102e772"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-lively.png",
+      "sha256": "a3aaf13e69ca0de0537e939fe382a1939fb2324202e85c41b3491c9eef52733e"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-nod.png",
+      "sha256": "249aa8d5fb33b3be46a057bd1856c3fc3c435a28f307296fc1b5e2c57470ae23"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-sway.png",
+      "sha256": "18a3e01b6cb48a3901097612b217e4254c000e72db9db4a85627c019e5cd0755"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated.png",
+      "sha256": "db21f3e886cb46aa909cb6647700afdd489078d39c557a75fe9c9ef4c8826baa"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-sit.png",
+      "sha256": "ec376c1af4783fba41dbf613be0404e22b2050287db8e98e82601625d978b645"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-gentle.png",
+      "sha256": "a036d087d46cb2f8885ed91b4cf515f3745ddb4e349b2744bc7a987a66ed9f97"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-lively.png",
+      "sha256": "ab01d214445b6132970371c8f8fdfe934fd54190be2944a034c1d421bc87db01"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-nod.png",
+      "sha256": "99d2475e21bf2d72cabb424bf1a2d21adc9b8caf7ce2ed6c5dace4875ca85ad8"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-sway.png",
+      "sha256": "e3a2ad0db0bf4e6d864f1133ea2476bb6ddb49128ec2c9c6ce0ed10c8d780399"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated.png",
+      "sha256": "659e2fa9fbf87dcba8fdb5a30a08773a461bdb2fb51ab4822fb8b60b8e936934"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-sit.png",
+      "sha256": "ec6b2210aecb840fee0e7420d17bb22f2221401e0ac705ebd687029ba0cf947a"
+    }
+  ]
+}
