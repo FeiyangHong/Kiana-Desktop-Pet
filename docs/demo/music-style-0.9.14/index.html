@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>琪亚娜 · 音乐动作逐帧对照</title>
+<style>
+:root{color-scheme:light;--page:#f5f3f7;--card:#fff;--ink:#342f42;--muted:#625e70;--line:#dedbe3;--accent:#614e91}
+:root.dark{color-scheme:dark;--page:#24232b;--card:#35333e;--ink:#eeeaf7;--muted:#c8c1d6;--line:#55515f;--accent:#d2c2ff}
+*{box-sizing:border-box}body{background:var(--page);color:var(--ink);font:15px/1.5 system-ui,"Microsoft YaHei",sans-serif;margin:0}
+main{margin:clamp(16px,5vh,60px) auto;padding:0 18px;max-width:840px}h1{font-size:clamp(23px,4vw,34px);margin:0 0 22px}
+.controls,.transport{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px}
+label{display:flex;align-items:center;gap:6px;color:var(--muted)}
+select,button{font:inherit;border:1px solid var(--line);border-radius:8px;color:var(--ink);background:var(--card);padding:5px 9px}
+button{cursor:pointer}input{accent-color:var(--accent)}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.poses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}
+figure{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0;text-align:center;padding:12px 2px}
+canvas{display:block;width:100%;max-width:200px;height:auto;margin:auto}figcaption{color:var(--muted);font-size:14px}
+figure:last-child figcaption{color:var(--accent);font-weight:650}output{font-variant-numeric:tabular-nums;min-width:7em}input[type=range]{width:min(220px,43vw)}
+@media(max-width:550px){.poses{gap:4px}figure{border-radius:8px}figcaption{font-size:12px}.controls{gap:7px}}
+</style>
+</head>
+<body><main>
+<h1>音乐动作逐帧对照</h1>
+<div class="controls">
+<label>衣装 <select id="skin"><option value="kiana-winter-wish-round">冬祈新愿</option><option value="kiana-fiery-wishing-star-round">炽愿吉星原装</option><option value="time-runner-kiana-round">时砾逐光</option></select></label>
+<label>音乐动作 <select id="mode"></select></label>
+<label>早期参照 <select id="ref"><option>待机</option><option>招手</option><option>整理头发</option><option>伸懒腰</option><option>等待回应</option></select></label>
+<label>查看 <select id="crop"><option>整体</option><option>放大发缘</option><option>放大衣摆与鞋面</option></select></label>
+<label>底色 <select id="bg"><option>浅色</option><option>深色</option></select></label>
+</div>
+<div class="poses">
+<figure><canvas width="200" height="216" aria-label="早期参照帧"></canvas><figcaption>早期参照帧</figcaption></figure>
+<figure><canvas width="200" height="216" aria-label="修正前动作"></canvas><figcaption>0.9.13 修正前</figcaption></figure>
+<figure><canvas width="200" height="216" aria-label="修正后动作"></canvas><figcaption>0.9.14 修正后</figcaption></figure>
+</div>
+<div class="transport"><button id="play">暂停</button><button id="prev">上一帧</button><button id="next">下一帧</button><input id="seek" type="range" min="0" step="1" aria-label="播放位置"><output id="frame"></output></div>
+<p id="error" role="alert" hidden>图集读取失败。请把本页与同目录下的 PNG 文件一起打开。</p>
+</main>
+<script>
+'use strict';
+const el=id=>document.getElementById(id);
+const canvases=[...document.querySelectorAll('canvas')];
+const modes=[
+ {name:'原版坐姿',row:0},{name:'头部轻晃',row:1},{name:'侧向点头',row:2},
+ {name:'轻微应援',row:4},{name:'活力应援',row:5}
+];
+const seated=[0,1,2,3,4,5,6,7,8,9,10,11,10,9,8,7,6,5,4,3,2,1];
+const cheering=[0,1,2,3,4,5];
+const crops=[[0,0,200,216],[30,12,140,151],[50,117,92,99]];
+const cache=new Map();
+let row=4,order=[],starts=[],duration=0,time=0,last=performance.now(),playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+function atlas(side){
+ const key=el('skin').value+'-'+side+'.png';
+ if(!cache.has(key)){
+  const img=new Image();img.onload=draw;img.onerror=()=>{el('error').hidden=false};cache.set(key,img);img.src=key;
+ }
+ return cache.get(key);
+}
+function chooseSkin(){
+ const options=el('skin').selectedIndex===0?modes:modes.slice(0,3);
+ if(!options.some(m=>m.row===row))row=0;
+ el('mode').replaceChildren(...options.map(m=>new Option(m.name,m.row)));el('mode').value=row;chooseMode();
+}
+function chooseMode(){
+ row=Number(el('mode').value);order=row<3?seated:cheering;starts=[];duration=0;
+ order.forEach((pose,i)=>{starts.push(duration);duration+=row<3?9600/order.length:row===4?240:i%2===0?180:120});
+ el('seek').max=order.length-1;time=0;last=performance.now();draw();
+}
+function step(){for(let i=starts.length-1;i>0;i--)if(time>=starts[i])return i;return 0}
+function paint(canvas,img,r,col,angle){
+ const ctx=canvas.getContext('2d');ctx.clearRect(0,0,200,216);if(!img.complete||!img.naturalWidth)return;
+ const [x,y,w,h]=crops[el('crop').selectedIndex];
+ ctx.save();ctx.scale(200/w,216/h);ctx.translate(-x,-y);
+ if(angle){ctx.translate(91.08,203.94);ctx.rotate(angle);ctx.translate(-91.08,-203.94)}
+ ctx.imageSmoothingQuality='high';ctx.drawImage(img,col*200,r*216,200,216,0,0,200,216);ctx.restore();
+}
+function draw(){
+ const pos=step(),pose=order[pos];
+ const angle=row===4?1.1*Math.PI/180*Math.sin(2*Math.PI*time/1440):0;
+ paint(canvases[0],atlas('after'),3,el('ref').selectedIndex,0);
+ paint(canvases[1],atlas('before'),row,pose,angle);paint(canvases[2],atlas('after'),row,pose,angle);
+ el('seek').value=pos;el('frame').value='画稿 '+(pose+1)+' / '+(row<3?12:6);el('play').textContent=playing?'暂停':'播放';
+}
+function seek(pos){playing=false;time=starts[(pos+order.length)%order.length];draw()}
+el('skin').onchange=chooseSkin;el('mode').onchange=chooseMode;el('ref').onchange=el('crop').onchange=draw;
+el('bg').onchange=()=>document.documentElement.classList.toggle('dark',el('bg').selectedIndex===1);
+el('seek').oninput=()=>seek(Number(el('seek').value));el('prev').onclick=()=>seek(step()-1);el('next').onclick=()=>seek(step()+1);
+el('play').onclick=()=>{playing=!playing;last=performance.now();draw()};
+function tick(now){if(playing){time=(time+now-last)%duration;draw()}last=now;requestAnimationFrame(tick)}
+chooseSkin();requestAnimationFrame(tick);
+</script></body></html>

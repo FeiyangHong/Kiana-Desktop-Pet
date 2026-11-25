@@ -1,0 +1,131 @@
+{
+  "version": "0.9.14",
+  "frameCount": 120,
+  "comparison": "docs/demo/music-style-0.9.14/index.html",
+  "seatedVariants": [
+    "classic",
+    "sway",
+    "nod"
+  ],
+  "referenceActions": [
+    "idle",
+    "waving",
+    "groom",
+    "stretch",
+    "waiting"
+  ],
+  "corrections": {
+    "kiana-winter-wish-round": "两种应援的银发向高光过渡过快，晶饰外线过深。按衣装前期画稿对齐两种应援的发缘与晶饰，三种坐姿另校衣摆、冰蓝鞋饰和描边。",
+    "kiana-fiery-wishing-star-round": "三种坐姿的马尾与前额侧发外线偏重；按帧对齐紫褐发线、红色裙边和鞋面，连接侧向点头时侧发与马尾之间的墨线。",
+    "time-runner-kiana-round": "按三种坐姿各自的布料轮廓调整蓝紫裙片的外缘阴影与马尾描边，保留上一版鞋底细节。"
+  },
+  "validation": {
+    "kiana-winter-wish-round": {
+      "seated": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 14529,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "ea65bb2c7496c1ca0bc2a453a27220feecf9df4e8a8752b2890c9ccecbba3dbe"
+      },
+      "seated-sway": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 13114,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "6a6c8f9048b1997bafbddce57bc4883ac53619831b2116556bb4cbb67c2db484"
+      },
+      "seated-nod": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 11923,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "aba28c3826142ef5deb1873152bd5ff332195881e1dc389168f05bb6b7240d61"
+      },
+      "gentle": {
+        "frames": 6,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 32415,
+        "verifiedStickAndHandMasks": 12,
+        "sha256": "e447228144b858c820accf05c59de9c2f4b1f0680b56e2e99a8056fe6793cbce"
+      },
+      "lively": {
+        "frames": 6,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 34081,
+        "verifiedStickAndHandMasks": 12,
+        "sha256": "01f20d66add365ed19053bdfc116fbe488eae46dbdf5fc53bd64c6167e935f97"
+      },
+      "96dpi": {
+        "checkedFrames": 48,
+        "minimumSilhouetteOverlap": 0.99965
+      },
+      "144dpi": {
+        "checkedFrames": 48,
+        "minimumSilhouetteOverlap": 0.99972
+      }
+    },
+    "kiana-fiery-wishing-star-round": {
+      "seated": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 11428,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "17fa8c061ef16278d50254628ae1043629972f1a481c0e92577da00fb211fabf"
+      },
+      "seated-sway": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 11842,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "736c0048e6016eb3c1650740a2fb5f0da93402110e9515813ce3d8a9fbd35017"
+      },
+      "seated-nod": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 12078,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "9507c82825a7ba5ebf9026c2d69d5de0835981d88e1387fc16f0a21f08833141"
+      },
+      "96dpi": {
+        "checkedFrames": 36,
+        "minimumSilhouetteOverlap": 0.99977
+      },
+      "144dpi": {
+        "checkedFrames": 36,
+        "minimumSilhouetteOverlap": 0.99978
+      }
+    },
+    "time-runner-kiana-round": {
+      "seated": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 7739,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "8485b3d0b4a8540b53aa6155db44dc98ff23ccd075aa261d5e28c38605d9c710"
+      },
+      "seated-sway": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 8375,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "85ce366d0506c1bea857f04ea835f3c470afbbd241e99bd31ce123316139fd81"
+      },
+      "seated-nod": {
+        "frames": 12,
+        "alphaMaskMinIoU": 1.0,
+        "minRetouchedPixels": 9643,
+        "verifiedStickAndHandMasks": 0,
+        "sha256": "bdba96368d4c0fcb3e66bf304ffbaad098abf04b084dd3460a9b4fdf05150c20"
+      },
+      "96dpi": {
+        "checkedFrames": 36,
+        "minimumSilhouetteOverlap": 1.0
+      },
+      "144dpi": {
+        "checkedFrames": 36,
+        "minimumSilhouetteOverlap": 1.0
+      }
+    }
+  }
+}

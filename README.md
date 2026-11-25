@@ -2,6 +2,10 @@
 
 ## 效果演示
 
+### 三种坐姿与冬祈新愿应援（0.9.14）
+
+三套 Q 版衣装的原版坐姿、头部轻晃、侧向点头，以及冬祈新愿的两种应援均已逐帧对齐早期画稿。下载后打开对照页，可同步播放前后版本，逐帧查看发缘、衣摆和鞋面，也可切换深浅底色。[查看全部 11 组动作](docs/demo/music-style-0.9.14/index.html) · [查看局部对比图](docs/demo/music-style-0.9.14/comparison.png)
+
 ### 坐着听歌的发梢与鞋子（0.9.13）
 
 冬祈新愿的银发、晶饰与裙边已校正墨线宽度。时砾逐光的鞋面花纹与薄鞋底按每一帧的脚尖方向校正。原版坐姿、头部轻晃和侧向点头均已更新。[查看同一帧的局部动态对照](docs/demo/seated-edges-0.9.13.png)
@@ -62,7 +66,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.13-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.14-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
