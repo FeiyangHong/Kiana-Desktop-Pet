@@ -1,0 +1,61 @@
+{
+  "version": "0.9.15",
+  "poses": 72,
+  "preview": "docs/demo/seated-details-0.9.15.png",
+  "art": "时砾逐光逐只鞋校准鞋尖方向、前后遮挡和花纹。冬祈新愿按每帧飘带、马尾、鞋沿和椅脚追踪透明区域，并校准发顶外缘。",
+  "verification": {
+    "kiana-winter-wish-round": {
+      "seated": {
+        "poses": 12,
+        "minEditedPixels": 1267,
+        "sha256": "20af39887eab90d58095534f7a60d0bc10532d7ef5f941f51e55fbcbceb473d4",
+        "minNewClearPixelsBelowSeat": 0
+      },
+      "seated-sway": {
+        "poses": 12,
+        "minEditedPixels": 2587,
+        "sha256": "d09ea55f2419416d16641c68b73ab142f576cc0105bbeea5c3ec61fff9aff77a",
+        "minNewClearPixelsBelowSeat": 262
+      },
+      "seated-nod": {
+        "poses": 12,
+        "minEditedPixels": 2657,
+        "sha256": "6722aa81f2333ee470cade1189c98dafccf76d9cd2d5fa35f82ff73a79c64feb",
+        "minNewClearPixelsBelowSeat": 273
+      },
+      "96dpi": {
+        "renderedFrames": 36
+      },
+      "144dpi": {
+        "renderedFrames": 36
+      }
+    },
+    "time-runner-kiana-round": {
+      "seated": {
+        "poses": 12,
+        "minEditedPixels": 776,
+        "sha256": "a2863862ab257eecd182e108882d7a1d4427d0ccc7bbc2f0bc7c4707598d7e74"
+      },
+      "seated-sway": {
+        "poses": 12,
+        "minEditedPixels": 803,
+        "sha256": "f064aef50bc814c182e34c16cb066509f7fdb1d9d80d2595356c7c5b7101bc22"
+      },
+      "seated-nod": {
+        "poses": 12,
+        "minEditedPixels": 859,
+        "sha256": "fa5d44f7b8ac79ebe068c04f53658d38e562576c5deac6254a1b4870828d1320"
+      },
+      "96dpi": {
+        "renderedFrames": 36
+      },
+      "144dpi": {
+        "renderedFrames": 36
+      }
+    }
+  },
+  "referenceBriefs": [
+    "ImageGen：以坐姿为目标、待机为衣装参照，恢复飘带内侧月牙状留白，保护银发和晶饰的实色阴影。",
+    "ImageGen：按待机画稿局部重画浅紫鞋面、花瓣线和一颗小珠，鞋底随脚尖朝向，保留原脚踝、鞋轮廓与遮挡。"
+  ]
+}
