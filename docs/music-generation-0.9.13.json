@@ -1,0 +1,124 @@
+{
+  "version": "0.9.13",
+  "targets": [
+    "kiana-winter-wish-round",
+    "time-runner-kiana-round"
+  ],
+  "frameCount": 72,
+  "variants": [
+    "classic",
+    "sway",
+    "nod"
+  ],
+  "art": "Two transparent seated style keys corrected using imagegen against the original outfit idle drawings. Ink falloff is matched against the early animation sequence. The winter flyaway is registered at its tip and notch. Purple shoe paint is registered at each visible ankle and toe, with the sole drawn to the local footprint.",
+  "preview": "docs/demo/seated-edges-0.9.13.png",
+  "review": {
+    "kiana-winter-wish-round-96": {
+      "frames": 36,
+      "minMaskIoU": 0.99875,
+      "maxCentroidShiftInDip": 0.027,
+      "twoDipInwardLuminance": [
+        [
+          160.2,
+          186.5
+        ],
+        [
+          136.0,
+          189.6
+        ],
+        [
+          153.0,
+          190.5
+        ]
+      ]
+    },
+    "kiana-winter-wish-round-144": {
+      "frames": 36,
+      "minMaskIoU": 0.99855,
+      "maxCentroidShiftInDip": 0.021,
+      "twoDipInwardLuminance": [
+        [
+          159.2,
+          199.7
+        ],
+        [
+          130.4,
+          202.6
+        ],
+        [
+          157.2,
+          201.4
+        ]
+      ]
+    },
+    "time-runner-kiana-round-96": {
+      "frames": 36,
+      "minMaskIoU": 0.99944,
+      "maxCentroidShiftInDip": 0.023,
+      "twoDipInwardLuminance": [
+        [
+          186.9,
+          190.3
+        ],
+        [
+          173.3,
+          179.9
+        ],
+        [
+          176.8,
+          182.7
+        ]
+      ]
+    },
+    "time-runner-kiana-round-144": {
+      "frames": 36,
+      "minMaskIoU": 0.99943,
+      "maxCentroidShiftInDip": 0.015,
+      "twoDipInwardLuminance": [
+        [
+          210.1,
+          209.9
+        ],
+        [
+          192.4,
+          197.2
+        ],
+        [
+          196.8,
+          199.9
+        ]
+      ]
+    }
+  },
+  "reviewUnits": {
+    "minMaskIoU": "old/new alpha >= 128",
+    "maxCentroidShiftInDip": "old/new silhouette centroid, device-independent pixels",
+    "twoDipInwardLuminance": "median hair-adjacent contour luminance, 0 to 255, at 2 DIPs inside the silhouette; pairs are before/after for classic, sway, nod"
+  },
+  "assets": [
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-nod.png",
+      "sha256": "6a6d4c6e7e493857c8f1a321ffc1852b20ed5dead98582380092731a342175ef"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated-sway.png",
+      "sha256": "446a338692d449faab86e28286641b93be8119670928c895cb60d4d174817301"
+    },
+    {
+      "path": "assets/kiana-winter-wish-round-music-seated.png",
+      "sha256": "2e1b35099eeb8c2c50b221079fb1b765e8aeb66af123cf279e8b9f12481e043c"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-nod.png",
+      "sha256": "fdb94abd8297d54e3af6ef8f556c3e37b001c58163b52ade0c791952cb26344a"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated-sway.png",
+      "sha256": "d1c5583a9818bce8f78e3863a1dda7c31ee91eb38b21900198bac331cd3a72f2"
+    },
+    {
+      "path": "assets/time-runner-kiana-round-music-seated.png",
+      "sha256": "c62dd49be15e21c1501446a5e0ea073f03a623e435ec88a7fd61d4d4fd0b6892"
+    }
+  ]
+}
