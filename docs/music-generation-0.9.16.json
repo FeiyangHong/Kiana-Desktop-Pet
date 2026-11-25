@@ -1,0 +1,37 @@
+{
+  "version": "0.9.16",
+  "skin": "kiana-winter-wish-round",
+  "sourcePoses": 36,
+  "preview": "docs/demo/winter-tail-0.9.16.png",
+  "referenceBrief": "用 ImageGen 对照坐姿与原始待机，打开马尾末端晶饰下方与裙边、椅面之间的空隙。依照每一帧的发束、晶饰和衣摆描边校准透明度。",
+  "atlases": {
+    "seated": {
+      "frames": 12,
+      "minNewExteriorPixelsLeft": 198,
+      "minNewExteriorPixelsRight": 274,
+      "sha256": "6c99634408b21ad603b5968531992df9ffc3fae0a65db43c2bf2fd38f5c88eef"
+    },
+    "seated-sway": {
+      "frames": 12,
+      "minNewExteriorPixelsLeft": 254,
+      "minNewExteriorPixelsRight": 313,
+      "sha256": "5854fd6e3cb45b588084f58a82a88318e5a13940eaa9216d5f79d2be914798d6"
+    },
+    "seated-nod": {
+      "frames": 12,
+      "minNewExteriorPixelsLeft": 294,
+      "minNewExteriorPixelsRight": 384,
+      "sha256": "307f11b963d204307da406c2ff1ccf383ba38e569b290804102356012450a640"
+    }
+  },
+  "render": {
+    "96dpi": {
+      "verifiedFrames": 36,
+      "minNewClearPixels": 122
+    },
+    "144dpi": {
+      "verifiedFrames": 36,
+      "minNewClearPixels": 293
+    }
+  }
+}

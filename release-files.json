@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "0.9.15",
+  "version": "0.9.16",
   "files": [
     "ASSET_NOTICE.md",
     "CHANGELOG.md",
@@ -171,6 +171,8 @@
     "docs/demo/music-style-0.9.14/time-runner-kiana-round-before.png",
     "docs/music-generation-0.9.14.json",
     "docs/demo/seated-details-0.9.15.png",
-    "docs/music-generation-0.9.15.json"
+    "docs/music-generation-0.9.15.json",
+    "docs/demo/winter-tail-0.9.16.png",
+    "docs/music-generation-0.9.16.json"
   ]
 }

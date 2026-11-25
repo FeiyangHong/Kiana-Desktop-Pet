@@ -2,6 +2,10 @@
 
 ## 效果演示
 
+### 冬祈新愿的坐姿发尾（0.9.16）
+
+冬祈新愿的原版坐姿、头部轻晃和侧向点头已恢复两侧发尾的透明空隙。放大画面可以看到左侧冰晶与裙边、右侧马尾晶饰与椅面之间透出的桌面底色。[查看头部轻晃的动态对照](docs/demo/winter-tail-0.9.16.png)
+
 ### 坐姿的鞋面与透明留白（0.9.15）
 
 时砾逐光的三种坐姿按前期画稿重画鞋尖花纹和小珠。冬祈新愿的轻晃与侧向点头恢复了椅脚和鞋边的留白，并逐帧校准三种坐姿的马尾飘带与发顶边缘。[查看实际动画的局部前后对照](docs/demo/seated-details-0.9.15.png)
@@ -70,7 +74,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.9.15-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.9.16-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。
