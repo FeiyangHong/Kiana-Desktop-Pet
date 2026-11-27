@@ -3,7 +3,7 @@ namespace KianaPet {
  public sealed partial class PetWindow {
   double nextDisplayProbe;int displayRechecks;bool recoveryActive;
   void ScheduleDisplayRecovery(bool resume){if(quitting||handle==IntPtr.Zero)return;
-   if(!recoveryActive&&displayMemory!=null&&Settings.RememberLayouts&&!string.IsNullOrEmpty(displayKey)){displayMemory.Remember(displayKey,Settings);displayMemory.Save();}
+   if(!recoveryActive&&displayMemory!=null&&Settings.RememberLayouts&&!string.IsNullOrEmpty(displayKey)){displayMemory.Remember(displayKey,Settings,lastSavedWidth,lastSavedHeight);displayMemory.Save();}
    recoveryActive=true;walkUntil=0;velocity=0;walkPlanner.Reset();pressed=dragging=false;if(sprite.IsMouseCaptured)sprite.ReleaseMouseCapture();if(musicWindow!=null)musicWindow.CancelDisplayMotion();
    displayPending=true;displayDue=clock.Elapsed.TotalSeconds+.7;displayRechecks=resume?3:2;nextWalk=displayDue+5;
    if(resume){lastTick=clock.Elapsed.TotalSeconds;lastSlow=-10;wasStackVisible=false;linkFailures=musicFailures=0;Link.RequestReconnect();poll.Interval=TimeSpan.FromSeconds(2);musicTimer.Interval=TimeSpan.FromMilliseconds(850);Poll(null,EventArgs.Empty);PollMusic(null,EventArgs.Empty);}

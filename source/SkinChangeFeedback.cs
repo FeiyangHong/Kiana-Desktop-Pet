@@ -43,6 +43,7 @@ namespace KianaPet {
    var oldSource=continuation!=null?continuation.OldSource:new AnimationPreviewSource(oldSkin,Settings.MusicSeatedStyle);
    skinShowcaseSequence=new OutfitActionSequence(Settings,action,true,null,oldSource,continuation);skinShowcaseChoice=skinShowcaseSequence.Choice;skinShowcaseAction=action;skinShowcaseExpectedState=state;skinShowcaseSeated=true;
    skinShowcaseRiseMs=skinShowcaseSequence.RiseMs;skinShowcaseSitMs=skinShowcaseSequence.SitMs;skinShowcaseActionMs=skinShowcaseSequence.ActionMs;
+   if(continuation==null||!swapped)ApplyPetSize(oldSource.SkinId);
    skinShowcaseAt=clock.Elapsed.TotalSeconds-(continuation!=null?skinShowcaseSequence.ContinueAt(continuation,continuedMs)/1000:0);skinShowcaseSwapStarted=continuation!=null&&swapped;skinShowcaseRunning=true;
    DrawSkinShowcase();if(continuation!=null&&swapped&&skinShowcaseRunning)StartSkinFade(visual,state,true,true);
   }
@@ -66,7 +67,7 @@ namespace KianaPet {
   public void StopOutfitAction(){StopSkinVisual();}
   void StopSkinShowcase(){
    bool restore=skinShowcaseRunning;skinShowcaseRunning=false;skinShowcaseSwapStarted=false;skinShowcaseExpectedState="";skinShowcaseAction="";skinShowcaseSource=null;skinShowcaseChoice=null;skinShowcaseSequence=null;
-   if(restore){lastFrame=-1;if(!quitting)DrawAnimation((clock.Elapsed.TotalSeconds-stateAt)*1000);}
+   if(restore){ApplyPetSize(Settings.Skin);lastFrame=-1;if(!quitting)DrawAnimation((clock.Elapsed.TotalSeconds-stateAt)*1000);}
   }
  }
 }

@@ -28,6 +28,7 @@ namespace KianaPet {
   public string[] SettingsCategoryOrder=new string[0];
   public string Skin="kiana-fiery-wishing-star-round";
   public int Size=176;
+  public Dictionary<string,int> SkinSizes=new Dictionary<string,int>();
   public bool RecoverHotkeyEnabled=false;
   public uint RecoverHotkeyModifiers=PetHotkey.Control|PetHotkey.Alt,RecoverHotkeyKey=0x50;
   public bool BackgroundMini=true;
@@ -84,7 +85,7 @@ namespace KianaPet {
    if(!new[]{"below","left","right","free"}.Contains(MusicPosition))MusicPosition="below";
    if(!new[]{"below","left","right"}.Contains(MusicDefaultPosition))MusicDefaultPosition="below";
    if(double.IsNaN(MusicX)||double.IsInfinity(MusicX)||double.IsNaN(MusicY)||double.IsInfinity(MusicY)){MusicX=MusicY=0;MusicHasPosition=false;}
-   Size=Math.Max(96,Math.Min(320,Size)); IdleMinutes=Math.Max(1,Math.Min(120,IdleMinutes));
+   PetSizeSettings.Validate(this); IdleMinutes=Math.Max(1,Math.Min(120,IdleMinutes));
    TimeSpan a,b; if(!TimeSpan.TryParse(Bedtime,out a)||a.TotalHours<0||a.TotalHours>=24)Bedtime="02:00";
    if(!TimeSpan.TryParse(WakeTime,out b)||b.TotalHours<0||b.TotalHours>=24)WakeTime="09:00";
    if(double.IsNaN(X)||double.IsInfinity(X)||double.IsNaN(Y)||double.IsInfinity(Y)){X=Y=-1;HasPosition=false;}

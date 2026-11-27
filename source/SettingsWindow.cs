@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 namespace KianaPet {
  public sealed partial class SettingsWindow:Window {
-  readonly TextBlock musicStatus=new TextBlock();readonly ComboBox musicPosition=new ComboBox();bool updatingMusicPosition;readonly PetWindow pet;readonly TextBlock status=new TextBlock();readonly TextBlock sizeLabel=new TextBlock();
+  readonly TextBlock musicStatus=new TextBlock();readonly ComboBox musicPosition=new ComboBox();bool updatingMusicPosition;readonly PetWindow pet;readonly TextBlock status=new TextBlock();
   readonly System.Collections.Generic.List<Button> outfitButtons=new System.Collections.Generic.List<Button>();
   readonly SolidColorBrush ink=new SolidColorBrush(Color.FromRgb(47,39,63)),muted=new SolidColorBrush(Color.FromRgb(112,103,127)),purple=new SolidColorBrush(Color.FromRgb(120,90,177));
   public SettingsWindow(PetWindow owner){pet=owner;PetVisuals.Apply(this,true);PetVisuals.InstallTooltips(this);Title="琪亚娜的陪伴设置";Width=920;Height=790;MinWidth=760;MinHeight=520;WindowStartupLocation=WindowStartupLocation.CenterScreen;Background=new SolidColorBrush(Color.FromRgb(248,246,252));FontFamily=new FontFamily("Microsoft YaHei UI");FontSize=13;Foreground=ink;
@@ -14,7 +14,7 @@ namespace KianaPet {
    StackPanel header=new StackPanel();header.Children.Add(new TextBlock{Text="琪亚娜的陪伴设置",FontSize=25,FontWeight=FontWeights.SemiBold});header.Children.Add(new TextBlock{Text="琪亚娜与灰原哀 · "+pet.Pets.Count+" 套形象",Foreground=muted,Margin=new Thickness(0,6,0,20)});root.Children.Add(header);
    TabControl tabs=new TabControl{Background=Brushes.Transparent,BorderThickness=new Thickness(0)};Grid.SetRow(tabs,1);root.Children.Add(tabs);
    StackPanel appearance=Page(tabs,"外观与互动");BuildAppearancePreview(appearance);TitleText(appearance,"今天穿哪一套？");WrapPanel outfits=new WrapPanel();foreach(PetInfo info in pet.Pets){string id=info.Id;Button b=Button(info.Name,delegate{pet.SelectSkin(id);},id==pet.Settings.Skin);b.Tag=id;outfitButtons.Add(b);b.Width=255;b.Margin=new Thickness(0,0,10,10);outfits.Children.Add(b);}appearance.Children.Add(outfits);
-   TitleText(appearance,"宠物大小");sizeLabel.Text=pet.Settings.Size+" 像素（逻辑尺寸）";sizeLabel.Foreground=muted;appearance.Children.Add(sizeLabel);Slider size=new Slider{Minimum=96,Maximum=320,Value=pet.Settings.Size,TickFrequency=8,IsSnapToTickEnabled=true,Margin=new Thickness(0,10,5,12)};size.ValueChanged+=delegate{pet.Settings.Size=(int)size.Value;sizeLabel.Text=pet.Settings.Size+" 像素（逻辑尺寸）";pet.ApplySettings();};appearance.Children.Add(size);
+   BuildSharedSizeControl(appearance);
    Check(appearance,"启用底部 ChatGPT 工具栏",pet.Settings.HoverToolbar,delegate(bool v){pet.Settings.HoverToolbar=v;pet.ApplySettings();});
    Check(appearance,"工具栏常驻（关闭后仅悬停显示）",pet.Settings.ToolbarPinned,pet.SetToolbarPinned);
    Check(appearance,"显示互动气泡",pet.Settings.Bubbles,delegate(bool v){pet.Settings.Bubbles=v;pet.ApplySettings();});

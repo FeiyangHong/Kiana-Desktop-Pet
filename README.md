@@ -2,6 +2,10 @@
 
 ## 效果演示
 
+### 每套皮肤单独记住大小（0.10.1）
+
+在 **设置 → 外观与互动 → 外观与动作预览** 选择皮肤，拖动「预览皮肤大小」试大小，再点「保存此皮肤大小」。范围为 **96–320 逻辑像素**。例如共用大小为 112 时，可以单独把灰原哀·微侧 Q 版设为 128。手动和随机换装都会自动套用对应值。点击「恢复共用大小」即可重新跟随共用滑杆。专属大小随通用偏好导出、导入。
+
 ### 灰原哀与独立动作倍速（0.10.0）
 
 在 **设置 → 外观与互动** 中选择灰原哀的非 Q 版、正面 Q 版或微侧 Q 版，点击「应用这套衣装」。每版有 23 段动作，含左右走动、喝饮料、开心回应、三种听歌坐姿和两种应援。通过 **设置 → 效果预览 → 动作图鉴** 可逐帧查看，也可为选中的皮肤和动作单独调速。
@@ -78,7 +82,7 @@
 git clone https://github.com/FeiyangHong/Kiana-Desktop-Pet.git
 cd Kiana-Desktop-Pet
 .\build-release.ps1
-.\dist\Kiana-Desktop-Pet-0.10.0-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
+.\dist\Kiana-Desktop-Pet-0.10.1-Windows\install.ps1 -InstallRoot 'E:\Kiana-Desktop-Pet\runtime\KianaDesktopPet'
 ```
 
 `-InstallRoot` 可改为本机希望保存程序、设置与日志的目录；ChatGPT 平滑联动组件会装在其同级的 `KianaSmoothPet`。首次启动桌宠请使用安装器生成的“琪亚娜桌宠”快捷方式。另一台电脑拉取更新后重新构建、安装即可；本机设置会保留并在更新前备份。

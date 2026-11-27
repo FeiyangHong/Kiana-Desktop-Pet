@@ -29,15 +29,18 @@ namespace KianaPet {
    System.Windows.Automation.AutomationProperties.SetName(appearancePreviewAction,"预览动作");
    appearancePreviewImage=new Image{Width=144,Height=156,Stretch=Stretch.Fill,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Center};
    RenderOptions.SetBitmapScalingMode(appearancePreviewImage,BitmapScalingMode.HighQuality);
-   var grid=new Grid();grid.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(164)});grid.ColumnDefinitions.Add(new ColumnDefinition());
-   grid.Children.Add(appearancePreviewImage);var controls=new StackPanel{VerticalAlignment=VerticalAlignment.Center};Grid.SetColumn(controls,1);grid.Children.Add(controls);
+   var layout=new DockPanel();
+   appearanceImageSlot=new Border{Width=PetSizeSettings.Maximum,Child=appearancePreviewImage,Margin=new Thickness(0,0,14,0)};
+   layout.Children.Add(appearanceImageSlot);var controls=new StackPanel{VerticalAlignment=VerticalAlignment.Top};layout.Children.Add(controls);
    controls.Children.Add(appearancePreviewSkin);controls.Children.Add(appearancePreviewAction);
    var actions=new WrapPanel();appearancePreviewPlay=Button("暂停预览",delegate{appearancePreviewPaused=!appearancePreviewPaused;UpdateAppearancePreviewPlayback();},false);
    actions.Children.Add(appearancePreviewPlay);actions.Children.Add(Button("应用这套衣装",delegate{var id=Convert.ToString(appearancePreviewSkin.SelectedValue);if(pet.Pets.Any(p=>p.Id==id)){pet.SelectSkin(id);UpdateAppearancePreviewStatus();}},true));controls.Children.Add(actions);
    appearancePreviewLabel=CompanionControls.Text("",12);controls.Children.Add(appearancePreviewLabel);
-   appearancePreviewSurface=new Border{Child=grid,Padding=new Thickness(12),Margin=new Thickness(0,0,0,6),MinHeight=190,CornerRadius=new CornerRadius(PetVisuals.SurfaceRadius),BorderThickness=new Thickness(1)};page.Children.Add(appearancePreviewSurface);
+   appearancePreviewSurface=new Border{Child=layout,Padding=new Thickness(12),Margin=new Thickness(0,0,0,6),MinHeight=190,CornerRadius=new CornerRadius(PetVisuals.SurfaceRadius),BorderThickness=new Thickness(1)};page.Children.Add(appearancePreviewSurface);
+   appearancePreviewSurface.SizeChanged+=delegate{ArrangeAppearanceImage();};
+   BuildSkinSizeControl(controls);
    var more=new WrapPanel();more.Children.Add(Button("打开完整动作图鉴",delegate{NavigateCategory("效果预览","");},false));page.Children.Add(more);
-   Note(page,"切换衣装和动作只影响预览；点击“应用这套衣装”才保存。动作列表按预览衣装提供的素材显示。");
+   Note(page,"拖动滑块按桌面实际大小试看。点击「保存此皮肤大小」后，这套皮肤下次换上时会使用这个尺寸。");
    appearancePreviewSkin.SelectionChanged+=delegate{RefreshAppearancePreviewActions();ResetAppearancePreview();};
    appearancePreviewAction.SelectionChanged+=delegate{ResetAppearancePreview();};
    appearancePreviewTimer.Tick+=delegate{DrawAppearancePreview();};
@@ -61,7 +64,7 @@ namespace KianaPet {
    if(lastActualPreviewSkin!=pet.Settings.Skin){lastActualPreviewSkin=pet.Settings.Skin;appearancePreviewSkin.SelectedValue=pet.Settings.Skin;}
    appearancePreviewSurface.Background=PetPalette.Brush(PetPalette.Background);appearancePreviewSurface.BorderBrush=PetPalette.Brush(PetPalette.Line);
    appearancePreviewLabel.Foreground=muted;appearancePreviewLabel.Text=AppearancePreviewSkinId==pet.Settings.Skin?"这套衣装正在使用":"仅预览，尚未应用";
-   UpdateAppearancePreviewPlayback();DrawAppearancePreview();
+   SyncAppearanceSize();UpdateAppearancePreviewPlayback();DrawAppearancePreview();
   }
   void DrawAppearancePreview(){
    if(appearancePreviewClosed||appearancePreviewSurface==null||!appearancePreviewSurface.IsVisible)return;

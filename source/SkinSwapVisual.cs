@@ -22,21 +22,21 @@ namespace KianaPet {
   }
   void PlaySkinVisual(BitmapSource old,string expectedState,bool automatic){StartSkinFade(old,expectedState,automatic,false);}
   void StartSkinFade(BitmapSource old,string expectedState,bool automatic,bool keepShowcase){
-   if(keepShowcase)ClearSkinFade();else StopSkinVisual();if(old==null||!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible){if(automatic)ShowOutfitFeedback(!keepShowcase);return;}
+   if(keepShowcase)ClearSkinFade();else StopSkinVisual();if(old==null||!Settings.SmoothTransitions||!MotionSettings.Enabled||!IsVisible){ApplyPetSize(Settings.Skin);if(automatic)ShowOutfitFeedback(!keepShowcase);return;}
    int token=skinVisualToken;skinVisualRunning=true;skinVisualAutomatic=automatic;skinVisualExpectedState=expectedState;
-   skinOldVisual.Source=old;skinOldVisual.Visibility=Visibility.Visible;skinOldVisual.Opacity=1;skinLiveVisual.Opacity=0;
+   skinOldVisual.Width=old.Width;skinOldVisual.Height=old.Height;skinOldVisual.HorizontalAlignment=HorizontalAlignment.Center;skinOldVisual.VerticalAlignment=VerticalAlignment.Bottom;skinOldVisual.Source=old;skinOldVisual.Visibility=Visibility.Visible;skinOldVisual.Opacity=1;skinLiveVisual.Opacity=0;
    double duration=keepShowcase?Math.Min(300,skinShowcaseActionMs*.5):300;
    var outgoing=new DoubleAnimation(1,0,TimeSpan.FromMilliseconds(duration*.4)){EasingFunction=new CubicEase{EasingMode=EasingMode.EaseIn}};
-   outgoing.Completed+=delegate{if(token!=skinVisualToken)return;skinOldVisual.BeginAnimation(OpacityProperty,null);skinOldVisual.Opacity=0;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Source=null;};
+   outgoing.Completed+=delegate{if(token!=skinVisualToken)return;skinOldVisual.BeginAnimation(OpacityProperty,null);skinOldVisual.Opacity=0;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Source=null;ApplyPetSize(Settings.Skin);};
    var incoming=new DoubleAnimation(0,1,TimeSpan.FromMilliseconds(duration*.6)){BeginTime=TimeSpan.FromMilliseconds(duration*.4),EasingFunction=new CubicEase{EasingMode=EasingMode.EaseOut}};
    incoming.Completed+=delegate{if(token!=skinVisualToken)return;if(keepShowcase)ClearSkinFade();else StopSkinVisual();if(automatic)ShowOutfitFeedback(!keepShowcase);};
    skinOldVisual.BeginAnimation(OpacityProperty,outgoing);skinLiveVisual.BeginAnimation(OpacityProperty,incoming);
   }
   void StopSkinVisual(){StopSkinShowcase();ClearSkinFade();}
   void ClearSkinFade(){
-   skinVisualToken++;skinVisualRunning=false;skinVisualExpectedState="";
+   bool wasFading=skinVisualRunning;skinVisualToken++;skinVisualRunning=false;skinVisualExpectedState="";
    skinOldVisual.BeginAnimation(OpacityProperty,null);skinLiveVisual.BeginAnimation(OpacityProperty,null);
-   skinOldVisual.Source=null;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Opacity=0;skinLiveVisual.Opacity=1;
+   skinOldVisual.Source=null;skinOldVisual.Visibility=Visibility.Hidden;skinOldVisual.Opacity=0;skinLiveVisual.Opacity=1;if(wasFading)ApplyPetSize(Settings.Skin);
   }
   void SkinVisualActionChanged(string next){if((skinVisualRunning&&next!=skinVisualExpectedState)||(skinShowcaseRunning&&next!=skinShowcaseExpectedState))StopSkinVisual();}
   void MaintainSkinVisual(){

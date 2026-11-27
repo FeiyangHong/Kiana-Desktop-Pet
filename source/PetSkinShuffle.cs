@@ -30,7 +30,7 @@ namespace KianaPet {
    skinShuffle.Load(saved,Settings);skinShuffleReady=true;
    {
     string id=skinShuffle.StartupChoice(Settings,DateTime.Now,preview);
-    if(id!=null){string old=Settings.Skin;try{Settings.Skin=id;LoadSkinCore(false);skinShuffle.Applied(Settings);Store.Save(Settings);}catch(Exception e){Settings.Skin=old;skinShuffle.Reset(Settings);skinShuffleError=e.Message;}}
+    if(id!=null){string old=Settings.Skin;try{Settings.Skin=id;LoadSkinCore(false);ApplyPetSize(id);skinShuffle.Applied(Settings);if(lastPreferences!=null)lastPreferences.Skin=id;Save();}catch(Exception e){Settings.Skin=old;ApplyPetSize(old);skinShuffle.Reset(Settings);skinShuffleError=e.Message;}}
    }
    SaveSkinShuffle();
   }
@@ -113,14 +113,14 @@ namespace KianaPet {
    try{
     Settings.Skin=id;LoadSkinCore(false);
     // Redraw the current phase before composition; do not restart a music
-    // session, resize windows, force a greeting or reset polling.
+    // session, force a greeting or reset polling.
     // The selected existing action and bubble follow the visual handoff.
     bool standing=CanStandForOutfit(old);if(!standing)DrawAnimation((now-stateAt)*1000);
     if(manual)ManualSkinShuffleReset();else skinShuffle.Applied(Settings);skinShuffleError="";
     if(!manual&&lastPreferences!=null)lastPreferences.Skin=id;
-    Save();SaveSkinShuffle();
-    if(standing){BeginMusicOutfitChange(old,continuation,continuationAt,continuationSwapped,visual);}else PlaySkinVisual(visual,state,true);return true;
-   }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
+    if(standing){BeginMusicOutfitChange(old,continuation,continuationAt,continuationSwapped,visual);}else PlaySkinVisual(visual,state,true);
+    Save();SaveSkinShuffle();return true;
+   }catch(Exception e){StopSkinVisual();Settings.Skin=old;LoadSkinCore(false);ApplyPetSize(old);DrawAnimation((now-stateAt)*1000);skinShuffle.Reset(Settings);skinShuffleError="换装未完成："+e.Message;Store.Log(skinShuffleError);SaveSkinShuffle();return false;}
   }
   void ShowSkinShuffleFeedback(){ShowOutfitFeedback(true);}
   void ShowOutfitFeedback(bool playAction){
