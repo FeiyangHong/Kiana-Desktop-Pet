@@ -37,7 +37,7 @@ namespace KianaPet {
    appearancePreviewLabel=CompanionControls.Text("",12);controls.Children.Add(appearancePreviewLabel);
    appearancePreviewSurface=new Border{Child=grid,Padding=new Thickness(12),Margin=new Thickness(0,0,0,6),MinHeight=190,CornerRadius=new CornerRadius(PetVisuals.SurfaceRadius),BorderThickness=new Thickness(1)};page.Children.Add(appearancePreviewSurface);
    var more=new WrapPanel();more.Children.Add(Button("打开完整动作图鉴",delegate{NavigateCategory("效果预览","");},false));page.Children.Add(more);
-   Note(page,"切换衣装和动作只影响预览；点击“应用这套衣装”才保存。听歌动作仅三套 Q 版提供。");
+   Note(page,"切换衣装和动作只影响预览；点击“应用这套衣装”才保存。动作列表按预览衣装提供的素材显示。");
    appearancePreviewSkin.SelectionChanged+=delegate{RefreshAppearancePreviewActions();ResetAppearancePreview();};
    appearancePreviewAction.SelectionChanged+=delegate{ResetAppearancePreview();};
    appearancePreviewTimer.Tick+=delegate{DrawAppearancePreview();};
@@ -47,8 +47,8 @@ namespace KianaPet {
   }
   void RefreshAppearancePreviewActions(){
    string selected=Convert.ToString(appearancePreviewAction.SelectedValue),skin=AppearancePreviewSkinId;
-   appearancePreviewAction.ItemsSource=AnimationGallery.Catalog.Where(c=>c.Category!="音乐"||MusicSprites.Supported(skin)).Select(c=>new ComboBoxItem{Content=c.Name,Tag=c.Id}).ToArray();
-   appearancePreviewAction.SelectedValue=AnimationGallery.Catalog.Any(c=>c.Id==selected&&(c.Category!="音乐"||MusicSprites.Supported(skin)))?selected:"idle";
+   appearancePreviewAction.ItemsSource=AnimationGallery.Catalog.Where(c=>AnimationAssets.Supports(skin,c.Id)).Select(c=>new ComboBoxItem{Content=c.Name,Tag=c.Id}).ToArray();
+   appearancePreviewAction.SelectedValue=AnimationGallery.Catalog.Any(c=>c.Id==selected&&(AnimationAssets.Supports(skin,c.Id)))?selected:"idle";
   }
   void ResetAppearancePreview(){appearancePreviewClock.Reset();UpdateAppearancePreviewStatus();}
   void UpdateAppearancePreviewPlayback(){
@@ -67,7 +67,7 @@ namespace KianaPet {
    if(appearancePreviewClosed||appearancePreviewSurface==null||!appearancePreviewSurface.IsVisible)return;
    var choice=AnimationGallery.Catalog.FirstOrDefault(c=>c.Id==Convert.ToString(appearancePreviewAction.SelectedValue));string skin=AppearancePreviewSkinId;if(choice==null||string.IsNullOrEmpty(skin))return;
    try{if(appearancePreviewSource==null||appearancePreviewSourceSkin!=skin||appearancePreviewSourceStyle!=pet.Settings.MusicSeatedStyle){appearancePreviewSource=new AnimationPreviewSource(skin,pet.Settings.MusicSeatedStyle);appearancePreviewSourceSkin=skin;appearancePreviewSourceStyle=pet.Settings.MusicSeatedStyle;}
-    double elapsed=MotionSettings.Enabled?appearancePreviewClock.Elapsed.TotalMilliseconds*AnimationTiming.Speed(pet.Settings,choice.Id):0;
+    double elapsed=MotionSettings.Enabled?appearancePreviewClock.Elapsed.TotalMilliseconds*AnimationTiming.Speed(pet.Settings,skin,choice.Id):0;
     var pose=appearancePreviewSource.Frame(choice,elapsed);if(pose==null)return;appearancePreviewImage.Source=pose.Source;
     var transforms=new TransformGroup();transforms.Children.Add(new MatrixTransform(SpriteGeometry.Matrix(pose.Alignment,appearancePreviewImage.Width)));if(pose.Angle!=0)transforms.Children.Add(new RotateTransform(pose.Angle,appearancePreviewImage.Width*.46,appearancePreviewImage.Width*1.03));appearancePreviewImage.RenderTransform=transforms;
    }catch(Exception){appearancePreviewTimer.Stop();appearancePreviewLabel.Text="此动作暂无法预览，请尝试其他动作。";}

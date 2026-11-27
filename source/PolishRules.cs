@@ -20,6 +20,6 @@ namespace KianaPet {
  }
  public sealed class AmbientPlanner {
   double next=35,lastTouch=-10;string last="";public bool Touch(double now){if(now-lastTouch<.7)return false;lastTouch=now;next=now+35;return true;}
-  public string Next(double now,bool available,Random r){if(!available){next=Math.Max(next,now+8);return null;}if(now<next)return null;string[] choices={"groom","stretch","blink"};var list=choices.Where(s=>s!=last).ToArray();last=list[r.Next(list.Length)];next=now+35+r.NextDouble()*45;return last;}
+  public string Next(double now,bool available,Random r,bool canDrink=false){if(!available){next=Math.Max(next,now+8);return null;}if(now<next)return null;string[] choices=canDrink?new[]{"groom","stretch","blink","drink"}:new[]{"groom","stretch","blink"};var list=choices.Where(s=>s!=last).ToArray();last=list[r.Next(list.Length)];next=now+35+r.NextDouble()*45;return last;}
  }
 }

@@ -7,10 +7,12 @@ namespace KianaPet {
  public sealed class AnimationPose {public BitmapSource Source;public FrameAlignment Alignment;public string Key,SourceLabel;public double Angle;}
  public sealed class AnimationPreviewSource {
   readonly string skin,seatedStyle;readonly Dictionary<string,BitmapSource[]> sheets=new Dictionary<string,BitmapSource[]>();SkinAlignment alignment;BitmapSource[] music,seated;
+  public string SkinId{get{return skin;}}
+  public double Duration(AnimationChoice choice){return AnimationAssets.Duration(skin,choice.Id,seatedStyle);}
   public AnimationPreviewSource(string skin,string seatedStyle="classic"){this.skin=skin;this.seatedStyle=MusicSeatedFrames.NormalizeStyle(seatedStyle);try{alignment=Store.Json.Deserialize<SkinAlignment[]>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","sprite-alignment.json"))).FirstOrDefault(c=>c.Skin==skin);}catch{}}
   BitmapSource[] Sheet(string group){BitmapSource[] cells;if(sheets.TryGetValue(group,out cells))return cells;string path=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets",skin+(group=="base"?"":"-"+group)+".png");if(!File.Exists(path)){sheets[group]=null;return null;}var image=new BitmapImage();image.BeginInit();image.CacheOption=BitmapCacheOption.OnLoad;image.UriSource=new Uri(path);image.EndInit();image.Freeze();int w=group=="base"?192:384,h=group=="base"?208:416,columns=image.PixelWidth/w;cells=new BitmapSource[columns*(image.PixelHeight/h)];for(int i=0;i<cells.Length;i++){cells[i]=new CroppedBitmap(image,new Int32Rect(i%columns*w,i/columns*h,w,h));cells[i].Freeze();}sheets[group]=cells;return cells;}
   AnimationPose Cell(string group,int index,string label){var cells=Sheet(group);FrameAlignment a=null;if(alignment!=null&&group!="base"){var list=group=="extra"?alignment.Extra:group=="ambient"?alignment.Ambient:alignment.Transition;if(index<list.Length&&SpriteGeometry.Valid(list[index]))a=list[index];}return new AnimationPose{Source=cells[index],Alignment=a,Key=group+":"+index,SourceLabel=label};}
-  public AnimationPose Frame(AnimationChoice choice,double elapsed){double ms=Math.Max(0,elapsed)%choice.Duration;string id=choice.Id;
+  public AnimationPose Frame(AnimationChoice choice,double elapsed){if(AnimationAssets.HasTracks(skin))return AnimationAssets.Frame(skin,choice.Id,elapsed,seatedStyle);if(choice.Id=="drink")return null;double ms=Math.Max(0,elapsed)%choice.Duration;string id=choice.Id;
    if(id.StartsWith("music-")){if(!MusicSprites.Supported(skin))return null;if(music==null){music=MusicSprites.Load(skin);seated=MusicSeatedFrames.Load(skin,seatedStyle);}if(music==null)return null;int index;BitmapSource source;
     if(id=="music-quiet"){index=MusicSeatedFrames.FrameIndex(ms);source=seated[index];}
     else{index=id=="music-sit"?18+Math.Min(5,(int)(ms/120)):id=="music-rise"?23-Math.Min(5,(int)(ms/120)):MusicReactions.Frame(id,ms,false);source=music[index];}
@@ -31,32 +33,101 @@ namespace KianaPet {
  }
  public sealed class AnimationGallery:UserControl,IDisposable {
   public static readonly AnimationChoice[] Catalog={
-   new AnimationChoice("idle","待机","日常互动","没有任务或互动时",6600),new AnimationChoice("running-left","向左跑动","日常互动","自由活动或向左拖动时",1060),new AnimationChoice("running-right","向右跑动","日常互动","自由活动或向右拖动时",1060),new AnimationChoice("waving","招手","日常互动","双击、打招呼或拖动结束时",700),new AnimationChoice("jumping","开心回应","日常互动","戳脸互动时",840),new AnimationChoice("pat","摸头","日常互动","轻点头部时",1300),new AnimationChoice("carry","被提起","日常互动","按住拖动时",560),new AnimationChoice("sleep","睡眠","日常互动","到休息时间或空闲打盹时",3600),new AnimationChoice("blink","眨眼","日常互动","空闲小动作",1000),new AnimationChoice("groom","整理头发","日常互动","空闲日常动作，包含抬手与收回",2100),new AnimationChoice("stretch","伸懒腰","日常互动","空闲日常动作，包含过渡",2100),
+   new AnimationChoice("idle","待机","日常互动","没有任务或互动时",6600),new AnimationChoice("running-left","向左跑动","日常互动","自由活动或向左拖动时",1060),new AnimationChoice("running-right","向右跑动","日常互动","自由活动或向右拖动时",1060),new AnimationChoice("waving","招手","日常互动","双击、打招呼或拖动结束时",700),new AnimationChoice("jumping","开心回应","日常互动","戳脸互动时",840),new AnimationChoice("drink","喝饮料","日常互动","在互动菜单中喝一口，或空闲时自然出现",2150),new AnimationChoice("pat","摸头","日常互动","轻点头部时",1300),new AnimationChoice("carry","被提起","日常互动","按住拖动时",560),new AnimationChoice("sleep","睡眠","日常互动","到休息时间或空闲打盹时",3600),new AnimationChoice("blink","眨眼","日常互动","空闲小动作",1000),new AnimationChoice("groom","整理头发","日常互动","空闲日常动作，包含抬手与收回",2100),new AnimationChoice("stretch","伸懒腰","日常互动","空闲日常动作，包含过渡",2100),
    new AnimationChoice("running","思考／处理中","任务状态","联动任务处理中",820),new AnimationChoice("review","完成待查看","任务状态","任务完成但尚未查看",1030),new AnimationChoice("waiting","等待回应","任务状态","任务需要回应或操作",1010),new AnimationChoice("failed","任务遇到问题","任务状态","任务失败或需要检查",1220),
    new AnimationChoice("music-quiet","坐着听歌","音乐","安静倾听循环；坐下与起身可单独预览",2400),new AnimationChoice("music-gentle","轻微应援","音乐","按平时／副歌设置，胸前轻微挥棒",1440),new AnimationChoice("music-lively","活力应援","音乐","按平时／副歌设置，抬手举棒",900),new AnimationChoice("music-sit","坐下过渡","音乐","进入坐着听歌时",720),new AnimationChoice("music-rise","起身过渡","音乐","从坐姿切换到挥棒时",720)};
   readonly DispatcherTimer timer=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(33)};readonly Stopwatch clock=new Stopwatch();readonly Image sprite=new Image{Width=198,Height=214.5,Stretch=Stretch.Fill};readonly TextBlock detail=new TextBlock{TextWrapping=TextWrapping.Wrap,FontSize=12},counter=new TextBlock{FontSize=11},sleep=new TextBlock{Text="z Z z",FontSize=18,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Top,Margin=new Thickness(0,10,10,0)};
   readonly WrapPanel choices=new WrapPanel();readonly ComboBox skins=new ComboBox(),category=new ComboBox(),speed=new ComboBox();readonly Slider seek=new Slider{Minimum=0,Maximum=1};readonly Button play;AnimationPreviewSource source;AnimationChoice selected=Catalog[0];double elapsed,last;bool paused,updatingSeek,disposed;string loadedSkin,loadedStyle;
+  double SelectedDuration{get{EnsureSource();return source.Duration(selected);}}
   public string SelectedAction{get{return selected.Id;}}public BitmapSource CurrentFrame{get{return sprite.Source as BitmapSource;}}public bool IsPlaying{get{return timer.IsEnabled&&!paused;}}
-  readonly TextBlock rateError=new TextBlock{TextWrapping=TextWrapping.Wrap,FontSize=12};readonly Config rateConfig;readonly Action<string,double> saveRate;readonly Action resetRates;
-  public double CurrentSpeed{get{return AnimationTiming.Speed(rateConfig,selected.Id);}}
-  public AnimationGallery(List<PetInfo> pets,string currentSkin,Config config=null,Action<string,double> saveSpeed=null,Action resetSpeeds=null){
-   rateConfig=config??new Config();saveRate=saveSpeed;resetRates=resetSpeeds;
+  readonly TextBlock rateError=new TextBlock{TextWrapping=TextWrapping.Wrap,FontSize=12};
+  readonly TextBlock rateSource=CompanionControls.Text("",12);
+  readonly ComboBox rateScope=new ComboBox(),seatedStyle=new ComboBox();
+  readonly Button inheritRate,clearScope;
+  readonly Config rateConfig;
+  readonly Action<string,string,string,double?> editRate;
+  bool SharedScope{get{return rateScope.SelectedIndex==1;}}
+  string PreviewSkin{get{return Convert.ToString(skins.SelectedValue);}}
+  string PreviewSeatedStyle{get{
+   switch(seatedStyle.SelectedIndex){
+    case 1:return "classic";
+    case 2:return "sway";
+    case 3:return "nod";
+    default:return MusicSeatedFrames.NormalizeStyle(rateConfig.MusicSeatedStyle);
+   }
+  }}
+  public double CurrentSpeed{get{return AnimationTiming.Speed(rateConfig,PreviewSkin,selected.Id,PreviewSeatedStyle);}}
+  public AnimationGallery(List<PetInfo> pets,string currentSkin,Config config=null,Action<string,string,string,double?> editSpeed=null){
+   rateConfig=config??new Config();editRate=editSpeed;
    paused=!MotionSettings.Enabled;var root=new StackPanel();var filters=new Grid();filters.ColumnDefinitions.Add(new ColumnDefinition());filters.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(135)});skins.ItemsSource=pets;skins.DisplayMemberPath="Name";skins.SelectedValuePath="Id";skins.SelectedValue=currentSkin;skins.Padding=category.Padding=new Thickness(6);skins.Margin=new Thickness(0,0,8,8);category.ItemsSource=new[]{"全部动作","日常互动","任务状态","音乐"};category.SelectedIndex=0;Grid.SetColumn(category,1);filters.Children.Add(skins);filters.Children.Add(category);root.Children.Add(filters);
    var body=new Grid();body.ColumnDefinitions.Add(new ColumnDefinition{Width=new GridLength(238)});body.ColumnDefinitions.Add(new ColumnDefinition());var stage=new Grid{Height=232,Background=PetPalette.Brush(PetPalette.Background)};stage.Children.Add(sprite);stage.Children.Add(sleep);var border=new Border{CornerRadius=new CornerRadius(PetVisuals.SurfaceRadius),BorderBrush=PetPalette.Brush(PetPalette.Line),BorderThickness=new Thickness(1),Child=stage,Margin=new Thickness(0,0,12,8)};body.Children.Add(border);var right=new StackPanel();Grid.SetColumn(right,1);right.Children.Add(choices);body.Children.Add(right);root.Children.Add(body);
-   RenderOptions.SetBitmapScalingMode(sprite,BitmapScalingMode.HighQuality);var controls=new WrapPanel();play=CompanionControls.Button(paused?"播放":"暂停",delegate{paused=!paused;play.Content=paused?"播放":"暂停";});controls.Children.Add(play);controls.Children.Add(CompanionControls.Button("重播",delegate{elapsed=0;paused=false;play.Content="暂停";Draw();}));controls.Children.Add(CompanionControls.Button("下一帧",Step));controls.Children.Add(CompanionControls.Button("切换背景",delegate{stage.Background=stage.Background==Brushes.White?PetPalette.Brush(PetPalette.Hex("#20222B")):Brushes.White;}));root.Children.Add(controls);var rates=new WrapPanel{Margin=new Thickness(0,8,0,8)};rates.Children.Add(CompanionControls.Text("当前动作速度（倍）",12));speed.IsEditable=true;speed.Width=85;speed.ItemsSource=new[]{"0.10","0.25","0.50","0.75","1.00","1.25","1.50","2.00","3.00","4.00"};speed.Padding=new Thickness(6);rates.Children.Add(speed);rates.Children.Add(CompanionControls.Button("应用到桌宠",ApplyRate));rates.Children.Add(CompanionControls.Button("此动作默认",delegate{SetSelectedSpeed(AnimationTiming.Default(selected.Id));}));rates.Children.Add(CompanionControls.Button("全部恢复默认",ResetRates));root.Children.Add(rates);root.Children.Add(rateError);root.Children.Add(CompanionControls.Text("支持 0.10–4.00 倍；输入后点击应用。各动作分别保存，六套衣装共用。默认 1×，坐着听歌默认 0.25×。",12));root.Children.Add(seek);root.Children.Add(counter);root.Children.Add(detail);Content=root;
-   skins.SelectionChanged+=delegate{source=null;elapsed=0;RefreshChoices();Draw();};category.SelectionChanged+=delegate{RefreshChoices();};seek.ValueChanged+=delegate{if(updatingSeek)return;elapsed=seek.Value*selected.Duration;paused=true;play.Content="播放";Draw();};
-   timer.Tick+=delegate{double now=clock.Elapsed.TotalMilliseconds;if(!paused)elapsed=(elapsed+(now-last)*CurrentSpeed)%selected.Duration;last=now;Draw();};IsVisibleChanged+=delegate{if(IsVisible&&!disposed){clock.Restart();last=0;timer.Start();Draw();}else{timer.Stop();clock.Stop();}};Unloaded+=delegate{timer.Stop();clock.Stop();};Loaded+=delegate{if(IsVisible&&!disposed){clock.Restart();last=0;timer.Start();Draw();}};RefreshChoices();
+   RenderOptions.SetBitmapScalingMode(sprite,BitmapScalingMode.HighQuality);var controls=new WrapPanel();play=CompanionControls.Button(paused?"播放":"暂停",delegate{paused=!paused;play.Content=paused?"播放":"暂停";});controls.Children.Add(play);controls.Children.Add(CompanionControls.Button("重播",delegate{elapsed=0;paused=false;play.Content="暂停";Draw();}));controls.Children.Add(CompanionControls.Button("下一帧",Step));controls.Children.Add(CompanionControls.Button("切换背景",delegate{stage.Background=stage.Background==Brushes.White?PetPalette.Brush(PetPalette.Hex("#20222B")):Brushes.White;}));root.Children.Add(controls);
+   seatedStyle.ItemsSource=new[]{"跟随音乐设置","原版坐姿","头部轻晃","侧向点头"};
+   seatedStyle.SelectedIndex=0;
+   seatedStyle.HorizontalAlignment=HorizontalAlignment.Left;
+   seatedStyle.Padding=new Thickness(6);
+   seatedStyle.ToolTip="预览哪一种坐姿，并调整该坐姿的速度";
+   System.Windows.Automation.AutomationProperties.SetName(seatedStyle,"坐着听歌的预览样式");
+   root.Children.Add(seatedStyle);
+   var rates=new WrapPanel{Margin=new Thickness(0,8,0,0)};
+   rateScope.ItemsSource=new[]{"仅此皮肤","所有皮肤的共用速度"};
+   rateScope.SelectedIndex=0;rateScope.Padding=new Thickness(6);
+   System.Windows.Automation.AutomationProperties.SetName(rateScope,"动作速度的适用范围");
+   rates.Children.Add(rateScope);
+   speed.IsEditable=true;speed.Width=75;speed.Padding=new Thickness(6);speed.Margin=new Thickness(6,0,6,0);
+   speed.ItemsSource=new[]{"0.10","0.25","0.50","0.75","1.00","1.25","1.50","2.00","3.00","4.00"};
+   System.Windows.Automation.AutomationProperties.SetName(speed,"动作播放倍速");
+   rates.Children.Add(speed);
+   rates.Children.Add(CompanionControls.Button("应用到桌宠",ApplyRate));
+   inheritRate=CompanionControls.Button("恢复共用速度",delegate{EditSelected(selected.Id,null);});rates.Children.Add(inheritRate);
+   clearScope=CompanionControls.Button("本皮肤全部恢复共用",ResetRates);rates.Children.Add(clearScope);
+   root.Children.Add(rates);root.Children.Add(rateSource);root.Children.Add(rateError);
+   rateScope.SelectionChanged+=delegate{RefreshRate();};
+   seatedStyle.SelectionChanged+=delegate{elapsed=0;RefreshRate();Draw();};
+   root.Children.Add(seek);root.Children.Add(counter);root.Children.Add(detail);Content=root;
+   skins.SelectionChanged+=delegate{source=null;elapsed=0;RefreshChoices();Draw();};category.SelectionChanged+=delegate{RefreshChoices();};seek.ValueChanged+=delegate{if(updatingSeek)return;elapsed=seek.Value*SelectedDuration;paused=true;play.Content="播放";Draw();};
+   timer.Tick+=delegate{double now=clock.Elapsed.TotalMilliseconds;if(!paused)elapsed=(elapsed+(now-last)*CurrentSpeed)%SelectedDuration;last=now;Draw();};IsVisibleChanged+=delegate{if(IsVisible&&!disposed){clock.Restart();last=0;timer.Start();Draw();}else{timer.Stop();clock.Stop();}};Unloaded+=delegate{timer.Stop();clock.Stop();};Loaded+=delegate{if(IsVisible&&!disposed){clock.Restart();last=0;timer.Start();Draw();}};RefreshChoices();
   }
-  void RefreshChoices(){choices.Children.Clear();bool music=MusicSprites.Supported(Convert.ToString(skins.SelectedValue));foreach(var entry in Catalog.Where(c=>category.SelectedIndex==0||c.Category==Convert.ToString(category.SelectedItem))){var item=entry;var b=CompanionControls.Button(item.Name,delegate{SelectAction(item.Id);});b.MinWidth=100;b.MinHeight=28;b.FontSize=12;b.Tag=item.Id;b.Padding=new Thickness(6,3,6,3);b.Margin=new Thickness(0,0,5,5);b.ToolTip=item.When;b.IsEnabled=item.Category!="音乐"||music;choices.Children.Add(b);}if(selected.Category=="音乐"&&!music)selected=Catalog[0];Highlight();RefreshRate();}
+  void RefreshChoices(){choices.Children.Clear();string skin=Convert.ToString(skins.SelectedValue);foreach(var entry in Catalog.Where(c=>category.SelectedIndex==0||c.Category==Convert.ToString(category.SelectedItem))){var item=entry;var b=CompanionControls.Button(item.Name,delegate{SelectAction(item.Id);});b.MinWidth=100;b.MinHeight=28;b.FontSize=12;b.Tag=item.Id;b.Padding=new Thickness(6,3,6,3);b.Margin=new Thickness(0,0,5,5);b.ToolTip=item.When;b.IsEnabled=AnimationAssets.Supports(skin,item.Id);choices.Children.Add(b);}if(!AnimationAssets.Supports(skin,selected.Id))selected=Catalog[0];Highlight();RefreshRate();}
   void Highlight(){foreach(var b in choices.Children.OfType<Button>()){bool active=Convert.ToString(b.Tag)==selected.Id;b.Background=active?PetPalette.Brush(PetPalette.Dark?PetPalette.Hex("#514664"):PetPalette.Hex("#EEE7F8")):PetPalette.Brush(PetPalette.Background);b.BorderBrush=PetPalette.Brush(active?PetPalette.Hex("#B6A0D2"):PetPalette.Line);}}
-  public void SelectAction(string id){var item=Catalog.FirstOrDefault(c=>c.Id==id);if(item==null||item.Category=="音乐"&&!MusicSprites.Supported(Convert.ToString(skins.SelectedValue)))return;selected=item;elapsed=0;Highlight();RefreshRate();Draw();}
-  void RefreshRate(){rateError.Text="";speed.Text=CurrentSpeed.ToString("0.##",System.Globalization.CultureInfo.InvariantCulture);}
-  void ApplyRate(){double value;string text=(speed.Text??"").Trim().TrimEnd('×','x','X');if(!double.TryParse(text,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out value)||!AnimationTiming.Valid(value)){rateError.Text="请输入 0.10–4.00 之间的倍速，例如 0.25 或 1.5。";return;}SetSelectedSpeed(value);}
-  public void SetSelectedSpeed(double value){if(!AnimationTiming.Valid(value))throw new ArgumentOutOfRangeException("value");value=Math.Round(value,2);if(saveRate!=null)saveRate(selected.Id,value);else rateConfig.AnimationSpeeds[selected.Id]=value;elapsed=0;RefreshRate();Draw();}
-  public void ResetRates(){if(resetRates!=null)resetRates();else rateConfig.AnimationSpeeds.Clear();elapsed=0;RefreshRate();Draw();}
-  void EnsureSource(){string skin=Convert.ToString(skins.SelectedValue);if(source==null||loadedSkin!=skin||loadedStyle!=rateConfig.MusicSeatedStyle){source=new AnimationPreviewSource(skin,rateConfig.MusicSeatedStyle);loadedSkin=skin;loadedStyle=rateConfig.MusicSeatedStyle;}}
-  void Draw(){if(!IsVisible||disposed)return;try{EnsureSource();var pose=source.Frame(selected,elapsed);if(pose==null)return;sprite.Source=pose.Source;var transforms=new TransformGroup();transforms.Children.Add(new MatrixTransform(SpriteGeometry.Matrix(pose.Alignment,sprite.Width)));if(pose.Angle!=0)transforms.Children.Add(new RotateTransform(pose.Angle,sprite.Width*.46,sprite.Width*1.03));sprite.RenderTransform=transforms;sleep.Visibility=selected.Id=="sleep"?Visibility.Visible:Visibility.Hidden;detail.Text=selected.When+"\n"+pose.SourceLabel+(MusicSprites.Supported(loadedSkin)?"":"；音乐专用动作仅三套Q版提供");counter.Text=(paused?"已暂停 · ":"播放中 · ")+selected.Name+" · "+(elapsed/CurrentSpeed/1000).ToString("0.00")+" / "+(selected.Duration/CurrentSpeed/1000).ToString("0.00")+" 秒 · "+CurrentSpeed.ToString("0.##")+"×";updatingSeek=true;seek.Value=elapsed/selected.Duration;updatingSeek=false;}catch(Exception e){detail.Text="此动作暂无法预览："+e.Message;timer.Stop();}}
-  public void Step(){EnsureSource();paused=true;play.Content="播放";string key=source.Frame(selected,elapsed).Key;for(double dt=1;dt<=selected.Duration+10;dt+=10){double next=(elapsed+dt)%selected.Duration;if(source.Frame(selected,next).Key!=key){elapsed=next;break;}}Draw();}
+  public void SelectAction(string id){var item=Catalog.FirstOrDefault(c=>c.Id==id);if(item==null||!AnimationAssets.Supports(Convert.ToString(skins.SelectedValue),item.Id))return;selected=item;elapsed=0;Highlight();RefreshRate();Draw();}
+  string shownStyle;
+  void RefreshRate(){
+   shownStyle=PreviewSeatedStyle;
+   bool quiet=selected.Id=="music-quiet";
+   seatedStyle.Visibility=quiet?Visibility.Visible:Visibility.Collapsed;
+   rateError.Text="";
+   double shared=AnimationTiming.SharedSpeed(rateConfig,selected.Id),local;
+   bool custom=AnimationTiming.TrySkinSpeed(rateConfig,PreviewSkin,selected.Id,shownStyle,out local);
+   var culture=System.Globalization.CultureInfo.InvariantCulture;
+   speed.Text=(SharedScope?shared:CurrentSpeed).ToString("0.##",culture);
+   inheritRate.Content=SharedScope?"恢复此动作默认":"恢复共用速度";
+   inheritRate.IsEnabled=SharedScope?rateConfig.AnimationSpeeds.ContainsKey(selected.Id):custom;
+   clearScope.Content=SharedScope?"全部共用速度恢复默认":"本皮肤全部恢复共用";
+   clearScope.IsEnabled=SharedScope?rateConfig.AnimationSpeeds.Count>0:rateConfig.SkinAnimationSpeeds.ContainsKey(PreviewSkin);
+   var skin=skins.SelectedItem as PetInfo;
+   string target=(skin==null?PreviewSkin:skin.Name)+" · "+selected.Name+(quiet?"（"+MusicSeatedFrames.StyleLabel(shownStyle)+"）":"");
+   string preview=custom?"皮肤专属 "+local.ToString("0.##",culture)+"×":"继承共用 "+shared.ToString("0.##",culture)+"×";
+   rateSource.Text=target+"  ·  "+preview+(SharedScope&&quiet?"  ·  共用设置适用于三种坐姿":"");
+  }
+  void ApplyRate(){
+   double value;string text=(speed.Text??"").Trim().TrimEnd('×','x','X');
+   if(!double.TryParse(text,System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out value)||!AnimationTiming.Valid(value)){
+    rateError.Text="请输入 0.10–4.00 之间的倍速，例如 0.25 或 1.5。";return;
+   }
+   SetSelectedSpeed(value);
+  }
+  void EditSelected(string action,double? value){
+   string skin=SharedScope?null:PreviewSkin;
+   if(editRate!=null)editRate(skin,action,PreviewSeatedStyle,value);
+   else AnimationTiming.Edit(rateConfig,skin,action,PreviewSeatedStyle,value);
+   elapsed=0;RefreshRate();Draw();
+  }
+  public void SetSelectedSpeed(double value){EditSelected(selected.Id,value);}
+  public void ResetRates(){EditSelected(null,null);}
+  void EnsureSource(){string skin=Convert.ToString(skins.SelectedValue);if(source==null||loadedSkin!=skin||loadedStyle!=PreviewSeatedStyle){source=new AnimationPreviewSource(skin,PreviewSeatedStyle);loadedSkin=skin;loadedStyle=PreviewSeatedStyle;if(shownStyle!=loadedStyle)RefreshRate();}}
+  void Draw(){if(!IsVisible||disposed)return;try{EnsureSource();var pose=source.Frame(selected,elapsed);if(pose==null)return;sprite.Source=pose.Source;var transforms=new TransformGroup();transforms.Children.Add(new MatrixTransform(SpriteGeometry.Matrix(pose.Alignment,sprite.Width)));if(pose.Angle!=0)transforms.Children.Add(new RotateTransform(pose.Angle,sprite.Width*.46,sprite.Width*1.03));sprite.RenderTransform=transforms;sleep.Visibility=selected.Id=="sleep"?Visibility.Visible:Visibility.Hidden;detail.Text=selected.When+"\n"+pose.SourceLabel;counter.Text=(paused?"已暂停 · ":"播放中 · ")+selected.Name+" · "+(elapsed/CurrentSpeed/1000).ToString("0.00")+" / "+(SelectedDuration/CurrentSpeed/1000).ToString("0.00")+" 秒 · "+CurrentSpeed.ToString("0.##")+"×";updatingSeek=true;seek.Value=elapsed/SelectedDuration;updatingSeek=false;}catch(Exception e){detail.Text="此动作暂无法预览："+e.Message;timer.Stop();}}
+  public void Step(){EnsureSource();paused=true;play.Content="播放";string key=source.Frame(selected,elapsed).Key;for(double dt=1;dt<=SelectedDuration+10;dt+=10){double next=(elapsed+dt)%SelectedDuration;if(source.Frame(selected,next).Key!=key){elapsed=next;break;}}Draw();}
   public void Dispose(){disposed=true;timer.Stop();clock.Stop();source=null;sprite.Source=null;}
  }
 }

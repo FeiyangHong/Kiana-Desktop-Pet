@@ -7,6 +7,7 @@ using System.Web.Script.Serialization;
 namespace KianaPet {
  public sealed class PetInfo {
   public string Id {get;set;} public string Name {get;set;} public string Atlas {get;set;}
+  public string AnimationManifest {get;set;}
  }
  public sealed class Config {
   public int Schema=1;
@@ -23,6 +24,7 @@ namespace KianaPet {
   public int ToolbarPreset=0,ToolbarTint=55,ToolbarOpacity=85,ToolbarDirection=2,ToolbarFlowSeconds=18,ToolbarGlassFog=30;
   public bool ToolbarFlow=false,ToolbarAutoContrast=true;
   public Dictionary<string,double> AnimationSpeeds=new Dictionary<string,double>();
+  public Dictionary<string,Dictionary<string,double>> SkinAnimationSpeeds=new Dictionary<string,Dictionary<string,double>>();
   public string[] SettingsCategoryOrder=new string[0];
   public string Skin="kiana-fiery-wishing-star-round";
   public int Size=176;

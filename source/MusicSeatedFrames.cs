@@ -22,7 +22,7 @@ namespace KianaPet {
   public static BitmapSource[] Load(string skin,string style="classic") {
    style=NormalizeStyle(style);string cacheKey=skin+":"+style;string suffix=style=="classic"?"":"-"+style;
    if(cachedSkin==cacheKey&&cached!=null)return cached;
-   if(!MusicSprites.Supported(skin))return null;
+   if(!MusicSprites.LegacySupported(skin))return null;
    var list=Store.Json.Deserialize<MusicSpriteCalibration[]>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","music-seated"+suffix+"-calibration.json")));
    var c=Array.Find(list,r=>r.Skin==skin);
    if(c==null||c.Frames==null||c.Frames.Length!=FrameCount||!MusicReactions.Finite(c.ReferenceHeadHeight)||c.ReferenceHeadHeight<120||c.ReferenceHeadHeight>300||!MusicReactions.Finite(c.ReferenceCenter)||!MusicReactions.Finite(c.ReferenceFoot))throw new InvalidDataException("坐姿完整帧校准无效");

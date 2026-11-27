@@ -13,11 +13,11 @@ namespace KianaPet {
  }
  public static class SkinShuffleRules {
   public static readonly string[] Defaults={"kiana-winter-wish-round","kiana-fiery-wishing-star-round","time-runner-kiana-round"};
-  public static readonly string[] Allowed=Defaults.Concat(new[]{"kiana-winter-wish","kiana-fiery-wishing-star","time-runner-kiana"}).ToArray();
+  public static string[] Allowed {get{return PetCatalog.Load().Select(skin=>skin.Id).ToArray();}}
   public static void Validate(Config c){
    SkinChangeActions.Validate(c);
    c.SkinShuffleMinutes=Math.Max(1,Math.Min(1440,c.SkinShuffleMinutes));
-   c.SkinShufflePool=(c.SkinShufflePool??Defaults).Where(Allowed.Contains).Distinct(StringComparer.Ordinal).Take(6).ToArray();
+   c.SkinShufflePool=(c.SkinShufflePool??Defaults).Where(Allowed.Contains).Distinct(StringComparer.Ordinal).ToArray();
   }
   public static string Day(DateTime date){return date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture);}
   public static string WaitText(double value){long seconds=(long)Math.Ceiling(MusicReactions.Finite(value)?Math.Max(0,value):0);return (seconds/3600).ToString("00")+":"+(seconds/60%60).ToString("00")+":"+(seconds%60).ToString("00");}
@@ -34,7 +34,7 @@ namespace KianaPet {
   public void Load(SkinShuffleSession saved,Config c){
    Session=saved??new SkinShuffleSession();
    Session.Pool=Session.Pool??new string[0];
-   Session.Bag=(Session.Bag??new string[0]).Where(c.SkinShufflePool.Contains).Distinct(StringComparer.Ordinal).Take(6).ToArray();
+   Session.Bag=(Session.Bag??new string[0]).Where(c.SkinShufflePool.Contains).Distinct(StringComparer.Ordinal).ToArray();
    DateTime date;if(!DateTime.TryParseExact(Session.HeldDate,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out date))Session.HeldDate="";
    if(!MusicReactions.Finite(Session.Remaining)||Session.Remaining<0||Session.Remaining>95040)Session.Remaining=-1;
    Configure(c);hasTick=false;

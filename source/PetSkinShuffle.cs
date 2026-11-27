@@ -71,7 +71,7 @@ namespace KianaPet {
    bool taskPose=skinShuffleRequested&&SkinChangeActions.TaskPose(state);
    if(state!="idle"&&state!="music-quiet"&&!review&&!taskPose)return "等待当前动作结束："+MusicActivity.ActionName(state);
    if(state=="music-quiet"&&!MusicSprites.Supported(Settings.Skin))return "等待普通待机";
-   if(state=="music-quiet"&&AnimationTiming.MusicElapsed(Settings,state,Math.Max(0,(clock.Elapsed.TotalSeconds-stateAt)*1000),false)<MusicReactions.SitTransitionMs)return "正在坐下，等待当前过渡结束";
+   if(state=="music-quiet"&&AnimationTiming.MusicElapsed(Settings,state,Math.Max(0,(clock.Elapsed.TotalSeconds-stateAt)*1000),false)<AnimationAssets.Duration(Settings.Skin,"music-sit"))return "正在坐下，等待当前过渡结束";
    if(state=="music-quiet"&&Music.Current.Connected&&Music.Current.HasPosition&&DateTime.UtcNow-Music.Current.At<=TimeSpan.FromSeconds(6)&&MusicReactions.InChorus(MusicReactions.Position(Music.Current,DateTime.UtcNow),MusicReactions.Ranges(Settings,Music.Current,Settings.MusicChorusEnabled?chorusLibrary.For(Music.Current.Id):new ChorusRange[0]),Music.Current.Duration))return "已知副歌期间暂缓换装";
    if(state=="music-quiet"&&Settings.SkinShufflePool.Any(id=>!MusicSprites.Supported(id)))return "混合普通版候选时等待日常待机，保留音乐动作";
    return "";
@@ -84,11 +84,11 @@ namespace KianaPet {
   bool SkinShuffleBoundaryReady(double now){
    string blocked=SkinShuffleBlockReason();
    double elapsed=Math.Max(0,(now-stateAt)*1000);
-   double timeline=state=="music-quiet"?AnimationTiming.MusicElapsed(Settings,state,elapsed,false)-MusicReactions.SitTransitionMs:AnimationTiming.Elapsed(Settings,state,elapsed);
-   bool boundary=skinBoundary.Observe(state,timeline,state=="music-quiet"?MusicSeatedFrames.CycleMs:Rules.CycleMs(state),blocked.Length==0,Settings.ReduceMotion,now);
+   double timeline=state=="music-quiet"?AnimationTiming.MusicElapsed(Settings,state,elapsed,false)-AnimationAssets.Duration(Settings.Skin,"music-sit"):AnimationTiming.Elapsed(Settings,state,elapsed);
+   bool boundary=skinBoundary.Observe(state,timeline,AnimationAssets.HasTracks(Settings.Skin)||state=="music-quiet"?AnimationAssets.Duration(Settings.Skin,state,Settings.MusicSeatedStyle):Rules.CycleMs(state),blocked.Length==0,Settings.ReduceMotion,now);
    // A delayed tick must still land on the first review frame, rather than
    // treating any point in the next loop as a visual handoff.
-   return boundary&&(state!="review"||Settings.ReduceMotion||Rules.Frame(state,timeline)==0);
+   return boundary&&(state!="review"||Settings.ReduceMotion||(AnimationAssets.HasTracks(Settings.Skin)?AnimationAssets.Track(Settings.Skin,state).Slot(timeline):Rules.Frame(state,timeline))==0);
   }
   bool ExecuteSkinShuffle(double now,bool boundary){
    if(!skinShuffleReady||(!skinShuffleRequested&&!boundary)||(!skinShuffleRequested&&!skinShuffle.Due(Settings,DateTime.Now))||SkinShuffleBlockReason().Length>0)return false;
@@ -101,7 +101,7 @@ namespace KianaPet {
    if(state!="review"||Settings.ReduceMotion||(!skinShuffleRequested&&!skinShuffle.Due(Settings,DateTime.Now))||SkinShuffleBlockReason().Length>0)return normal;
    // Sample the short entry frame even in quiet mode or at high action speeds.
    // This adjustment ends with the request and never changes provider polling.
-   return Math.Min(normal,Math.Max(16,(int)(Rules.FirstFrameMs(state)/AnimationTiming.Speed(Settings,state)/2)));
+   return Math.Min(normal,Math.Max(16,(int)((AnimationAssets.HasTracks(Settings.Skin)?AnimationAssets.Track(Settings.Skin,state).Start[1]:Rules.FirstFrameMs(state))/AnimationTiming.Speed(Settings,state)/2)));
   }
   bool ApplyAutomaticSkin(string id,double now){return ApplySkinChange(id,now,false);}
   bool ApplySkinChange(string id,double now,bool manual){

@@ -43,7 +43,7 @@ namespace KianaPet {
    var oldSource=continuation!=null?continuation.OldSource:new AnimationPreviewSource(oldSkin,Settings.MusicSeatedStyle);
    skinShowcaseSequence=new OutfitActionSequence(Settings,action,true,null,oldSource,continuation);skinShowcaseChoice=skinShowcaseSequence.Choice;skinShowcaseAction=action;skinShowcaseExpectedState=state;skinShowcaseSeated=true;
    skinShowcaseRiseMs=skinShowcaseSequence.RiseMs;skinShowcaseSitMs=skinShowcaseSequence.SitMs;skinShowcaseActionMs=skinShowcaseSequence.ActionMs;
-   skinShowcaseAt=clock.Elapsed.TotalSeconds-(continuation!=null?continuedMs/1000:0);skinShowcaseSwapStarted=continuation!=null&&swapped;skinShowcaseRunning=true;
+   skinShowcaseAt=clock.Elapsed.TotalSeconds-(continuation!=null?skinShowcaseSequence.ContinueAt(continuation,continuedMs)/1000:0);skinShowcaseSwapStarted=continuation!=null&&swapped;skinShowcaseRunning=true;
    DrawSkinShowcase();if(continuation!=null&&swapped&&skinShowcaseRunning)StartSkinFade(visual,state,true,true);
   }
   void ApplyOutfitPose(AnimationPose pose){sprite.Source=pose.Source;activeAlignment=pose.Alignment;ApplySpriteAlignment();lastFrame=-1;}

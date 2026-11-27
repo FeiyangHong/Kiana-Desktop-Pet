@@ -13,7 +13,7 @@ namespace KianaPet {
    if(c.ToolbarColorSource=="manual")return new[]{PetPalette.Hex(c.ToolbarColor1),PetPalette.Hex(c.ToolbarColor2),PetPalette.Hex(c.ToolbarColor3)};
    if(c.ToolbarColorSource=="background"&&backdrop!=null)return backdrop;
    if(c.ToolbarColorSource=="music"&&cover!=null){var p=MusicGradient.SamplePair(cover);return new[]{p[0],p[1],PetPalette.Mix(p[0],p[1],.5)};}
-   int index=c.ToolbarPreset;if(c.ToolbarColorSource=="outfit")index=c.Skin.Contains("winter")?0:c.Skin.Contains("time-runner")?1:2;
+   int index=c.ToolbarPreset;if(c.ToolbarColorSource=="outfit")index=c.Skin.StartsWith("haibara-ai",StringComparison.Ordinal)?9:c.Skin.Contains("winter")?0:c.Skin.Contains("time-runner")?1:2;
    return Presets[index].Select(PetPalette.Hex).ToArray();
   }
   public static Color[] Tinted(Config c,Color[] palette,bool dark){return palette.Select(x=>PetPalette.Mix(PetPalette.Hex(dark?"#27262D":"#FFFFFF"),x,c.ToolbarTint/100d)).ToArray();}

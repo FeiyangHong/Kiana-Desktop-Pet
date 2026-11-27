@@ -1,0 +1,234 @@
+{
+  "idle": {
+    "File": "front-q-idle.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 2, 1, 4, 5, 0],
+    "Start": [0, 1680, 2340, 2390, 2540, 2600, 3000, 3840, 4680],
+    "Duration": 6600,
+    "Stride": 0
+  },
+  "blink": {
+    "File": "front-q-blink.png",
+    "Columns": 3,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 1, 0],
+    "Start": [0, 140, 180, 320, 370],
+    "Duration": 1000,
+    "Stride": 0
+  },
+  "waving": {
+    "File": "front-q-waving.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 0],
+    "Start": [0, 100, 205, 330, 455, 640, 750],
+    "Duration": 850,
+    "Stride": 0
+  },
+  "drink": {
+    "File": "front-q-drink.png",
+    "Columns": 3,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 1, 0],
+    "Start": [0, 720, 980, 1660, 1950],
+    "Duration": 2430,
+    "Stride": 0
+  },
+  "groom": {
+    "File": "front-q-groom.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 2, 1, 0],
+    "Start": [0, 100, 260, 430, 680, 1300, 1540, 1730, 1920],
+    "Duration": 2100,
+    "Stride": 0
+  },
+  "stretch": {
+    "File": "front-q-stretch.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 3, 2, 1, 0],
+    "Start": [0, 100, 260, 430, 670, 1290, 1460, 1645, 1795, 1940],
+    "Duration": 2100,
+    "Stride": 0
+  },
+  "running-left": {
+    "File": "q-running-left.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "Start": [0, 67, 212, 327, 408, 504, 594, 727, 872, 987, 1068, 1116, 1164, 1209, 1254],
+    "Duration": 1320,
+    "Stride": 235,
+    "Travel": [0.0, 14.078, 40.863, 61.147, 76.395, 93.701, 109.23, 132.46, 158.45, 179.529, 193.186, 200.579, 207.972, 214.552, 221.132, 235]
+  },
+  "running-right": {
+    "File": "q-running-right.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "Start": [0, 67, 212, 327, 408, 504, 594, 727, 872, 987, 1068, 1116, 1164, 1209, 1254],
+    "Duration": 1320,
+    "Stride": 235,
+    "Travel": [0.0, 14.078, 40.863, 61.147, 76.395, 93.701, 109.23, 132.46, 158.45, 179.529, 193.186, 200.579, 207.972, 214.552, 221.132, 235]
+  },
+  "jumping": {
+    "File": "front-q-jumping.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0],
+    "Start": [0, 50, 105, 170, 220, 265, 310, 390, 435, 485, 535, 595, 680, 745],
+    "Duration": 840,
+    "Stride": 0
+  },
+  "pat": {
+    "File": "front-q-pat.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+    "Start": [0, 90, 170, 248, 363, 571, 707, 809, 954, 1058, 1148],
+    "Duration": 1300,
+    "Stride": 0
+  },
+  "carry": {
+    "File": "front-q-carry.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 0, 6, 7, 8, 9, 10],
+    "Start": [0, 80, 160, 240, 320, 400, 480, 560, 640, 720, 800, 880],
+    "Duration": 960,
+    "Stride": 0
+  },
+  "sleep": {
+    "File": "front-q-sleep.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 280, 490, 710, 950, 1205, 1625, 1870, 2150, 2465, 2785, 3120],
+    "Duration": 3600,
+    "Stride": 0
+  },
+  "running": {
+    "File": "front-q-running.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 68, 137, 205, 273, 342, 410, 478, 547, 615, 683, 752],
+    "Duration": 820,
+    "Stride": 0
+  },
+  "review": {
+    "File": "front-q-review.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 86, 172, 258, 343, 429, 515, 601, 687, 772, 858, 944],
+    "Duration": 1030,
+    "Stride": 0
+  },
+  "waiting": {
+    "File": "front-q-waiting.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 84, 168, 252, 337, 421, 505, 589, 673, 758, 842, 926],
+    "Duration": 1010,
+    "Stride": 0
+  },
+  "failed": {
+    "File": "front-q-failed.png",
+    "Columns": 3,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1],
+    "Start": [0, 102, 203, 305, 407, 508, 610, 712, 813, 915, 1017, 1118],
+    "Duration": 1220,
+    "Stride": 0
+  },
+  "music-sit": {
+    "File": "front-q-music-sit.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660],
+    "Duration": 720,
+    "Stride": 0
+  },
+  "music-quiet": {
+    "File": "front-q-music-quiet.png",
+    "Columns": 5,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9],
+    "Start": [0, 75, 150, 225, 300, 375, 450, 525, 600, 675, 750, 825, 900, 975, 1050, 1125, 1200, 1275, 1350, 1425, 1500, 1575, 1650, 1725, 1800, 1875, 1950, 2025, 2100, 2175, 2250, 2325],
+    "Duration": 2400,
+    "Stride": 0
+  },
+  "music-quiet-sway": {
+    "File": "front-q-music-quiet-sway.png",
+    "Columns": 5,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9],
+    "Start": [0, 75, 150, 225, 300, 375, 450, 525, 600, 675, 750, 825, 900, 975, 1050, 1125, 1200, 1275, 1350, 1425, 1500, 1575, 1650, 1725, 1800, 1875, 1950, 2025, 2100, 2175, 2250, 2325],
+    "Duration": 2400,
+    "Stride": 0
+  },
+  "music-quiet-nod": {
+    "File": "front-q-music-quiet-nod.png",
+    "Columns": 5,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0, 9, 10, 11, 12, 13, 14, 15, 16, 15, 14, 13, 12, 11, 10, 9],
+    "Start": [0, 75, 150, 225, 300, 375, 450, 525, 600, 675, 750, 825, 900, 975, 1050, 1125, 1200, 1275, 1350, 1425, 1500, 1575, 1650, 1725, 1800, 1875, 1950, 2025, 2100, 2175, 2250, 2325],
+    "Duration": 2400,
+    "Stride": 0
+  },
+  "music-rise": {
+    "File": "front-q-music-rise.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Start": [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660],
+    "Duration": 720,
+    "Stride": 0
+  },
+  "music-gentle": {
+    "File": "front-q-music-gentle.png",
+    "Columns": 3,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7],
+    "Start": [0, 120, 285, 520, 680, 850, 1010, 1260],
+    "Duration": 1440,
+    "Stride": 0
+  },
+  "music-lively": {
+    "File": "front-q-music-lively.png",
+    "Columns": 4,
+    "FrameWidth": 352,
+    "FrameHeight": 416,
+    "Order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "Start": [0, 105, 180, 260, 340, 440, 585, 670, 750, 825],
+    "Duration": 900,
+    "Stride": 0
+  }
+}

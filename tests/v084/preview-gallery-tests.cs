@@ -4,7 +4,7 @@ class PreviewGalleryTests {
  static object Field(object o,string n){return o.GetType().GetField(n,BindingFlags.NonPublic|BindingFlags.Instance).GetValue(o);}static void Set(object o,string n,object v){o.GetType().GetField(n,BindingFlags.NonPublic|BindingFlags.Instance).SetValue(o,v);}static void Draw(PetWindow p,double ms){p.GetType().GetMethod("DrawAnimation",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(p,new object[]{ms});}
  static void SpeedTests(PetWindow pet,AnimationGallery gallery){
   var c=Store.Json.Deserialize<Config>("{\"Schema\":1}");c.Validate();Check(AnimationTiming.Speed(c,"music-quiet")==.25&&AnimationTiming.Speed(c,"waving")==1,"旧配置缺少倍速时使用新默认值");
-  Check(AnimationTiming.Actions.OrderBy(s=>s).SequenceEqual(AnimationGallery.Catalog.Select(a=>a.Id).OrderBy(s=>s)),"全部20类动画有独立速度项");
+  Check(AnimationTiming.Actions.OrderBy(s=>s).SequenceEqual(AnimationGallery.Catalog.Select(a=>a.Id).OrderBy(s=>s)),"每种图鉴动作都有独立速度项");
   c.AnimationSpeeds=null;c.Validate();c.AnimationSpeeds["idle"]=0;c.AnimationSpeeds["waving"]=double.NaN;c.AnimationSpeeds["invalid"]=2;c.Validate();Check(c.AnimationSpeeds.Count==0,"空配置、非有限值、越界和未知动作安全回退");
   c.AnimationSpeeds["idle"]=1.75;c.AnimationSpeeds["music-sit"]=.5;c.AnimationSpeeds["music-rise"]=2;c.AnimationSpeeds["music-gentle"]=1.5;
   Check(AnimationTiming.MusicElapsed(c,"music-quiet",1440+4800,false)==1920,"坐下0.5倍与坐姿0.25倍独立计时");Check(AnimationTiming.MusicElapsed(c,"music-gentle",360+1000,true)==2220,"起身2倍后进入1.5倍应援");
@@ -19,10 +19,40 @@ class PreviewGalleryTests {
   var quietChoice=AnimationGallery.Catalog.Single(v=>v.Id=="music-quiet");Check(quietChoice.Duration/AnimationTiming.Speed(pet.Settings,quietChoice.Id)==9600,"预览与真实坐姿周期均为9.6秒");
   Set(pet,"state","idle");gallery.SelectAction("music-quiet");var originalPose=gallery.CurrentFrame;pet.Settings.MusicSeatedStyle="sway";gallery.SelectAction("music-quiet");Check(!ReferenceEquals(originalPose,gallery.CurrentFrame)&&((TextBlock)Field(gallery,"detail")).Text.Contains("头部轻晃"),"already-open gallery refreshes when seated style changes");pet.Settings.MusicSeatedStyle="nod";gallery.SelectAction("music-quiet");Check(((TextBlock)Field(gallery,"detail")).Text.Contains("侧向点头"),"gallery uses third accepted seated style");pet.Settings.MusicSeatedStyle="classic";gallery.SelectAction("music-quiet");Check(((TextBlock)Field(gallery,"detail")).Text.Contains("原版坐姿"),"gallery can switch back without reopening");
  }
+ static void ScopedTests(PetWindow pet,AnimationGallery gallery){
+  var skins=(ComboBox)Field(gallery,"skins");var scope=(ComboBox)Field(gallery,"rateScope");var style=(ComboBox)Field(gallery,"seatedStyle");
+  string active=pet.Settings.Skin,other="haibara-ai-front-q";
+  gallery.SelectAction("waving");scope.SelectedIndex=1;gallery.SetSelectedSpeed(1.5);
+  Check(AnimationTiming.Speed(pet.Settings,active,"waving")==1.5,"编辑共用速度后无覆盖项的皮肤继承");
+  skins.SelectedValue=other;scope.SelectedIndex=0;gallery.SetSelectedSpeed(.65);
+  Check(gallery.CurrentSpeed==.65&&pet.Settings.Skin==active&&AnimationTiming.Speed(pet.Settings,"waving")==1.5,"图鉴只调整预览选中的另一套皮肤");
+  Check(AnimationTiming.Speed(Store.Load(),other,"waving")==.65,"重新读盘保留皮肤动作倍率");
+  scope.SelectedIndex=1;gallery.SetSelectedSpeed(1.8);Check(gallery.CurrentSpeed==.65&&AnimationTiming.Speed(pet.Settings,active,"waving")==1.8,"修改共用速度时保留皮肤专属倍率");
+  scope.SelectedIndex=0;Find<Button>(gallery).Single(b=>Convert.ToString(b.Content)=="恢复共用速度").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  Check(gallery.CurrentSpeed==1.8,"取消单项覆盖后立即继承新的共用速度");
+  gallery.SelectAction("music-quiet");style.SelectedIndex=2;gallery.SetSelectedSpeed(.55);style.SelectedIndex=3;gallery.SetSelectedSpeed(.8);
+  style.SelectedIndex=1;Check(gallery.CurrentSpeed==.25,"独立晃头和点头设置保留原坐姿继承");style.SelectedIndex=2;
+  var imported=PreferenceTransfer.Import(PreferenceTransfer.Export(Store.Load(),false));
+  Check(AnimationTiming.Speed(imported,other,"music-quiet","sway")==.55&&AnimationTiming.Speed(imported,other,"music-quiet","nod")==.8&&AnimationTiming.Speed(imported,active,"music-quiet","sway")==.25,"共享偏好传输保持两种坐姿和皮肤隔离");
+  imported.Skin=other;imported.MusicSeatedStyle="sway";double entry=AnimationAssets.Duration(other,"music-sit");
+  AnimationTiming.Edit(imported,other,"music-sit",null,.5);double phase=AnimationTiming.MusicElapsed(imported,"music-quiet",entry*2+1000,false);
+  Check(Math.Abs(phase-(entry+550))<.001&&Math.Abs(AnimationTiming.MusicWallTime(imported,"music-quiet",phase,false)-(entry*2+1000))<.001,"真实入座与所选坐姿使用各自皮肤时长和倍速");
+  gallery.ResetRates();Check(gallery.CurrentSpeed==.25&&AnimationTiming.Speed(pet.Settings,active,"waving")==1.8,"仅重置预览皮肤全部覆盖");
+  scope.SelectedIndex=1;gallery.ResetRates();scope.SelectedIndex=0;style.SelectedIndex=0;skins.SelectedValue=active;gallery.SelectAction("waving");
+  gallery.SetSelectedSpeed(.5);pet.React("waving","",2);double now=((System.Diagnostics.Stopwatch)Field(pet,"clock")).Elapsed.TotalSeconds;
+  Set(pet,"state","waving");Set(pet,"stateAt",now-1);gallery.SetSelectedSpeed(2);double after=((System.Diagnostics.Stopwatch)Field(pet,"clock")).Elapsed.TotalSeconds;
+  double spent=(after-(double)Field(pet,"stateAt"))*2,remaining=(double)Field(pet,"interactionUntil")-after;
+  Check(Math.Abs(spent-.5)<.35&&remaining>.75&&remaining<1.1,"播放中改倍速保留当前帧进度并更新互动结束时间");
+  Set(pet,"interaction",null);Set(pet,"state","idle");gallery.ResetRates();gallery.SelectAction("music-quiet");
+  var malformed=new Config();malformed.SkinAnimationSpeeds=null;malformed.Validate();
+  malformed.SkinAnimationSpeeds[other]=new Dictionary<string,double>{{"unknown",2},{"drink",double.PositiveInfinity},{"music-quiet:invented",1},{"music-quiet:nod",.987}};
+  malformed.SkinAnimationSpeeds["invalid-skin"]=null;malformed.Validate();
+  Check(malformed.SkinAnimationSpeeds.Count==1&&malformed.SkinAnimationSpeeds[other].Count==1&&AnimationTiming.Speed(malformed,other,"music-quiet","nod")==.99,"清理未知皮肤、无效样式及非法倍速");
+ }
  static IEnumerable<T> Find<T>(DependencyObject root) where T:DependencyObject {if(root is T)yield return (T)root;for(int i=0;i<VisualTreeHelper.GetChildrenCount(root);i++)foreach(var item in Find<T>(VisualTreeHelper.GetChild(root,i)))yield return item;}
  [STAThread]static int Main(string[] args){Store.Root=args[0];Store.Save(new Config{Walking=false,Gravity=false,LinkChatGPT=false,MusicEnabled=false,SleepSchedule=false,IdleSleep=false,HideFullscreen=false});var app=new Application{ShutdownMode=ShutdownMode.OnLastWindowClose};var pet=new PetWindow(true);bool passed=false;
-  pet.Loaded+=async delegate{try{await Task.Delay(800);var settings=app.Windows.OfType<SettingsWindow>().Single();settings.NavigateCategory("效果预览","");await Task.Delay(180);var gallery=Find<AnimationGallery>(settings).Single();Check(AnimationGallery.Catalog.Length==20,"20类现有动作可查阅");string before=Store.Json.Serialize(pet.Settings);foreach(var info in pet.Pets){var source=new AnimationPreviewSource(info.Id);foreach(var action in AnimationGallery.Catalog){if(action.Category=="音乐"&&!MusicSprites.Supported(info.Id)){Check(source.Frame(action,0)==null,"非Q版明确无音乐专用图集");continue;}var frame=source.Frame(action,0);Check(frame!=null&&frame.Source!=null,info.Id+" / "+action.Id);Check(source.Frame(action,action.Duration-.1)!=null,"循环末端可读");}}
-   gallery.SelectAction("music-quiet");var initial=gallery.CurrentFrame;gallery.Step();Check(gallery.CurrentFrame!=null&&!ReferenceEquals(initial,gallery.CurrentFrame),"下一帧切换完整人物图片");Check(!gallery.IsPlaying,"逐帧查看自动暂停");gallery.SelectAction("stretch");Check(gallery.CurrentFrame!=null,"日常过渡可直接预览");Check(Store.Json.Serialize(pet.Settings)==before,"衣装和动作预览不写真实偏好");SpeedTests(pet,gallery);settings.Capture(Path.Combine(Store.Root,"animation-gallery.png"));settings.NavigateCategory("音乐","长歌词滚动");await Task.Delay(100);Check(!gallery.IsPlaying,"离开预览页停止计时器");settings.Capture(Path.Combine(Store.Root,"lyric-settings.png"));gallery.Dispose();Check(!gallery.IsPlaying,"关闭释放预览播放");passed=true;
+  pet.Loaded+=async delegate{try{await Task.Delay(800);var settings=app.Windows.OfType<SettingsWindow>().Single();settings.NavigateCategory("效果预览","");await Task.Delay(180);var gallery=Find<AnimationGallery>(settings).Single();Check(AnimationGallery.Catalog.Length==21,"包含喝饮料的21类动作可查阅");string before=Store.Json.Serialize(pet.Settings);foreach(var info in pet.Pets){var source=new AnimationPreviewSource(info.Id);foreach(var action in AnimationGallery.Catalog){if((action.Category=="音乐"&&!MusicSprites.Supported(info.Id))||(action.Id=="drink"&&!info.Id.StartsWith("haibara-"))){Check(source.Frame(action,0)==null,"不支持的动作没有虚假预览帧");continue;}var frame=source.Frame(action,0);Check(frame!=null&&frame.Source!=null,info.Id+" / "+action.Id);Check(source.Frame(action,source.Duration(action)-.1)!=null,"循环末端可读");}}
+   gallery.SelectAction("music-quiet");var initial=gallery.CurrentFrame;gallery.Step();Check(gallery.CurrentFrame!=null&&!ReferenceEquals(initial,gallery.CurrentFrame),"下一帧切换完整人物图片");Check(!gallery.IsPlaying,"逐帧查看自动暂停");gallery.SelectAction("stretch");Check(gallery.CurrentFrame!=null,"日常过渡可直接预览");Check(Store.Json.Serialize(pet.Settings)==before,"衣装和动作预览不写真实偏好");SpeedTests(pet,gallery);ScopedTests(pet,gallery);settings.Capture(Path.Combine(Store.Root,"animation-gallery.png"));settings.NavigateCategory("音乐","长歌词滚动");await Task.Delay(100);Check(!gallery.IsPlaying,"离开预览页停止计时器");settings.Capture(Path.Combine(Store.Root,"lyric-settings.png"));gallery.Dispose();Check(!gallery.IsPlaying,"关闭释放预览播放");passed=true;
   }catch(Exception e){Store.Atomic("error.json",new{error=e.ToString()});}finally{Store.Atomic("preview-gallery-tests.json",new{passed,checks});foreach(var window in app.Windows.Cast<Window>().Where(w=>w!=pet).ToArray())window.Close();pet.Close();}};app.Run(pet);return passed?0:1;
  }
 }

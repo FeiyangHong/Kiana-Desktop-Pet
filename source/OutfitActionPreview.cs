@@ -10,16 +10,21 @@ namespace KianaPet {
    if(!SkinChangeActions.Allowed.Contains(action))throw new ArgumentException("请选择现有换装动作。");
    Source=source??new AnimationPreviewSource(c.Skin,c.MusicSeatedStyle);OldSource=oldSource??Source;Choice=AnimationGallery.Catalog.First(a=>a.Id==action);
    bool sit=seated&&MusicSprites.Supported(c.Skin);StaySeated=sit&&c.SkinShuffleMusicMode=="seated";
-   RiseMs=timing!=null?timing.RiseMs:sit&&!StaySeated?720/AnimationTiming.Speed(c,"music-rise"):0;
-   SitMs=timing!=null?timing.SitMs:sit&&!StaySeated?720/AnimationTiming.Speed(c,"music-sit"):0;
-   ActionMs=timing!=null?timing.ActionMs:StaySeated?MusicSeatedFrames.CycleMs/AnimationTiming.Speed(c,"music-quiet"):Choice.Duration/AnimationTiming.Speed(c,action);
+   RiseMs=timing!=null?timing.RiseMs:sit&&!StaySeated?AnimationAssets.Duration(OldSource.SkinId,"music-rise")/AnimationTiming.Speed(c,OldSource.SkinId,"music-rise"):0;
+   SitMs=sit&&!StaySeated?AnimationAssets.Duration(Source.SkinId,"music-sit")/AnimationTiming.Speed(c,Source.SkinId,"music-sit"):0;
+   ActionMs=StaySeated?AnimationAssets.Duration(Source.SkinId,"music-quiet",c.MusicSeatedStyle)/AnimationTiming.Speed(c,Source.SkinId,"music-quiet"):Source.Duration(Choice)/AnimationTiming.Speed(c,Source.SkinId,action);
    // Decode all poses before starting the visual clock, avoiding a pause or
    // skipped stage when the target skin first sits down.
    if(StaySeated)Source.Frame(AnimationGallery.Catalog.First(a=>a.Id=="music-quiet"),0);
-   else{Source.Frame(Choice,0);Source.Frame(Choice,Choice.Duration*.4);if(sit){OldSource.Frame(AnimationGallery.Catalog.First(a=>a.Id=="music-rise"),0);OldSource.Frame(AnimationGallery.Catalog.First(a=>a.Id=="idle"),0);Source.Frame(AnimationGallery.Catalog.First(a=>a.Id=="music-sit"),0);}}
+   else{Source.Frame(Choice,0);Source.Frame(Choice,Source.Duration(Choice)*.4);if(sit){OldSource.Frame(AnimationGallery.Catalog.First(a=>a.Id=="music-rise"),0);OldSource.Frame(AnimationGallery.Catalog.First(a=>a.Id=="idle"),0);Source.Frame(AnimationGallery.Catalog.First(a=>a.Id=="music-sit"),0);}}
+  }
+  public double ContinueAt(OutfitActionSequence previous,double ms){
+   if(ms<previous.RiseMs)return ms/previous.RiseMs*RiseMs;
+   if(ms<previous.RiseMs+previous.ActionMs)return RiseMs+(ms-previous.RiseMs)/previous.ActionMs*ActionMs;
+   return RiseMs+ActionMs+(previous.SitMs>0?Math.Min(1,(ms-previous.RiseMs-previous.ActionMs)/previous.SitMs)*SitMs:0);
   }
   public string VisibleAction(double ms){if(StaySeated)return "music-quiet";ms=Math.Max(0,Math.Min(DurationMs-.001,ms));return ms<RiseMs?"music-rise":ms<RiseMs+ActionMs?Choice.Id:"music-sit";}
-  public AnimationPose Frame(double ms){ms=Math.Max(0,Math.Min(DurationMs-.001,ms));string action=VisibleAction(ms);var choice=action==Choice.Id?Choice:AnimationGallery.Catalog.First(a=>a.Id==action);double elapsed=StaySeated?ms*MusicSeatedFrames.CycleMs/ActionMs:action=="music-rise"?ms*720/RiseMs:action=="music-sit"?(ms-RiseMs-ActionMs)*720/SitMs:(ms-RiseMs)*Choice.Duration/ActionMs;return (action=="music-rise"?OldSource:Source).Frame(choice,elapsed);}
+  public AnimationPose Frame(double ms){ms=Math.Max(0,Math.Min(DurationMs-.001,ms));string action=VisibleAction(ms);var choice=action==Choice.Id?Choice:AnimationGallery.Catalog.First(a=>a.Id==action);var source=action=="music-rise"?OldSource:Source;double phase=StaySeated?ms/ActionMs:action=="music-rise"?ms/RiseMs:action=="music-sit"?(ms-RiseMs-ActionMs)/SitMs:(ms-RiseMs)/ActionMs;return source.Frame(choice,phase*source.Duration(choice));}
  }
  public sealed class OutfitActionPreview:Window {
   readonly Config config;readonly string[] actions;readonly AnimationPreviewSource previewSource;readonly Image sprite=new Image{Width=224,Height=224*208d/192,Stretch=Stretch.Fill};

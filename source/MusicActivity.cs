@@ -16,7 +16,7 @@ namespace KianaPet {
    if(!string.IsNullOrEmpty(blocked))reason=blocked;
    else if(!c.MusicEnabled)reason="音乐栏已关闭，音乐动作停用。";
    else if(c.ReduceMotion)reason="已开启减少动态效果，自动音乐动作暂停。";
-   else if(!MusicSprites.Supported(c.Skin))reason="当前普通版服装不支持音乐动作，请使用 Q 版。";
+   else if(!MusicSprites.Supported(c.Skin))reason="当前衣装没有专用听歌动画，换成带有听歌动作的衣装即可。";
    else if(retaining)reason="短暂停顿或断连保留上次音乐动作，宽限结束后恢复日常活动。";
    else if(!fresh)reason="没有新鲜的播放信息，等待连接恢复。";
    else if(!s.Playing)reason="播放器已暂停，等待继续播放。";

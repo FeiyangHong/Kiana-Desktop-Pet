@@ -28,5 +28,23 @@
     "Id": "time-runner-kiana-round",
     "Name": "时砾逐光·圆润Q版",
     "Atlas": "time-runner-kiana-round.png"
+  },
+  {
+    "Id": "haibara-ai",
+    "Name": "灰原哀·非Q版",
+    "Atlas": "haibara/nonq-idle.png",
+    "AnimationManifest": "haibara/haibara-ai.json"
+  },
+  {
+    "Id": "haibara-ai-front-q",
+    "Name": "灰原哀·正面Q版",
+    "Atlas": "haibara/front-q-idle.png",
+    "AnimationManifest": "haibara/haibara-ai-front-q.json"
+  },
+  {
+    "Id": "haibara-ai-side-q",
+    "Name": "灰原哀·微侧Q版",
+    "Atlas": "haibara/side-q-idle.png",
+    "AnimationManifest": "haibara/haibara-ai-side-q.json"
   }
 ]

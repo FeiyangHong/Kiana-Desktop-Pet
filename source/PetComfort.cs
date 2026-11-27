@@ -26,7 +26,7 @@ namespace KianaPet {
   public void ImportPreferences(bool positions){var dialog=new OpenFileDialog{Title="导入桌宠偏好",Filter="桌宠设置 (*.json)|*.json",CheckFileExists=true};if(dialog.ShowDialog(settingsWindow)!=true)return;try{ReviewPreferenceFile(dialog.FileName,positions);}catch(Exception e){MessageBox.Show(settingsWindow,e.Message,"导入失败");}}
   public void ResetPreferences(){if(MessageBox.Show(settingsWindow,"恢复默认设置？当前偏好会先自动备份，宠物位置保留。","恢复默认",MessageBoxButton.YesNo,MessageBoxImage.Question)!=MessageBoxResult.Yes)return;try{ReplacePreferences(new Config(),false);RefreshSettingsWindow();}catch(Exception e){MessageBox.Show(settingsWindow,e.Message,"恢复失败");}}
   public string ReplacePreferences(Config next,bool positions){
-   PauseAutoScenes();next.Validate();if(!Pets.Any(p=>p.Id==next.Skin))throw new Exception("设置中的服装不在当前六套素材中。");
+   PauseAutoScenes();next.Validate();if(!Pets.Any(p=>p.Id==next.Skin))throw new Exception("这份设置指定的皮肤不在本机的皮肤清单中。");
    Save();PreferenceTransfer.Backup();if(!positions){next.X=Settings.X;next.Y=Settings.Y;next.HasPosition=Settings.HasPosition;next.MusicPosition=Settings.MusicPosition;next.MusicX=Settings.MusicX;next.MusicY=Settings.MusicY;next.MusicHasPosition=Settings.MusicHasPosition;}
    string warning="";if(hotkey!=null&&!preview&&!hotkey.Configure(next.RecoverHotkeyEnabled,next.RecoverHotkeyModifiers,next.RecoverHotkeyKey)){warning="新快捷键未启用："+hotkey.Error;hotkey.Configure(false,0,0);next.RecoverHotkeyEnabled=false;}
    Settings=next;ManualSkinShuffleReset();PauseAutoScenes();manualQuiet=false;lastQuietScan=-10;LoadSkin();ResizePet();UpdateLayout();if(next.HasPosition)MoveTo(next.X,next.Y);ClampPosition();ApplySettings();return warning;
